@@ -1,5 +1,5 @@
 # import requests_mock
-from unittest.mock import Mock
+# from unittest.mock import Mock
 
 import pytest
 
@@ -76,7 +76,5 @@ MOCK_SERVER_URL = "http://localhost:12345/"
 
 
 @pytest.fixture
-def mock_get(mocker):
-    mock = Mock()
-    mocker.patch("requests.get", return_value=mock)
-    return mock
+def ky_options() -> dict:
+    return {"baseURL": MOCK_SERVER_URL, "onRequest": True}
