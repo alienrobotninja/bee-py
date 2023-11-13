@@ -1,6 +1,7 @@
 import json
 from typing import Any, Callable, Generic, Optional, TypeVar, Union
 
+from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
 from bee_py.utils.hex import bytes_to_hex
@@ -10,6 +11,11 @@ Name = TypeVar("Name")
 Length = TypeVar("Length", bound=int)
 T = TypeVar("T", bound=Callable)
 
+BeeRequestOptions = dict[str, Optional[Union[str, int, dict[str, str], PreparedRequest, Response]]]
+
+
+BeeRequest = dict[str, Union[str, dict[str, str], Optional[str]]]
+BeeResponse = dict[str, Union[dict[str, str], int, str, BeeRequest]]
 
 SPAN_SIZE = 8
 SECTION_SIZE = 32

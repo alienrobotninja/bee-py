@@ -1,3 +1,6 @@
+# import requests_mock
+from unittest.mock import Mock
+
 import pytest
 
 from bee_py.utils.bytes import wrap_bytes_with_helpers
@@ -8,6 +11,13 @@ from bee_py.utils.stamps import (
     get_stamp_ttl_seconds,
     get_stamp_usage,
 )
+
+# Endpoints
+FEED_ENDPOINT = "/feeds"
+BZZ_ENDPOINT = "/bzz"
+BYTES_ENDPOINT = "/bytes"
+POSTAGE_ENDPOINT = "/stamps"
+CHEQUEBOOK_ENDPOINT = "/chequebook"
 
 
 @pytest.fixture
@@ -58,3 +68,15 @@ def stamp_cost_in_bzz(depth=20, amount=20_000_000_000):
 @pytest.fixture
 def stamp_cost_in_plur(depth=20, amount=20_000_000_000):
     return get_stamp_cost_in_plur(depth, amount)
+
+
+# test_http
+
+MOCK_SERVER_URL = "http://localhost:12345/"
+
+
+@pytest.fixture
+def mock_get(mocker):
+    mock = Mock()
+    mocker.patch("requests.get", return_value=mock)
+    return mock
