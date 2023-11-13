@@ -12,9 +12,9 @@ Here is a list of important resources for contributors:
 - [Code of Conduct]
 
 [gpl 3.0 license]: https://opensource.org/licenses/GPL-3.0
-[source code]: https://github.com/aviksaikat/bee-py
+[source code]: https://github.com/alienrobotninja/bee-py
 [documentation]: https://bee-py.readthedocs.io/
-[issue tracker]: https://github.com/aviksaikat/bee-py/issues
+[issue tracker]: https://github.com/alienrobotninja/bee-py/issues
 
 ## How to report a bug
 
@@ -37,36 +37,31 @@ Request features on the [Issue Tracker].
 
 ## How to set up your development environment
 
-You need Python 3.7+ and the following tools:
+You need Python 3.9+ and the following tools:
 
-- [Poetry]
-- [Nox]
-- [nox-poetry]
+- [pdm]
 
 Install the package with development requirements:
 
 ```console
-$ poetry install
+$ pdm install -G:all
 ```
 
 You can now run an interactive Python session,
 or the command-line interface:
 
 ```console
-$ poetry run python
-$ poetry run bee-py
+$ pdm venv activate
 ```
 
 [poetry]: https://python-poetry.org/
-[nox]: https://nox.thea.codes/
-[nox-poetry]: https://nox-poetry.readthedocs.io/
 
 ## How to test the project
 
 Run the full test suite:
 
 ```console
-$ nox
+$ pytest
 ```
 
 List the available Nox sessions:
@@ -108,7 +103,7 @@ $ nox --session=pre-commit -- install
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
-[pull request]: https://github.com/aviksaikat/bee-py/pulls
+[pull request]: https://github.com/alienrobotninja/bee-py/pulls
 
 <!-- github-only -->
 

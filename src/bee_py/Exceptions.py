@@ -1,0 +1,2 @@
+class HexStringLengthError(Exception):
+    pass
