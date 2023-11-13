@@ -3,7 +3,7 @@ import pytest
 
 @pytest.fixture
 def max_int():
-    return 2**53
+    return 2**53 - 1 
 
 
 # assuming these are the values you're testing with

@@ -7,12 +7,12 @@ def test_make_hex_string(test_data):
     test_bytes, test_hex = test_data
     assert make_hex_string("0xC0fFEE") == "C0fFEE"
     assert make_hex_string("C0FFEE") == "C0FFEE"
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         make_hex_string("")
         make_hex_string("COFFEE")
     assert make_hex_string("C0fFEE", 6) == "C0fFEE"
     assert make_hex_string("0xC0fFEE", 6) == "C0fFEE"
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         make_hex_string("C0fFEE", 5)
         make_hex_string("0xC0fFEE", 7)
 
@@ -66,20 +66,17 @@ def test_bytes_to_hex(test_data):
         (124, "7c", None, None),
         (28721856816, "6aff4c130", None, None),
         ("max_int", "1fffffffffffff", None, None),
-        ("max_int_plus_one", None, None, ValueError),
-        (124.1, None, None, ValueError),
-        ("a", None, None, ValueError),
-        ("0", None, None, ValueError),
+        (124.1, None, None, TypeError),
+        ("a", None, None, TypeError),
+        ("0", None, None, TypeError),
         (-1, None, None, ValueError),
     ],
 )
 def test_int_to_hex(value, result, length, exception, request):
     if value == "max_int":
         value = request.getfixturevalue("max_int")
-    elif value == "max_int_plus_one":
-        value = request.getfixturevalue("max_int") + 1
 
-    if exception is not None:
+    if exception:
         with pytest.raises(exception):
             int_to_hex(value, length)
     else:

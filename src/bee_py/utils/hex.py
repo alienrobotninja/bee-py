@@ -86,6 +86,12 @@ def int_to_hex(inp: int, length: Optional[int] = None) -> str:
     Raises:
         ValueError: If the length of the resulting hex string does not match the specified length.
     """
+    if not isinstance(inp, int):
+        msg = "Input must be an integer"
+        raise TypeError(msg)
+    if inp < 0:
+        msg = "Cannot convert negative integers to hexadecimal strings."
+        raise ValueError(msg)
     # Convert integer to hexadecimal
     hex_string = hex(inp)[2:]
 

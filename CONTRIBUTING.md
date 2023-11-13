@@ -54,7 +54,6 @@ or the command-line interface:
 $ pdm venv activate
 ```
 
-[poetry]: https://python-poetry.org/
 
 ## How to test the project
 
