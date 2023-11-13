@@ -1,4 +1,7 @@
-from typing import Callable, Generic, TypeVar, Union
+import json
+from typing import Any, Callable, Generic, TypeVar, Union
+
+from bee_py.utils.hex import bytes_to_hex
 
 Type = TypeVar("Type")
 Name = TypeVar("Name")
@@ -142,3 +145,48 @@ class PrefixedHexString(Generic[T]):
     @property
     def value(self) -> T:
         return self.__value
+
+
+class Data:
+    """A class representing binary data with additional helper methods."""
+
+    def __init__(self, data):
+        self.data = data
+
+    def text(self) -> str:
+        """Converts the binary data using UTF-8 decoding into string.
+
+        Returns:
+          The decoded string.
+        """
+
+        return self.data.decode("utf-8")
+
+    def hex(self) -> str:
+        """Converts the binary data into hex-string.
+
+        Returns:
+          The hexadecimal string representation of the data.
+        """
+
+        return bytes_to_hex(self.data)
+
+    def json(self) -> dict[str, Any]:
+        """Converts the binary data into string which is then parsed into JSON.
+
+        Returns:
+          The decoded JSON object.
+        """
+        if isinstance(self.data, bytes):
+            self.data = self.data.decode("utf-8")
+        if "{" in self.data:
+            return json.loads(self.data)
+
+        # Split the string into a list of words
+        words = self.data.split()
+        # Convert the list into a dictionary
+        dict_obj = {words[0]: " ".join(words[1:])}
+        # Convert the dictionary to a JSON object
+        json_object = json.dumps(dict_obj)
+
+        return json.loads(json_object)
