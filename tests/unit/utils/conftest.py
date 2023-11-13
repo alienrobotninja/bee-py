@@ -1,6 +1,13 @@
 import pytest
 
 from bee_py.utils.bytes import wrap_bytes_with_helpers
+from bee_py.utils.stamps import (
+    get_stamp_cost_in_bzz,
+    get_stamp_cost_in_plur,
+    get_stamp_maximum_capacity_bytes,
+    get_stamp_ttl_seconds,
+    get_stamp_usage,
+)
 
 
 @pytest.fixture
@@ -14,6 +21,7 @@ def test_data():
     return bytes.fromhex("00112233445566778899aabbccddeeff"), "00112233445566778899aabbccddeeff"
 
 
+# text_bytes
 @pytest.fixture
 def wrap_bytes_with_helpers_fixture():
     data = b"hello world"
@@ -24,3 +32,29 @@ def wrap_bytes_with_helpers_fixture():
 @pytest.fixture
 def wrapped_bytes(wrap_bytes_with_helpers_fixture):
     return wrap_bytes_with_helpers_fixture
+
+
+# test_stamps
+@pytest.fixture
+def stamp_usage(utilization=4, depth=18, bucket_depth=16):
+    return get_stamp_usage(utilization, depth, bucket_depth)
+
+
+@pytest.fixture
+def stamp_maximum_capacity_bytes(depth=20):
+    return get_stamp_maximum_capacity_bytes(depth)
+
+
+@pytest.fixture
+def stamp_ttl_seconds(amount=20_000_000_000, price_per_block=24_000, block_time=5):
+    return get_stamp_ttl_seconds(amount, price_per_block, block_time)
+
+
+@pytest.fixture
+def stamp_cost_in_bzz(depth=20, amount=20_000_000_000):
+    return get_stamp_cost_in_bzz(depth, amount)
+
+
+@pytest.fixture
+def stamp_cost_in_plur(depth=20, amount=20_000_000_000):
+    return get_stamp_cost_in_plur(depth, amount)

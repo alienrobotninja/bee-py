@@ -1,5 +1,7 @@
 import json
-from typing import Any, Callable, Generic, TypeVar, Union
+from typing import Any, Callable, Generic, Optional, TypeVar, Union
+
+from typing_extensions import TypeAlias
 
 from bee_py.utils.hex import bytes_to_hex
 
@@ -7,6 +9,36 @@ Type = TypeVar("Type")
 Name = TypeVar("Name")
 Length = TypeVar("Length", bound=int)
 T = TypeVar("T", bound=Callable)
+
+
+SPAN_SIZE = 8
+SECTION_SIZE = 32
+BRANCHES = 128
+CHUNK_SIZE = SECTION_SIZE * BRANCHES
+
+ADDRESS_HEX_LENGTH = 64
+PSS_TARGET_HEX_LENGTH_MAX = 6
+PUBKEY_HEX_LENGTH = 66
+BATCH_ID_HEX_LENGTH = 64
+REFERENCE_HEX_LENGTH = 64
+ENCRYPTED_REFERENCE_HEX_LENGTH = 128
+REFERENCE_BYTES_LENGTH = 32
+ENCRYPTED_REFERENCE_BYTES_LENGTH = 64
+
+# Minimal depth that can be used for creation of postage batch
+STAMPS_DEPTH_MIN = 17
+
+# Maximal depth that can be used for creation of postage batch
+STAMPS_DEPTH_MAX = 255
+
+TAGS_LIMIT_MIN = 1
+TAGS_LIMIT_MAX = 1000
+FEED_INDEX_HEX_LENGTH = 16
+
+
+# Type aliases
+BatchId: TypeAlias = str
+AddressPrefix: TypeAlias = str
 
 
 class BrandedType(Generic[Type, Name]):
@@ -162,7 +194,7 @@ class Data:
 
         return self.data.decode("utf-8")
 
-    def hex(self) -> str:
+    def hex(self) -> str:  # noqa: A003
         """Converts the binary data into hex-string.
 
         Returns:
@@ -190,3 +222,50 @@ class Data:
         json_object = json.dumps(dict_obj)
 
         return json.loads(json_object)
+
+
+def is_object(value: Any) -> bool:
+    """
+    Checks if a value is an object.
+
+    Args:
+    value: The value to check.
+
+    Returns:
+    True if the value is an object, False otherwise.
+    """
+    return value is not None and isinstance(value, dict)
+
+
+class UploadOptions:
+    """Represents the options for uploading a file to Bee."""
+
+    pin: Optional[bool]
+    encrypt: Optional[bool]
+    tag: Optional[int]
+    deferred: Optional[bool]
+
+    def __init__(
+        self,
+        pin: Optional[bool] = None,
+        encrypt: Optional[bool] = None,
+        tag: Optional[int] = None,
+        deferred: Optional[bool] = True,  # noqa: FBT002
+    ):
+        self.pin = pin
+        self.encrypt = encrypt
+        self.tag = tag
+        self.deferred = deferred
+
+
+class FileHeaders:
+    """Represents the headers for a file."""
+
+    name: Optional[str]
+    tag_uid: Optional[int]
+    content_type: Optional[str]
+
+    def __init__(self, name: Optional[str] = None, tag_uid: Optional[int] = None, content_type: Optional[str] = None):
+        self.name = name
+        self.tagUid = tag_uid
+        self.contentType = content_type
