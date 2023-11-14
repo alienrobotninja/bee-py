@@ -2,8 +2,6 @@ import binascii
 import re
 from typing import Optional, Union
 
-# from bee_py.types.type import HexString
-
 
 def bytes_to_hex(inp: bytes, length: Optional[int] = None) -> str:
     """Converts a byte array to a hexadecimal string.
