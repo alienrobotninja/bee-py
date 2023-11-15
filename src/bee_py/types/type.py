@@ -17,6 +17,7 @@ BeeRequestOptions = dict[str, Optional[Union[str, int, dict[str, str], PreparedR
 BeeRequest = dict[str, Union[str, dict[str, str], Optional[str]]]
 BeeResponse = dict[str, Union[dict[str, str], int, str, BeeRequest]]
 
+
 SPAN_SIZE = 8
 SECTION_SIZE = 32
 BRANCHES = 128
@@ -275,3 +276,7 @@ class FileHeaders:
         self.name = name
         self.tagUid = tag_uid
         self.contentType = content_type
+
+
+class OverLayAddress:
+    value: str

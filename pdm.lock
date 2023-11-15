@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:8ee1b406a438eb0ae96e974eaef0bdb5d10bfe17ef93eac491754fea3aef3ff6"
+content_hash = "sha256:bc47cb500f628364da3aea1c115ed3ebe77bad153ff170374691f178f095e67b"
 
 [[package]]
 name = "argcomplete"
@@ -788,6 +788,14 @@ dependencies = [
 files = [
     {file = "pyproject_hooks-1.0.0-py3-none-any.whl", hash = "sha256:283c11acd6b928d2f6a7c73fa0d01cb2bdc5f07c57a2eeb6e83d5e56b97976f8"},
     {file = "pyproject_hooks-1.0.0.tar.gz", hash = "sha256:f271b298b97f5955d53fb12b72c1fb1948c22c1a6b70b315c54cedaca0264ef5"},
+]
+
+[[package]]
+name = "pysha3"
+version = "1.0.2"
+summary = "SHA-3 (Keccak) for Python 2.7 - 3.5"
+files = [
+    {file = "pysha3-1.0.2.tar.gz", hash = "sha256:fe988e73f2ce6d947220624f04d467faf05f1bbdbc64b0a201296bb3af92739e"},
 ]
 
 [[package]]

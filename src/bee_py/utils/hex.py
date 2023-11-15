@@ -1,6 +1,6 @@
-import binascii
-import re
 from typing import Optional, Union
+
+from eth_utils import is_0x_prefixed, is_hex, to_bytes, to_hex
 
 
 def bytes_to_hex(inp: bytes, length: Optional[int] = None) -> str:
@@ -16,8 +16,8 @@ def bytes_to_hex(inp: bytes, length: Optional[int] = None) -> str:
     Raises:
         ValueError: If the length of the resulting hex string does not match the specified length.
     """
-    # Convert byte array to hexadecimal
-    hex_string = binascii.hexlify(inp).decode()
+    # # Convert byte array to hexadecimal
+    hex_string = to_hex(inp)
 
     if length is not None and len(hex_string) != length:
         msg = f"Length mismatch for valid hex string. Expected length {length}: {hex_string}"
@@ -38,10 +38,7 @@ def hex_to_bytes(hex_string: str) -> bytes:
     Raises:
         ValueError: If the hex string is not a valid hexadecimal string.
     """
-    # if ref starts with 0x remove it
-    if hex_string.startswith("0x"):
-        hex_string = hex_string[2:]
-    return binascii.unhexlify(hex_string)
+    return to_bytes(hexstr=hex_string)
 
 
 def str_to_hex(inp: str, length: Optional[int] = None) -> str:
@@ -100,7 +97,7 @@ def int_to_hex(inp: int, length: Optional[int] = None) -> str:
     return hex_string
 
 
-def is_hex_string(s: str, length: Optional[int] = None) -> bool:
+def is_hex_string(s: str, length: Optional[int] = None) -> bool:  # noqa: ARG001
     """Type guard for HexStrings.
 
     Requires no 0x prefix!
@@ -113,16 +110,17 @@ def is_hex_string(s: str, length: Optional[int] = None) -> bool:
         True if the input is a valid HexString, False otherwise.
     """
 
-    if not isinstance(s, str):
-        return False
+    # if not isinstance(s, str):
+    #     return False
 
-    if not re.match(r"^[0-9a-f]+$", s, flags=re.IGNORECASE):
-        return False
+    # if not re.match(r"^[0-9a-f]+$", s, flags=re.IGNORECASE):
+    #     return False
 
-    if length is not None and len(s) != length:
-        return False
+    # if length is not None and len(s) != length:
+    #     return False
 
-    return True
+    # return True
+    return is_hex(s)
 
 
 def is_prefixed_hex_string(s: str) -> bool:
@@ -137,13 +135,14 @@ def is_prefixed_hex_string(s: str) -> bool:
         True if the input is a valid PrefixedHexString, False otherwise.
     """
 
-    if not isinstance(s, str):
-        return False
+    # if not isinstance(s, str):
+    #     return False
 
-    if not re.match(r"^0x[0-9a-f]+$", s, flags=re.IGNORECASE):
-        return False
+    # if not re.match(r"^0x[0-9a-f]+$", s, flags=re.IGNORECASE):
+    #     return False
 
-    return True
+    # return True
+    return is_0x_prefixed(s)
 
 
 def make_hex_string(input_data: Union[int, bytes, str], length: Optional[int] = None) -> str:
