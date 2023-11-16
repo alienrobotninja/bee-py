@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:bfec7bb93d813c1129e06332862599837be2d1ae7e2a11928ebd5c497db7a807"
+content_hash = "sha256:ff0ec6fa3a1627e6f7beadb662b2e85cd18c5191c7edfc9fbfb1fbc453940433"
 
 [[package]]
 name = "aiohttp"
@@ -1626,6 +1626,20 @@ summary = "Markdown URL utilities"
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
+]
+
+[[package]]
+name = "merkly"
+version = "0.8.1"
+requires_python = ">=3.8,<4.0"
+summary = "🌳 The simple and easy implementation of Merkle Tree"
+dependencies = [
+    "pycryptodome<4.0.0,>=3.19.0",
+    "pydantic<2.0.0,>=1.10.2",
+]
+files = [
+    {file = "merkly-0.8.1-py3-none-any.whl", hash = "sha256:2d6ca95eda234d16f10043dfc9f5f7b5264b478f37bef56ff86ad26a2c35cf71"},
+    {file = "merkly-0.8.1.tar.gz", hash = "sha256:de14f322bbedb5ef299e7bb2932584e444d305a592656192e69ce8307c741450"},
 ]
 
 [[package]]
