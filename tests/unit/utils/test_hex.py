@@ -1,4 +1,5 @@
 import pytest
+from hexbytes import HexBytes
 
 from bee_py.utils.hex import bytes_to_hex, hex_to_bytes, int_to_hex, is_hex_string, make_hex_string
 
@@ -47,12 +48,12 @@ def test_is_hex_string_with_length(input_value, length, expected_result):
 
 def test_hex_to_bytes(test_data):
     _, test_hex = test_data
-    assert hex_to_bytes(test_hex).hex() == test_hex
+    assert HexBytes(hex_to_bytes(test_hex)) == HexBytes(test_hex)
 
 
 def test_bytes_to_hex(test_data):
     test_bytes, _ = test_data
-    assert bytes_to_hex(test_bytes) == test_bytes.hex()
+    assert HexBytes(bytes_to_hex(test_bytes)) == HexBytes(test_bytes)
 
 
 @pytest.mark.parametrize(

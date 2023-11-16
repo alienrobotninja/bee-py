@@ -12,7 +12,7 @@ def test_wrap_bytes_with_helpers_json(wrapped_bytes):
 
 
 def test_wrap_bytes_with_helpers_hex(wrapped_bytes):
-    assert wrapped_bytes.hex() == "68656c6c6f20776f726c64"
+    assert wrapped_bytes.hex() == "0x68656c6c6f20776f726c64"
 
 
 def test_branded_string_tag():
@@ -43,7 +43,7 @@ def test_data_json():
 
 def test_data_hex():
     data = Data(b"abcdef")
-    assert data.hex() == "616263646566"
+    assert data.hex() == "0x616263646566"
 
 
 def test_data_str_json_output():

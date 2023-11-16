@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
 from eth_utils import is_0x_prefixed, is_hex, to_bytes, to_hex
+from hexbytes import HexBytes
 
 
 def bytes_to_hex(inp: bytes, length: Optional[int] = None) -> str:
@@ -97,7 +98,7 @@ def int_to_hex(inp: int, length: Optional[int] = None) -> str:
     return hex_string
 
 
-def is_hex_string(s: str, length: Optional[int] = None) -> bool:  # noqa: ARG001
+def is_hex_string(s: Union[str, HexBytes, bytes], length: Optional[int] = None) -> bool:  # noqa: ARG001
     """Type guard for HexStrings.
 
     Requires no 0x prefix!
@@ -109,17 +110,14 @@ def is_hex_string(s: str, length: Optional[int] = None) -> bool:  # noqa: ARG001
     Returns:
         True if the input is a valid HexString, False otherwise.
     """
+    # if not a string return False
+    if not isinstance(s, str):
+        return False
+    # if the length doesn't match return False
+    if length:
+        if len(s) != length:
+            return False
 
-    # if not isinstance(s, str):
-    #     return False
-
-    # if not re.match(r"^[0-9a-f]+$", s, flags=re.IGNORECASE):
-    #     return False
-
-    # if length is not None and len(s) != length:
-    #     return False
-
-    # return True
     return is_hex(s)
 
 
@@ -183,3 +181,27 @@ def make_hex_string(input_data: Union[int, bytes, str], length: Optional[int] = 
         raise TypeError(msg)
 
     return hex_string
+
+
+def is_bytes(b: bytes, length: int) -> bool:
+    """
+    Type guard for `Bytes<T>` type
+
+    Args:
+        b (bytes): The byte array
+        length (int): The length of the byte array
+    """
+    return isinstance(b, bytes) and len(b) == length
+
+
+def assert_bytes(b: bytes, length: int) -> None:
+    """
+    Verifies if a byte array has a certain length
+
+    Args:
+        b (bytes): The byte array
+        length (int): The specified length
+    """
+    if not is_bytes(b, length):
+        msg = f"Parameter is not valid Bytes of length: {length} !== {len(b)}"
+        raise TypeError(msg)
