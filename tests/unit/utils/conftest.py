@@ -1,6 +1,4 @@
-# import requests_mock
-# from unittest.mock import Mock
-
+import ape
 import pytest
 
 from bee_py.utils.bytes import wrap_bytes_with_helpers
@@ -78,3 +76,26 @@ MOCK_SERVER_URL = "http://localhost:12345/"
 @pytest.fixture
 def ky_options() -> dict:
     return {"baseURL": MOCK_SERVER_URL, "onRequest": True}
+
+
+# test eth
+
+
+@pytest.fixture(scope="session")
+def accounts():
+    return ape.accounts
+
+
+@pytest.fixture(scope="session")
+def test_accounts(accounts):
+    return accounts.test_accounts
+
+
+@pytest.fixture(scope="session")
+def alice(test_accounts):
+    return test_accounts[0]
+
+
+@pytest.fixture(scope="session")
+def bob():
+    return test_accounts[1]

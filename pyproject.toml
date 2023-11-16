@@ -4,7 +4,9 @@ name = "bee-py"
 version = "0.1.0"
 description = "Python client library for connecting to Bee decentralised storage"
 authors = [{ name = "SAIKAT KARMAKAR", email = "saikickkarma@protonmail.com" }]
-dependencies = []
+dependencies = [
+    "eth-ape>=0.6.19",
+]
 requires-python = ">=3.9"
 readme = "README.md"
 license = { text = "LGPL-3.0, GPL-3.0" }
