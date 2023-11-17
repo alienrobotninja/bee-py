@@ -51,10 +51,10 @@ def is_valid_flex_bytes(flex_bytes: FlexBytes) -> bool:
     """Checks if a byte array is within the specified length range.
 
     Args:
-          flex_bytes: The byte array to check.
+                            flex_bytes: The byte array to check.
 
     Returns:
-          True if the byte array is valid, False otherwise.
+                            True if the byte array is valid, False otherwise.
     """
 
     return flex_bytes.minimum <= len(flex_bytes) <= flex_bytes.maximum
@@ -64,11 +64,11 @@ def is_bytes(b: Any, length: int) -> TypeGuard[bytes]:
     """Type guard for the `bytes` type.
 
     Args:
-      b: The value to check.
-      length: The length of the byte array.
+            b: The value to check.
+            length: The length of the byte array.
 
     Returns:
-      True if the value is a byte array of the specified length, False otherwise.
+            True if the value is a byte array of the specified length, False otherwise.
     """
 
     return isinstance(b, bytes) and len(b) == length
@@ -78,12 +78,12 @@ def has_bytes_at_offset(data: bytes, offset: int, length: int) -> bool:
     """Checks if the specified byte array is contained in the given data at the specified offset.
 
     Args:
-      data: The data to check.
-      offset: The offset to check at.
-      length: The length of the byte array to check.
+            data: The data to check.
+            offset: The offset to check at.
+            length: The length of the byte array to check.
 
     Returns:
-      True if the byte array is contained in the data at the specified offset, False otherwise.
+            True if the byte array is contained in the data at the specified offset, False otherwise.
     """
 
     if not isinstance(data, bytes):
@@ -102,11 +102,11 @@ def is_flex_bytes(b: Any, flex_bytes: FlexBytes) -> TypeGuard[bytes]:
     """Type guard for the `FlexBytes` type.
 
     Args:
-      b: The value to check.
-      flex_bytes: A `FlexBytes` object.
+            b: The value to check.
+            flex_bytes: A `FlexBytes` object.
 
     Returns:
-      True if the value is a byte array within the specified length range, False otherwise.
+            True if the value is a byte array within the specified length range, False otherwise.
     """
 
     return isinstance(b, bytes) and flex_bytes.min_length <= len(b) <= flex_bytes.max_length
@@ -116,11 +116,11 @@ def assert_bytes_length(b: bytes, length: int):
     """Asserts that the length of the given byte array is equal to the specified length.
 
     Args:
-      b: The byte array to check.
-      length: The specified length.
+            b: The byte array to check.
+            length: The specified length.
 
     Raises:
-      TypeError: If the length of the byte array is not equal to the specified length.
+            TypeError: If the length of the byte array is not equal to the specified length.
     """
 
     if not is_bytes(b, length):
@@ -132,15 +132,15 @@ def flex_bytes_at_offset(data: bytes, offset: int, length: int) -> bytes:
     """Returns the specified number of bytes from the given data starting at the specified offset.
 
     Args:
-      data: The data to extract the bytes from.
-      offset: The offset to start from.
-      length: The number of bytes to extract.
+            data: The data to extract the bytes from.
+            offset: The offset to start from.
+            length: The number of bytes to extract.
 
     Returns:
-      A byte array containing the extracted bytes.
+            A byte array containing the extracted bytes.
 
     Raises:
-      ValueError: If the offset or length is out of bounds.
+            ValueError: If the offset or length is out of bounds.
     """
 
     if not (0 <= offset <= len(data) - length):
@@ -159,11 +159,11 @@ def bytes_equal(a: bytes, b: bytes) -> bool:
     """Returns True if the two byte arrays are equal, False otherwise.
 
     Args:
-      a: The first byte array to compare.
-      b: The second byte array to compare.
+            a: The first byte array to compare.
+            b: The second byte array to compare.
 
     Returns:
-      True if the two byte arrays are equal, False otherwise.
+            True if the two byte arrays are equal, False otherwise.
     """
 
     if len(a) != len(b):
@@ -176,10 +176,10 @@ def make_bytes(length: int) -> bytes:
     """Returns a new byte array filled with zeroes with the specified length.
 
     Args:
-      length: The length of the byte array.
+            length: The length of the byte array.
 
     Returns:
-      A byte array filled with zeroes with the specified length.
+            A byte array filled with zeroes with the specified length.
     """
 
     return bytes(b"\x00" * length)
@@ -189,10 +189,10 @@ def wrap_bytes_with_helpers(data: bytes) -> Data:
     """Wraps the given byte array with helper methods for text, JSON, and hex encoding.
 
     Args:
-      data: The byte array to wrap.
+            data: The byte array to wrap.
 
     Returns:
-      A byte array wrapped with helper methods for text, JSON, and hex encoding.
+            A byte array wrapped with helper methods for text, JSON, and hex encoding.
     """
     if not isinstance(data, bytes):
         msg = "Data must be a byte array."

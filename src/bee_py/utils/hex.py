@@ -98,7 +98,7 @@ def int_to_hex(inp: int, length: Optional[int] = None) -> str:
     return hex_string
 
 
-def is_hex_string(s: Union[str, HexBytes, bytes], length: Optional[int] = None) -> bool:  # noqa: ARG001
+def is_hex_string(s: Union[str, HexBytes, bytes], length: Optional[int] = None) -> bool:
     """Type guard for HexStrings.
 
     Requires no 0x prefix!

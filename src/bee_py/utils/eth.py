@@ -217,7 +217,7 @@ def make_ethereum_wallet_signer(
     account: Optional[AccountAPI],
     address: Optional[Union[str, HexBytes, AddressType]],
     auto_sign: Optional[bool] = False,  # noqa: FBT002
-):
+) -> EthereumSigner:
     """Creates a Signer instance that uses the `personal_sign` method to sign requested data.
 
     Args:

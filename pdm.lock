@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:ff0ec6fa3a1627e6f7beadb662b2e85cd18c5191c7edfc9fbfb1fbc453940433"
+content_hash = "sha256:99adc1f0cf56c09b8915fce928f8c0d0b74715804a117b792f401b1e675bf0bb"
 
 [[package]]
 name = "aiohttp"
@@ -796,7 +796,7 @@ files = [
 
 [[package]]
 name = "eth-ape"
-version = "0.6.19"
+version = "0.6.25"
 requires_python = ">=3.8,<4"
 summary = "Ape Ethereum Framework"
 dependencies = [
@@ -809,7 +809,7 @@ dependencies = [
     "eth-account<0.9,>=0.8",
     "eth-typing<4,>=3.4",
     "eth-utils<3,>=2.2.0",
-    "ethpm-types<0.6,>=0.5.3",
+    "ethpm-types<0.6,>=0.5.10",
     "evm-trace>=0.1.0a23",
     "hexbytes<1,>=0.2.3",
     "ijson<4,>=3.1.4",
@@ -820,19 +820,20 @@ dependencies = [
     "pandas<2,>=1.3.0",
     "pluggy<2,>=1.3",
     "py-geth<4,>=3.13.0",
-    "pydantic<2,>=1.10.8",
+    "pydantic<3,>=1.10.8",
     "pytest<8.0,>=6.0",
     "python-dateutil<3,>=2.8.2",
     "requests<3,>=2.28.1",
     "rich<13,>=12.5.1",
     "tqdm<5.0,>=4.62.3",
     "traitlets>=5.3.0",
+    "urllib3<2,>=1.26.16",
     "watchdog<4,>=3.0",
     "web3[tester]<7,>=6.7.0",
 ]
 files = [
-    {file = "eth-ape-0.6.19.tar.gz", hash = "sha256:78001209dfdf8c7973c649b8cbba73d3399cd649aeee4223d0b29078ae997201"},
-    {file = "eth_ape-0.6.19-py3-none-any.whl", hash = "sha256:f6c5137a10edcc2a37a8f8736882e412b2fb3b326d00d8128538e73dc031f89b"},
+    {file = "eth-ape-0.6.25.tar.gz", hash = "sha256:c6b0331bb36d1f1e7e7973b36698edb17491d6abb5e183330481bcee5626d5e3"},
+    {file = "eth_ape-0.6.25-py3-none-any.whl", hash = "sha256:940458827f171dfeff8cfb96f4059e336b2271458b9c75602a3d79130f09d062"},
 ]
 
 [[package]]
@@ -1626,20 +1627,6 @@ summary = "Markdown URL utilities"
 files = [
     {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
     {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
-]
-
-[[package]]
-name = "merkly"
-version = "0.8.1"
-requires_python = ">=3.8,<4.0"
-summary = "🌳 The simple and easy implementation of Merkle Tree"
-dependencies = [
-    "pycryptodome<4.0.0,>=3.19.0",
-    "pydantic<2.0.0,>=1.10.2",
-]
-files = [
-    {file = "merkly-0.8.1-py3-none-any.whl", hash = "sha256:2d6ca95eda234d16f10043dfc9f5f7b5264b478f37bef56ff86ad26a2c35cf71"},
-    {file = "merkly-0.8.1.tar.gz", hash = "sha256:de14f322bbedb5ef299e7bb2932584e444d305a592656192e69ce8307c741450"},
 ]
 
 [[package]]
@@ -2997,15 +2984,15 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.10"
+version = "2.31.0.6"
 requires_python = ">=3.7"
 summary = "Typing stubs for requests"
 dependencies = [
-    "urllib3>=2",
+    "types-urllib3",
 ]
 files = [
-    {file = "types-requests-2.31.0.10.tar.gz", hash = "sha256:dc5852a76f1eaf60eafa81a2e50aefa3d1f015c34cf0cba130930866b1b22a92"},
-    {file = "types_requests-2.31.0.10-py3-none-any.whl", hash = "sha256:b32b9a86beffa876c0c3ac99a4cd3b8b51e973fb8e3bd4e0a6bb32c7efad80fc"},
+    {file = "types-requests-2.31.0.6.tar.gz", hash = "sha256:cd74ce3b53c461f1228a9b783929ac73a666658f223e28ed29753771477b3bd0"},
+    {file = "types_requests-2.31.0.6-py3-none-any.whl", hash = "sha256:a2db9cb228a81da8348b49ad6db3f5519452dd20a9c1e1a868c83c5fe88fd1a9"},
 ]
 
 [[package]]
@@ -3016,6 +3003,15 @@ summary = "Typing stubs for setuptools"
 files = [
     {file = "types-setuptools-68.2.0.1.tar.gz", hash = "sha256:8f31e8201e7969789e0eb23463b53ebe5f67d92417df4b648a6ea3c357ca4f51"},
     {file = "types_setuptools-68.2.0.1-py3-none-any.whl", hash = "sha256:e9c649559743e9f98c924bec91eae97f3ba208a70686182c3658fd7e81778d37"},
+]
+
+[[package]]
+name = "types-urllib3"
+version = "1.26.25.14"
+summary = "Typing stubs for urllib3"
+files = [
+    {file = "types-urllib3-1.26.25.14.tar.gz", hash = "sha256:229b7f577c951b8c1b92c1bc2b2fdb0b49847bd2af6d1cc2a2e3dd340f3bda8f"},
+    {file = "types_urllib3-1.26.25.14-py3-none-any.whl", hash = "sha256:9683bbb7fb72e32bfe9d2be6e04875fbe1b3eeec3cbb4ea231435aa7fd6b4f0e"},
 ]
 
 [[package]]
@@ -3030,12 +3026,12 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "2.0.7"
-requires_python = ">=3.7"
+version = "1.26.18"
+requires_python = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 summary = "HTTP library with thread-safe connection pooling, file post, and more."
 files = [
-    {file = "urllib3-2.0.7-py3-none-any.whl", hash = "sha256:fdb6d215c776278489906c2f8916e6e7d4f5a9b602ccbcfdf7f016fc8da0596e"},
-    {file = "urllib3-2.0.7.tar.gz", hash = "sha256:c97dfde1f7bd43a71c8d2a58e369e9b2bf692d1334ea9f9cae55add7d0dd0f84"},
+    {file = "urllib3-1.26.18-py2.py3-none-any.whl", hash = "sha256:34b97092d7e0a3a8cf7cd10e386f401b3737364026c45e622aa02903dffe0f07"},
+    {file = "urllib3-1.26.18.tar.gz", hash = "sha256:f8ecc1bba5667413457c529ab955bf8c67b45db799d159066261719e328580a0"},
 ]
 
 [[package]]

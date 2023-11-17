@@ -49,5 +49,5 @@ def test_get_stamp_cost_in_bzz(stamp_cost_in_bzz, depth, amount, expected):  # n
         (20, 20_000_000_000, 20971520000000000),
     ],
 )
-def test_get_stamp_cost_in_plur(stamp_cost_in_plur, depth, amount, expected):
+def test_get_stamp_cost_in_plur(stamp_cost_in_plur, depth, amount, expected):  # noqa: ARG001
     assert stamp_cost_in_plur == expected
