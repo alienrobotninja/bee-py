@@ -1,18 +1,22 @@
 from typing import Optional, Union
 
+import eth_keys
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from ape.types.signatures import MessageSignature, recover_signer
 from eth_account.messages import SignableMessage, encode_defunct
-from eth_utils import keccak
+from eth_keys import keys
 from hexbytes import HexBytes
 
+# bee_py imports
 from bee_py.utils.hash import keccak256_hash
+from bee_py.utils.hex import hex_to_bytes
 
 # Variables
 UNCOMPRESSED_RECOVERY_ID = 27
 
 
+# * Don't need this as we are using ethereum foundation maintained modules
 def hash_with_ethereum_prefix(data: Union[bytes, bytearray]) -> bytes:
     """
     Calculates the Keccak-256 hash of the provided data, prefixed with the Ethereum signed message prefix.
@@ -33,7 +37,7 @@ def hash_with_ethereum_prefix(data: Union[bytes, bytearray]) -> bytes:
 # TODO: Update the implementation when this PR is merged https://github.com/ApeWorX/ape/pull/1734
 def sign(
     data: Union[str, bytes, bytearray], account: AccountAPI, auto_sign: Optional[bool] = False  # noqa: FBT002
-) -> HexBytes:
+) -> MessageSignature:
     """
     Calculates the signature of the provided data using the given private key.
 
@@ -43,7 +47,7 @@ def sign(
         auto_sign(Optional[bool]): Whether to enable auto-signing for the account
 
     Returns:
-        HexBytes -> The signature of the data as HexBytes
+        MessageSignature -> The signature of the data as HexBytes
 
     N.B. It is not recoomened to pass private key here & there that's why I
     thought to use ape's account container which is much more secure that just
@@ -54,33 +58,39 @@ def sign(
         data = encode_defunct(text=data)
 
     # you have to set password as env variable
-    # more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure
+    # more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure # noqa: E501
     if auto_sign:
         account.set_autosign(True)
 
     signature = account.sign_message(data)
 
-    # return the signature encoded in vrs format
-    return HexBytes(signature.encode_vrs())
+    # return the signature
+    return signature
 
 
 # for more info ckeckout my gist: https://gist.github.com/Aviksaikat/fd5dfaef4c69e23116148b4b7c0377b6
-def public_key_to_address(pub_key: Union[str, bytes, HexBytes]) -> HexBytes[AddressType]:
+def public_key_to_address(pub_key: Union[str, bytes, eth_keys.datatypes.PublicKey]) -> HexBytes:
     """
     Converts an elliptic curve public key into its corresponding Ethereum address.
 
     Args:
-        pub_key (str | bytes | HexBytes): The elliptic curve public key.
+        pub_key (str | bytes | eth_keys.datatypes.PublicKey ): The elliptic curve public key.
 
     Returns:
         EthAddress(HexBytes): The Ethereum address derived from the public key.
     """
-    if isinstance(pub_key, HexBytes):
-        pub_key = pub_key.hex()
-    hash_of_public_key = keccak(pub_key)
-
+    if isinstance(pub_key, str):
+        hash_of_public_key = keys.PublicKey(hex_to_bytes(pub_key))
+    elif isinstance(pub_key, bytes):
+        hash_of_public_key = keys.PublicKey(pub_key)
+    # * if already an eth_keys.datatypes.PublicKey object then call the .to_address method & return
+    elif isinstance(pub_key, eth_keys.datatypes.PublicKey):
+        return HexBytes(pub_key.to_address())
+    else:
+        msg = f"Expected str, bytes or hexstr, got {pub_key}"
+        raise ValueError(msg)
     # Extract the last 20 bytes (40 characters) from the keccak digest as the address
-    address = hash_of_public_key[24:]
+    address = hash_of_public_key.to_address()
     return HexBytes(address)
 
 

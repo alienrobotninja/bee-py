@@ -249,7 +249,7 @@ def make_ethereum_wallet_signer(
 
     if auto_sign:
         # you have to set password as env variable
-        # more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure
+        # more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure # noqa: E501
         account.set_autosign(True)
 
     return EthereumSigner(account)

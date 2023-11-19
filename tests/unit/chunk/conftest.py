@@ -1,7 +1,10 @@
-import json
 from pathlib import Path
 
+import ape
+import eth_keys
 import pytest
+from eth_keys import keys
+from eth_utils import decode_hex
 
 from bee_py.chunk.bmt import bmt_hash
 from bee_py.chunk.serialize import serialize_bytes
@@ -42,9 +45,24 @@ def data(payload):
 
 
 # test signer
-@pytest.fixture
-def test_account_from_file() -> dict:
-    return json.loads(open(ACCOUNTS_FILE))
+# @pytest.fixture
+# def test_account_from_file() -> dict:
+#     return json.loads(open(ACCOUNTS_FILE))
+
+
+@pytest.fixture(scope="session")
+def accounts():
+    return ape.accounts
+
+
+@pytest.fixture(scope="session")
+def test_accounts(accounts):
+    return accounts.test_accounts
+
+
+@pytest.fixture(scope="session")
+def signer(test_accounts):
+    return test_accounts[0]
 
 
 @pytest.fixture
@@ -59,7 +77,25 @@ def data_to_sign_with_helper(data_to_sign_bytes) -> Data:
 
 @pytest.fixture
 def expected_signature_hex() -> str:
-    return "336d24afef78c5883b96ad9a62552a8db3d236105cb059ddd04dc49680869dc16234f6852c277087f025d4114c4fac6b40295ecffd1194a84cdb91bd571769491b"  # noqa: E501
+    return "1b6258da274d981bdccac1d52435681248a92758ede98195fd8d658b8b3390b2de4023e296185b58614c0f61483edf6e3ef7e9262ce3e1da3efd3a15acfe96c2e6"  # noqa: E501
+
+
+@pytest.fixture
+def public_key(signer) -> eth_keys.datatypes.PublicKey:
+    priv_key_bytes = decode_hex(signer.private_key)
+    priv_key = keys.PrivateKey(priv_key_bytes)
+    pub_key = priv_key.public_key
+    return pub_key
+
+
+@pytest.fixture
+def public_key_str(public_key) -> str:
+    return public_key.to_hex()
+
+
+@pytest.fixture
+def public_key_bytes(public_key) -> bytes:
+    return public_key.to_bytes()
 
 
 @pytest.fixture

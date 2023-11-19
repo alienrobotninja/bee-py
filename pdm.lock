@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:99adc1f0cf56c09b8915fce928f8c0d0b74715804a117b792f401b1e675bf0bb"
+content_hash = "sha256:b02365e0f06d02260b4be1b5de2baf4548a8646896e8f5b4c971780093a2f432"
 
 [[package]]
 name = "aiohttp"
@@ -1109,6 +1109,19 @@ dependencies = [
 files = [
     {file = "flake8-print-5.0.0.tar.gz", hash = "sha256:76915a2a389cc1c0879636c219eb909c38501d3a43cc8dae542081c9ba48bdf9"},
     {file = "flake8_print-5.0.0-py3-none-any.whl", hash = "sha256:84a1a6ea10d7056b804221ac5e62b1cee1aefc897ce16f2e5c42d3046068f5d8"},
+]
+
+[[package]]
+name = "flake8-pyproject"
+version = "1.2.3"
+requires_python = ">= 3.6"
+summary = "Flake8 plug-in loading the configuration from pyproject.toml"
+dependencies = [
+    "Flake8>=5",
+    "TOMLi; python_version < \"3.11\"",
+]
+files = [
+    {file = "flake8_pyproject-1.2.3-py3-none-any.whl", hash = "sha256:6249fe53545205af5e76837644dc80b4c10037e73a0e5db87ff562d75fb5bd4a"},
 ]
 
 [[package]]

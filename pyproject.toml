@@ -60,6 +60,7 @@ lint = [
     "mdformat-gfm>=0.3.0",         # Needed for formatting GitHub-flavored markdown
     "mdformat-frontmatter>=2.0.8", # Needed for frontmatters-style
     "mdformat-pyproject>=0.0.1",   # Allows configuring in pyproject.toml
+    "Flake8-pyproject>=1.2.3",
 ]
 
 
@@ -83,9 +84,18 @@ number = true
 
 # flake8
 [tool.flake8]
-line-length = 120
+max-line-length= 120
+ignore = ["E203", "W503"]
 exclude = ["__pycache__", ".venv/*"]
 docstring-convention = "google"
+
+# mypy
+[tool.mypy]
+exclude = ["build/", "dist/", "docs/"]
+check_untyped_defs = true
+
+[tool.mypy-pytest]
+ignore_missing_imports = true
 
 # ruff
 [tool.ruff]
