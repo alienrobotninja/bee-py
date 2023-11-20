@@ -2,7 +2,7 @@ from typing import Any, Generic, TypeVar
 
 from typing_extensions import TypeGuard
 
-from bee_py.types.type import Data
+from bee_py.types.type import Data, Length
 
 Min = TypeVar("Min", bound=int)
 Max = TypeVar("Max", bound=int)
@@ -199,3 +199,25 @@ def wrap_bytes_with_helpers(data: bytes) -> Data:
         raise TypeError(msg)
 
     return Data(data)
+
+
+def bytes_at_offset(data: bytes, offset: int, length: Length) -> bytes:
+    """
+    Returns `length` bytes starting from `offset`.
+
+    Args:
+        data: The original data.
+        offset: The offset to start from.
+        length: The length of data to be returned.
+
+    Returns:
+        bytes: The bytes at the given offset and length.
+    """
+    offset_bytes = data[offset : offset + length]
+
+    # * We are returning strongly typed Bytes so we have to verify that length is really what we claim
+    if not len(offset_bytes) == length:
+        msg = f"Lenght mismatch. Expected {length}, got {offset_bytes}"
+        raise ValueError(msg)
+
+    return offset_bytes

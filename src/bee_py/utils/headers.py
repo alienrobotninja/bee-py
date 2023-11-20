@@ -87,14 +87,15 @@ def extract_upload_headers(postage_batch_id: BatchId, options: Optional[UploadOp
         "swarm-postage-batch-id": postage_batch_id,
     }
 
-    if options is not None:
+    # * if not None
+    if options:
         if options.pin:
             headers["swarm-pin"] = str(options.pin)
         if options.encrypt:
             headers["swarm-encrypt"] = str(options.encrypt)
         if options.tag:
             headers["swarm-tag"] = str(options.tag)
-        if options.deferred is not None:
+        if options.deferred:
             headers["swarm-deferred-upload"] = str(options.deferred)
 
     return headers

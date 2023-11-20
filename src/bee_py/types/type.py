@@ -4,7 +4,7 @@ from typing import Any, Callable, Generic, Optional, TypeVar, Union
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
-from bee_py.utils.hex import bytes_to_hex
+from bee_py.utils.hex import bytes_to_hex, is_hex_string
 
 Type = TypeVar("Type")
 Name = TypeVar("Name")
@@ -45,6 +45,8 @@ TAGS_LIMIT_MIN = 1
 TAGS_LIMIT_MAX = 1000
 FEED_INDEX_HEX_LENGTH = 16
 
+TOPIC_BYTES_LENGTH = 32
+TOPIC_HEX_LENGTH = 64
 
 # Type aliases
 BatchId: TypeAlias = str
@@ -283,3 +285,76 @@ class FileHeaders:
 
 class OverLayAddress:
     value: str
+
+
+class Reference:
+    """
+    Represents a reference that can be either a non-encrypted reference, which is a hex string of length 64,
+    or an encrypted reference, which is a hex string of length 128.
+    """
+
+    def __init__(self, value):
+        self._validate(value)
+        self._value = value
+
+    def _validate(self, value):
+        if len(value) not in (REFERENCE_HEX_LENGTH, ENCRYPTED_REFERENCE_HEX_LENGTH) or not all(
+            c in "0123456789abcdefABCDEF" for c in value
+        ):
+            msg = "Reference must be a hex string of length 64 or 128"
+            raise ValueError(msg)
+
+    def __str__(self):
+        return self._value
+
+
+class ReferenceResponse:
+    """Represents a response containing a reference."""
+
+    def __init__(self, reference: Reference):
+        """Initializes the ReferenceResponse with the provided reference."""
+        self.reference = reference
+
+    @property
+    def reference(self) -> Reference:
+        """The reference associated with the response."""
+        return self._reference
+
+    @reference.setter
+    def reference(self, reference: Reference):
+        self._reference = reference
+
+    def __str__(self):
+        return f"ReferenceResponse(reference={self.reference})"
+
+
+class Topic:
+    def __init__(self, value: str):
+        self._validate(value)
+        self._value = value
+
+    def _validate(self, value: str):
+        if len(value) != self.TOPIC_HEX_LENGTH or not all(c in "0123456789abcdefABCDEF" for c in value):
+            msg = f"Topic must be a hex string of length {self.TOPIC_HEX_LENGTH}"
+            raise ValueError(msg)
+
+    def __str__(self):
+        return self._value
+
+
+ReferenceOrENS = Union[Reference, str]
+
+
+def assert_address(value: Any):
+    """
+    Asserts the value is an Ethereum address.
+
+    Args:
+        value: The value to assert.
+
+    Raises:
+        ValueError: If the value is not an Ethereum address.
+    """
+    if not isinstance(value, str) or len(value) != ADDRESS_HEX_LENGTH or not value.startswith("0x"):
+        msg = "Value is not an Ethereum address!"
+        raise ValueError(msg)

@@ -1,3 +1,4 @@
+from struct import pack
 from typing import Optional, Union
 
 from eth_utils import is_0x_prefixed, is_hex, to_bytes, to_hex
@@ -205,3 +206,10 @@ def assert_bytes(b: bytes, length: int) -> None:
     if not is_bytes(b, length):
         msg = f"Parameter is not valid Bytes of length: {length} !== {len(b)}"
         raise TypeError(msg)
+
+
+def to_big_endian(value: int) -> bytes:
+    """
+    Convert int to big endian representation
+    """
+    return pack(">I", value)

@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 import requests
 
 DEFAULT_HTTP_CONFIG = {
@@ -43,9 +45,9 @@ def maybe_run_on_request_hook(options: dict, request_config: dict) -> dict:
         new_request_config = request_config.copy()
         hook_result = {
             "method": request_config.get("method", "GET"),
-            "url": request_config["url"],
-            "headers": request_config["headers"],
-            "params": request_config.get("params"),
+            "url": urljoin(request_config.get("baseURL", ""), request_config.get("url", "")),
+            "headers": request_config.get("headers", {}),
+            "params": request_config.get("params", {}),
         }
 
         if hook_result:

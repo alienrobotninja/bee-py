@@ -94,7 +94,7 @@ def public_key_to_address(pub_key: Union[str, bytes, eth_keys.datatypes.PublicKe
     return HexBytes(address)
 
 
-def recover_addres(message: SignableMessage, signature: MessageSignature) -> AddressType:
+def recover_address(message: SignableMessage, signature: MessageSignature) -> AddressType:
     """
     Recovers the Ethereum address from a given signature and message digest.
 
