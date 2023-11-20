@@ -1,5 +1,11 @@
 # Bee Py
 
+<div align="center">
+    <p align="center">
+        <img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" alt="YAML" />
+        <img src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white" alt="Python" />
+        <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions" />
+    </p>
 <p align="center">
     <a href="https://pypi.org/project/bee-py/"><img src="https://img.shields.io/pypi/v/bee-py.svg" alt="PyPI"></a>
     <a href="https://pypi.org/project/bee-py/"><img src="https://img.shields.io/pypi/status/bee-py.svg" alt="Status"></a>
@@ -17,22 +23,26 @@
     <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="pre-commit"></a>
     <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black"></a>
 </p>
+    <img src="https://img.shields.io/github/license/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub license" />
+    <img src="https://img.shields.io/github/last-commit/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="git-last-commit" />
+    <img src="https://img.shields.io/github/commit-activity/m/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub commit activity" />
+    <img src="https://img.shields.io/github/languages/top/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub top language" />
+</div>
 
 ## 📖 Table of Contents
 
-- [📖 Table of Contents](#-table-of-contents)
-- [📍 Overview](#-overview)
-- [📦 Features](#-features)
-- [📂 repository Structure](#-repository-structure)
-- [⚙️ Modules](#modules)
-- [🚀 Getting Started](#-getting-started)
-  - [🔧 Installation](#-installation)
-  - [🤖 Running ](#-running-)
-  - [🧪 Tests](#-tests)
-- [🛣 Roadmap](#-roadmap)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-- [👏 Acknowledgments](#-acknowledgments)
+- [Bee Py](#bee-py)
+  - [📖 Table of Contents](#-table-of-contents)
+  - [Overview](#overview)
+  - [Features](#features)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Issues](#issues)
+- [Documentation](#documentation)
+  - [Credits](#credits)
 
 ## Overview
 
@@ -48,7 +58,7 @@ This is the python SDK for `bee.js`.
 
 ## Installation
 
-You can install _Bee Py_ via [pip] from [PyPI]:
+You can install _Bee Py_ via \[pip\] from \[PyPI\]:
 
 ```console
 $ pip install bee-py
@@ -71,7 +81,7 @@ _Bee Py_ is free and open source software.
 ## Issues
 
 If you encounter any problems,
-please [file an issue] along with a detailed description.
+please \[file an issue\] along with a detailed description.
 
 # Documentation
 
@@ -83,6 +93,6 @@ Developed by [@Aviksaikat](https://github.com/aviksaikat)
 
 <!-- github-only -->
 
-[license]: https://github.com/aviksaikat/bee-py/blob/main/LICENSE
-[contributor guide]: https://github.com/aviksaikat/bee-py/blob/main/CONTRIBUTING.md
 [command-line reference]: https://bee-py.readthedocs.io/en/latest/usage.html
+[contributor guide]: https://github.com/aviksaikat/bee-py/blob/main/CONTRIBUTING.md
+[license]: https://github.com/aviksaikat/bee-py/blob/main/LICENSE
