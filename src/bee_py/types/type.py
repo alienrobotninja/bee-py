@@ -358,3 +358,16 @@ def assert_address(value: Any):
     if not isinstance(value, str) or len(value) != ADDRESS_HEX_LENGTH or not value.startswith("0x"):
         msg = "Value is not an Ethereum address!"
         raise ValueError(msg)
+
+
+class BeeGenericResponse:
+    """Represents a generic response from the Bee API.
+
+    Attributes:
+        message: The human-readable message associated with the response.
+        code: The numerical code associated with the response.
+    """
+
+    def __init__(self, message: str, code: int):
+        self.message = message
+        self.code = code

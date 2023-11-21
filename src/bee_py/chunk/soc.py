@@ -1,5 +1,6 @@
 from typing import NewType, Optional
 
+from ape.managers.accounts import AccountAPI
 from eth_typing import ChecksumAddress as AddressType
 from pydantic import BaseModel
 
@@ -133,7 +134,7 @@ def make_soc_address(identifier: Identifier, address: AddressType) -> bytes:
 def make_single_owner_chunk(
     chunk: Chunk,
     identifier: Identifier,
-    signer: dict,
+    signer: AccountAPI,
 ) -> dict:
     """
     Creates a single owner chunk object.
@@ -150,8 +151,8 @@ def make_single_owner_chunk(
     assert_valid_chunk_data(chunk.data(), chunk_address)
 
     digest = keccak256_hash(identifier, chunk_address)
-    signature = sign(signer, digest)
-    data = serialize_bytes(identifier, signature, chunk.span(), chunk.payload())
+    signature = sign(account=signer, data=digest)
+    data = serialize_bytes(identifier, signature.encode_vrs(), chunk.span(), chunk.payload())
     address = make_soc_address(identifier, signer.get("address", ""))
 
     return {

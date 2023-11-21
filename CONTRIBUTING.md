@@ -11,11 +11,6 @@ Here is a list of important resources for contributors:
 - [Issue Tracker]
 - [Code of Conduct]
 
-[gpl 3.0 license]: https://opensource.org/licenses/GPL-3.0
-[source code]: https://github.com/alienrobotninja/bee-py
-[documentation]: https://bee-py.readthedocs.io/
-[issue tracker]: https://github.com/alienrobotninja/bee-py/issues
-
 ## How to report a bug
 
 Report bugs on the [Issue Tracker].
@@ -39,7 +34,7 @@ Request features on the [Issue Tracker].
 
 You need Python 3.9+ and the following tools:
 
-- [pdm]
+- \[pdm\]
 
 Install the package with development requirements:
 
@@ -53,7 +48,6 @@ or the command-line interface:
 ```console
 $ pdm venv activate
 ```
-
 
 ## How to test the project
 
@@ -79,8 +73,6 @@ $ nox --session=tests
 Unit tests are located in the _tests_ directory,
 and are written using the [pytest] testing framework.
 
-[pytest]: https://pytest.readthedocs.io/
-
 ## How to submit changes
 
 Open a [pull request] to submit changes to this project.
@@ -102,8 +94,12 @@ $ nox --session=pre-commit -- install
 It is recommended to open an issue before starting work on anything.
 This will allow a chance to talk it over with the owners and validate your approach.
 
-[pull request]: https://github.com/alienrobotninja/bee-py/pulls
-
 <!-- github-only -->
 
 [code of conduct]: CODE_OF_CONDUCT.md
+[documentation]: https://bee-py.readthedocs.io/
+[gpl 3.0 license]: https://opensource.org/licenses/GPL-3.0
+[issue tracker]: https://github.com/alienrobotninja/bee-py/issues
+[pull request]: https://github.com/alienrobotninja/bee-py/pulls
+[pytest]: https://pytest.readthedocs.io/
+[source code]: https://github.com/alienrobotninja/bee-py
