@@ -128,31 +128,30 @@ def assert_bytes_length(b: bytes, length: int):
         raise TypeError(msg)
 
 
-def flex_bytes_at_offset(data: bytes, offset: int, length: int) -> bytes:
-    """Returns the specified number of bytes from the given data starting at the specified offset.
+def flex_bytes_at_offset(data: bytes, offset: int, min_size: int, max_size: int) -> FlexBytes[Min, Max]:
+    """Returns a flex bytes object starting from the specified offset, ensuring the size is within the specified range.
 
     Args:
-            data: The data to extract the bytes from.
-            offset: The offset to start from.
-            length: The number of bytes to extract.
-
-    Returns:
-            A byte array containing the extracted bytes.
+        data: The original byte data.
+        offset: The offset to start extracting the flex bytes from.
+        min_size: The minimum allowed size of the extracted flex bytes.
+        max_size: The maximum allowed size of the extracted flex bytes.
 
     Raises:
-            ValueError: If the offset or length is out of bounds.
+        ValueError if the extracted flex bytes size falls outside the specified range.
+
+    Returns:
+        A flex bytes object representing the extracted byte sequence.
     """
 
-    if not (0 <= offset <= len(data) - length):
-        msg = "Offset or length is out of bounds."
+    extracted_bytes = data[offset:]
+    extracted_bytes_size = len(extracted_bytes)
+
+    if extracted_bytes_size < min_size or extracted_bytes_size > max_size:
+        msg = f"Flex bytes size must be between {min_size} and {max_size}, but found {extracted_bytes_size}"
         raise ValueError(msg)
 
-    offset_bytes = data[offset : offset + length]
-
-    # Assert that the length of the offset bytes is equal to the specified length.
-    assert_bytes_length(offset_bytes, length)
-
-    return offset_bytes
+    return extracted_bytes
 
 
 def bytes_equal(a: bytes, b: bytes) -> bool:

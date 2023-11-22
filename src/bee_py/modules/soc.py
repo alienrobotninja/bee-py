@@ -1,10 +1,15 @@
 from typing import Optional
 
+from structlog import get_logger
+
 from bee_py.types.type import BatchId, BeeRequestOptions, Reference, UploadOptions
 from bee_py.utils.headers import extract_upload_headers
+from bee_py.utils.hex import remove_0x_prefix
 from bee_py.utils.http import http
 
 SOC_ENDPOINT = "soc"
+
+logger = get_logger()
 
 
 def upload(
@@ -31,6 +36,11 @@ def upload(
     Returns:
         Reference: The reference of the uploaded chunk.
     """
+    # https://docs.ethswarm.org/api/#tag/Single-owner-chunk
+    owner = remove_0x_prefix(owner)
+    identifier = remove_0x_prefix(identifier)
+    signature = remove_0x_prefix(signature)
+
     config = {
         "method": "post",
         "url": f"{SOC_ENDPOINT}/{owner}/{identifier}",
@@ -39,10 +49,13 @@ def upload(
             "content-type": "application/octet-stream",
             **extract_upload_headers(postage_batch_id, options),
         },
-        "responseType": "json",
         "params": {"sig": signature},
     }
+    logger.debug(f"\n***********Config***********\n{config}")
+
     response = http(request_options, config)
-    response.raise_for_status()
+    if response.status_code != 200:  # noqa: PLR2004
+        print(response.json())  # noqa: T201
+        logger.error(response.raise_for_status())
 
     return response.json()["reference"]

@@ -95,7 +95,6 @@ def create_feed_manifest(
     """
     config = {
         "method": "post",
-        "responseType": "json",
         "url": f"{FEED_ENDPOINT}/{owner}/{topic}",
         "params": options,
         "headers": extract_upload_headers(postage_batch_id),
@@ -156,7 +155,6 @@ def fetch_latest_feed_update(
     response = http(
         request_options,
         {
-            "responseType": "json",
             "url": f"{FEED_ENDPOINT}/{owner}/{topic}",
             "params": options,
         },

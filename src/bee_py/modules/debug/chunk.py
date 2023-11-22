@@ -24,7 +24,6 @@ def check_if_chunk_exists_locally(
         request_options,
         {
             "url": f"{ENDPOINT}/{address}",
-            "responseType": "json",
         },
     )
     status_code = response.status_code
@@ -54,7 +53,6 @@ def delete_chunk_from_local_storage(
         {
             "method": "delete",
             "url": f"{ENDPOINT}/{address}",
-            "responseType": "json",
         },
     )
     status_code = response.status_code

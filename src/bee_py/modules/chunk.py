@@ -5,7 +5,7 @@ from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
 
-ENDPOINT = "chunk"
+ENDPOINT = "chunks"
 
 
 def upload(
@@ -22,14 +22,12 @@ def upload(
     Returns:
         The reference of the uploaded data.
     """
-    headers = extract_upload_headers(postage_batch_id, options)
 
     config = {
-        "url": request_options["url"] + f"/{ENDPOINT}",
+        "url": f"/{ENDPOINT}",
         "method": "post",
         "data": data,
-        "headers": headers,
-        "responseType": "json",
+        "headers": {**extract_upload_headers(postage_batch_id, options)},
     }
 
     response = http(request_options, config)
@@ -40,11 +38,10 @@ def upload(
     return response.json()["reference"]
 
 
-def downalod(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
+def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
     config = {
-        "url": f"{request_options['url']}/{ENDPOINT}/{_hash}",
+        "url": f"/{ENDPOINT}/{_hash}",
         "method": "get",
-        "responseType": "arraybuffer",
     }
     response = http(request_options, config)
 

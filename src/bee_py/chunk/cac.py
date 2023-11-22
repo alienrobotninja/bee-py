@@ -27,12 +27,6 @@ class Chunk:
         self.data = data
         self.span = span
 
-    def data(self):
-        return self.data
-
-    def span(self):
-        return self.span
-
     def payload(self) -> bytes:
         return flex_bytes_at_offset(self.data, CAC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
 

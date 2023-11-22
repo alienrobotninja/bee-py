@@ -6,6 +6,7 @@ description = "Python client library for connecting to Bee decentralised storage
 authors = [{ name = "SAIKAT KARMAKAR", email = "saikickkarma@protonmail.com" }]
 dependencies = [
     "eth-ape>=0.6.25",
+    "structlog>=23.2.0",
 ]
 requires-python = ">=3.9"
 readme = "README.md"

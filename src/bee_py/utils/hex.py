@@ -5,7 +5,7 @@ from eth_utils import is_0x_prefixed, is_hex, to_bytes, to_hex
 from hexbytes import HexBytes
 
 
-def bytes_to_hex(inp: bytes, length: Optional[int] = None) -> str:
+def bytes_to_hex(inp: Union[bytes, str], length: Optional[int] = None) -> str:
     """Converts a byte array to a hexadecimal string.
 
     Args:
@@ -19,7 +19,10 @@ def bytes_to_hex(inp: bytes, length: Optional[int] = None) -> str:
         ValueError: If the length of the resulting hex string does not match the specified length.
     """
     # # Convert byte array to hexadecimal
-    hex_string = to_hex(inp)
+    if isinstance(inp, bytes):
+        hex_string = to_hex(inp)
+    elif isinstance(inp, str):
+        hex_string = to_bytes(hexstr=inp)
 
     if length is not None and len(hex_string) != length:
         msg = f"Length mismatch for valid hex string. Expected length {length}: {hex_string}"
@@ -213,3 +216,10 @@ def to_big_endian(value: int) -> bytes:
     Convert int to big endian representation
     """
     return pack(">I", value)
+
+
+def remove_0x_prefix(input_string: str) -> str:
+    if input_string.startswith("0x"):
+        return input_string[2:]
+    else:
+        return input_string

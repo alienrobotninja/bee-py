@@ -1,18 +1,18 @@
-import os
+import json
+from pathlib import Path
 from typing import Union
 
 import ape
 import pytest
-from dotenv import load_dotenv
 
 from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
 from bee_py.types.type import BatchId
 from bee_py.utils.hex import bytes_to_hex
 
-load_dotenv()
-
-
 MOCK_SERVER_URL = "http://localhost:1633"
+PROJECT_PATH = Path(__file__).parent
+DATA_FOLDER = PROJECT_PATH / "../../data"
+BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 
 
 @pytest.fixture
@@ -26,23 +26,30 @@ def bee_peer_debug_url() -> str:
 
 
 @pytest.fixture
+def read_bee_postage() -> dict:
+    with open(BEE_DATA_FILE) as f:
+        data = json.loads(f.read())
+    return data
+
+
+@pytest.fixture
 def bee_ky_options() -> dict:
-    return {"baseURL": MOCK_SERVER_URL, "timeout": False}
+    return {"baseURL": MOCK_SERVER_URL, "timeout": 30, "onRequest": True}
 
 
 @pytest.fixture
 def bee_debug_ky_options(bee_debug_url) -> dict:
-    return {"baseURL": bee_debug_url(), "timeout": False}
+    return {"baseURL": bee_debug_url, "timeout": 30, "onRequest": True}
 
 
 @pytest.fixture
-def get_postage_batch(url: str = "bee_debug_url") -> BatchId:
+def get_postage_batch(request, url: str = "bee_debug_url") -> BatchId:
     stamp: BatchId
 
     if url == "bee_debug_url":
-        stamp = os.environ.get("BEE_POSTAGE", None)
+        stamp = request.getfixturevalue("read_bee_postage")["BEE_POSTAGE"]
     elif url == "bee_peer_debug_url":
-        stamp = os.environ.get("BEE_PEER_POSTAGE", None)
+        stamp = request.getfixturevalue("read_bee_postage")["BEE_PEER_POSTAGE"]
     else:
         msg = f"Unknown url: {url}"
         raise ValueError(msg)
@@ -64,17 +71,20 @@ def bee_peer_debug_url_postage(get_postage_batch) -> BatchId:
 
 
 @pytest.fixture
-def try_delete_chunk_from_local_storage(address: Union[str, bytes], bee_debug_ky_options):
+def try_delete_chunk_from_local_storage(soc_hash, bee_debug_ky_options):
+    address = soc_hash
     if isinstance(address, bytes):
         address = bytes_to_hex(address)
 
     try:
         response = delete_chunk_from_local_storage(bee_debug_ky_options, address)
+        return response
     except ValueError as e:
-        if response.status_code == 400:
-            return
-        else:
-            raise e
+        try:
+            response.status_code == 400  # noqa: B015
+            return response
+        except:  # noqa: E722
+            raise e  # noqa: B904
 
 
 @pytest.fixture(scope="session")

@@ -2,7 +2,8 @@ from typing import NewType, Optional
 
 from ape.managers.accounts import AccountAPI
 from eth_typing import ChecksumAddress as AddressType
-from pydantic import BaseModel
+from hexbytes import HexBytes
+from pydantic.dataclasses import dataclass
 
 from bee_py.chunk.bmt import bmt_hash
 from bee_py.chunk.cac import (
@@ -21,7 +22,7 @@ from bee_py.types.type import BatchId, BeeRequestOptions, Reference, UploadOptio
 from bee_py.utils.bytes import bytes_at_offset, bytes_equal, flex_bytes_at_offset
 from bee_py.utils.error import BeeError
 from bee_py.utils.hash import keccak256_hash
-from bee_py.utils.hex import bytes_to_hex
+from bee_py.utils.hex import bytes_to_hex, hex_to_bytes
 
 # * Global variables
 IDENTIFIER_SIZE = 32
@@ -36,7 +37,8 @@ SOC_PAYLOAD_OFFSET = SOC_SPAN_OFFSET + SPAN_SIZE
 Identifier = NewType("Identifier", bytes)
 
 
-class SingleOwnerChunkBase(BaseModel):
+@dataclass
+class SingleOwnerChunkBase:
     """Abstract base class for Single Owner Chunks (SOCs).
 
     Represents a SOC, a type of chunk that allows a user to assign arbitrary data to an address
@@ -61,12 +63,32 @@ class SingleOwnerChunk(SingleOwnerChunkBase, Chunk):
     with all its properties and behaviors defined.
 
     Attributes:
+        data: The data contained in the SOC.
         identifier: The identifier of the SOC.
         signature: The signature of the SOC.
+        span: The span of the SOC.
+        payload: The payload of the SOC.
+        address: The address of the SOC.
         owner: The owner of the SOC.
     """
 
-    pass
+    def __init__(
+        self,
+        data: bytes,
+        identifier: Identifier,
+        signature: bytes,
+        span: bytes,
+        payload: bytes,
+        address: HexBytes,
+        owner: AddressType,
+    ):
+        SingleOwnerChunkBase.__init__(self, identifier, signature, owner)
+        self.data = data
+        self.span = span
+        self.payload = payload
+        self.address = address
+
+    # address: AddressType
 
 
 def recover_chunk_owner(data: bytes) -> AddressType:
@@ -88,7 +110,7 @@ def recover_chunk_owner(data: bytes) -> AddressType:
     return owner_address
 
 
-def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> dict:
+def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> SingleOwnerChunk:
     """
     Verifies if the data is a valid single owner chunk.
 
@@ -116,26 +138,36 @@ def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> dict
     def payload():
         return flex_bytes_at_offset(data, SOC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
 
-    return {
-        "data": data,
-        "identifier": identifier,
-        "signature": signature(),
-        "span": span(),
-        "payload": payload(),
-        "address": soc_address,
-        "owner": owner_address,
-    }
+    # return {
+    #     "data": data,
+    #     "identifier": identifier,
+    #     "signature": signature(),
+    #     "span": span(),
+    #     "payload": payload(),
+    #     "address": soc_address,
+    #     "owner": owner_address,
+    # }
+    return SingleOwnerChunk(
+        data=data,
+        identifier=identifier,
+        signature=signature(),
+        span=span(),
+        payload=payload,
+        address=soc_address,
+        owner=owner_address,
+    )
 
 
 def make_soc_address(identifier: Identifier, address: AddressType) -> bytes:
-    return keccak256_hash(identifier, address)
+    address_bytes = hex_to_bytes(address)
+    return keccak256_hash(identifier, address_bytes)
 
 
 def make_single_owner_chunk(
     chunk: Chunk,
     identifier: Identifier,
     signer: AccountAPI,
-) -> dict:
+) -> SingleOwnerChunk:
     """
     Creates a single owner chunk object.
 
@@ -145,25 +177,35 @@ def make_single_owner_chunk(
         signer: The singer interface for signing the chunk.
 
     Returns:
-        dict: A dictionary representing a single owner chunk.
+        SingleOwnerChunk: SingleOwnerChunk object.
     """
     chunk_address = chunk.address()
-    assert_valid_chunk_data(chunk.data(), chunk_address)
+    assert_valid_chunk_data(chunk.data, chunk_address)
 
     digest = keccak256_hash(identifier, chunk_address)
     signature = sign(account=signer, data=digest)
-    data = serialize_bytes(identifier, signature.encode_vrs(), chunk.span(), chunk.payload())
-    address = make_soc_address(identifier, signer.get("address", ""))
+    data = serialize_bytes(identifier, signature.encode_vrs(), chunk.span, chunk.payload())
+    address = make_soc_address(identifier, signer.address)
 
-    return {
-        "data": data,
-        "identifier": identifier,
-        "signature": signature,
-        "span": chunk.span(),
-        "payload": chunk.payload(),
-        "address": address,
-        "owner": signer.get("address", ""),
-    }
+    # return {
+    #     "data": data,
+    #     "identifier": identifier,
+    #     "signature": signature,
+    #     "span": chunk.span,
+    #     "payload": chunk.payload(),
+    #     "address": address,
+    #     "owner": signer.address,
+    # }
+
+    return SingleOwnerChunk(
+        data=data,
+        identifier=identifier,
+        signature=signature.encode_vrs(),
+        span=chunk.span,
+        payload=chunk.payload(),
+        address=address,
+        owner=signer.address,
+    )
 
 
 def upload_single_owner_chunk(
@@ -171,7 +213,7 @@ def upload_single_owner_chunk(
     chunk: SingleOwnerChunk,
     postage_batch_id: BatchId,
     options: Optional[UploadOptions] = None,
-) -> str:
+) -> Reference:
     """Uploads a Single Owner Chunk (SOC) to the Bee network.
 
     Args:
@@ -183,14 +225,16 @@ def upload_single_owner_chunk(
     Returns:
         A Reference object representing the uploaded chunk.
     """
-
-    # Convert the owner, identifier, and signature to hexadecimal strings
-    owner = bytes_to_hex(chunk.owner)
+    # * Convert the owner, identifier, and signature to hexadecimal strings
+    if isinstance(chunk.owner, bytes):
+        owner = bytes_to_hex(chunk.owner)
+    else:
+        owner = chunk.owner
     identifier = bytes_to_hex(chunk.identifier)
     signature = bytes_to_hex(chunk.signature)
 
     # Serialize the chunk data, including the span and payload
-    data = serialize_bytes(chunk.span(), chunk.payload())
+    data = serialize_bytes(chunk.span, chunk.payload)
 
     # Upload the SOC data using the SOC API's upload method
     return upload(request_options, owner, identifier, signature, data, postage_batch_id, options)
