@@ -17,7 +17,7 @@ def get_all_balances(request_options: BeeRequestOptions) -> BalanceResponse:
     Returns:
         BalanceResponse object containing a list of peer balances.
     """
-    config = {"url": BALANCES_END_POINT}
+    config = {"url": BALANCES_END_POINT, "method": "GET"}
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -39,7 +39,7 @@ def get_peer_balance(request_options: BeeRequestOptions, address: AddressType) -
         PeerBalance object containing the peer's balance information.
     """
 
-    config = {"url": f"{BALANCES_END_POINT}/{address}"}
+    config = {"url": f"{BALANCES_END_POINT}/{address}", "method": "GET"}
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -59,7 +59,7 @@ def get_past_due_consumption_balances(request_options: BeeRequestOptions) -> Bal
     Returns:
         BalanceResponse object containing a list of peer balances.
     """
-    config = {"url": CONSUMED_ENDPOINT}
+    config = {"url": CONSUMED_ENDPOINT, "method": "GET"}
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -80,7 +80,7 @@ def get_past_due_consumption_peer_balance(request_options: BeeRequestOptions, ad
     Returns:
         PeerBalance object containing the peer's past due consumption balance information.
     """
-    config = {"url": f"{CONSUMED_ENDPOINT}/{address}"}
+    config = {"url": f"{CONSUMED_ENDPOINT}/{address}", "method": "GET"}
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004

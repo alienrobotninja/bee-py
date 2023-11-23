@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.types.type import BatchId
 
 
@@ -42,8 +43,8 @@ def bee_ky_options() -> dict:
 
 
 @pytest.fixture
-def bee_debug_ky_options(bee_debug_url) -> dict:
-    return {"baseURL": bee_debug_url, "timeout": 30, "onRequest": True}
+def bee_debug_ky_options(bee_peer_debug_url) -> dict:
+    return {"baseURL": bee_peer_debug_url, "timeout": 30, "onRequest": True}
 
 
 @pytest.fixture
@@ -72,3 +73,15 @@ def bee_debug_url_postage(get_postage_batch) -> BatchId:
 @pytest.fixture
 def bee_peer_debug_url_postage(get_postage_batch) -> BatchId:
     return get_postage_batch("bee_peer_debug_url")
+
+
+@pytest.fixture
+def bee_peer_debug_ky_options(bee_peer_debug_url):
+    return {"baseURL": bee_peer_debug_url, "timeout": 30, "onRequest": True}
+
+
+@pytest.fixture
+def peer_overlay(bee_peer_debug_ky_options) -> str:
+    node_addresses = get_node_addresses(bee_peer_debug_ky_options)
+
+    return node_addresses.overlay
