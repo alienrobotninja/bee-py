@@ -1,4 +1,4 @@
-from bee_py.types.type import BeeRequestOptions, NodeAddresses, Peer, Peers, PingResponse, RemovePeerResponse, Topology
+from bee_py.types.type import BeeRequestOptions, NodeAddresses, Peers, PingResponse, RemovePeerResponse, Topology
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 
@@ -18,7 +18,10 @@ def get_node_addresses(request_options: BeeRequestOptions) -> NodeAddresses:
     Returns:
         NodeAddresses object containing the node's addresses.
     """
-    config = {"url": ADDRESSES_ENDPOINT}
+    config = {
+        "url": ADDRESSES_ENDPOINT,
+        "method": "get",
+    }
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -38,7 +41,10 @@ def get_peers(request_options: NodeAddresses) -> Peers:
     Returns:
         List of Peer objects i.e. Peers object
     """
-    config = {"url": PEERS_ENDPOINT}
+    config = {
+        "url": PEERS_ENDPOINT,
+        "method": "get",
+    }
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -58,7 +64,10 @@ def get_blocklist(request_options: BeeRequestOptions) -> Peers:
     Returns:
        List of Peer objects.
     """
-    config = {"url": BLOCKLIST_ENDPOINT}
+    config = {
+        "url": BLOCKLIST_ENDPOINT,
+        "method": "get",
+    }
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -67,8 +76,8 @@ def get_blocklist(request_options: BeeRequestOptions) -> Peers:
 
     blocklist_response = response.json()
     # * Extract the 'address' field from each peer in the 'peers' list
-    peers = [Peer.parse_obj({"address": peer["address"]["address"]}) for peer in blocklist_response["peers"]]
-    return Peers.parse_obj({"peers": peers})
+    # peers = [Peer.parse_obj({"address": peer["address"]["address"]}) for peer in blocklist_response["peers"]]
+    return Peers.parse_obj(blocklist_response)
 
 
 def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResponse:
@@ -100,7 +109,10 @@ def get_topology(request_options: BeeRequestOptions) -> Topology:
     Returns:
     Topology object containing the response data.
     """
-    config = {"url": TOPOLOGY_ENDPOINT}
+    config = {
+        "url": TOPOLOGY_ENDPOINT,
+        "method": "get",
+    }
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
@@ -120,7 +132,7 @@ def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
     Returns:
     PingResponse object containing the response data.
     """
-    config = {"url": f"{PING_PONG_ENDPOINT}/{peer}", "response_type": "json", "method": "POST"}
+    config = {"url": f"{PING_PONG_ENDPOINT}/{peer}", "method": "POST"}
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004

@@ -88,8 +88,6 @@ class SingleOwnerChunk(SingleOwnerChunkBase, Chunk):
         self.payload = payload
         self.address = address
 
-    # address: AddressType
-
 
 def recover_chunk_owner(data: bytes) -> AddressType:
     """Recovers the owner's Ethereum address from a single owner chunk (SOC).

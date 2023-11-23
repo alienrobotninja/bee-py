@@ -167,3 +167,6 @@ pyproject.toml.bak
 
 # pdm 
 .pdm-python
+
+# ruff
+.ruff_cache/*

@@ -1,7 +1,6 @@
 import json
 from typing import Any, Callable, Generic, Optional, TypeVar, Union
 
-from eth_keys import keys
 from pydantic import BaseModel, Field
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
@@ -392,16 +391,28 @@ class NodeAddresses(BaseModel):
     overlay: str
     underlay: list[str]
     ethereum: str
-    public_key: keys.PublicKey = Field(..., alias="publicKey")
-    pss_public_key: keys.PublicKey = Field(..., alias="pssPublicKey")
+    public_key: str = Field(..., alias="publicKey")
+    pss_public_key: str = Field(..., alias="pssPublicKey")
 
 
 class Peer(BaseModel):
     address: str
 
+    def __str__(self):
+        return self.address
+
 
 class Peers(BaseModel):
     peers: list[Peer]
+
+    def __len__(self) -> int:
+        return len(self.peers)
+
+    # def __iter__(self):
+    #     yield from self.peers
+
+    def __getitem__(self, index):
+        return self.peers[index]
 
 
 class PingResponse(BaseModel):
@@ -419,8 +430,8 @@ class RemovePeerResponse(BaseModel):
 class Bin(BaseModel):
     population: int
     connected: int
-    disconnected_peers: list[Peer] = Field(..., alias="disconnectedPeers")
-    connected_peers: list[Peer] = Field(..., alias="connectedPeers")
+    disconnected_peers: Optional[list[Peer]] = Field(None, alias="disconnectedPeers")
+    connected_peers: Optional[list[Peer]] = Field(None, alias="connectedPeers")
 
 
 class Topology(BaseModel):
