@@ -1,10 +1,12 @@
 import json
 from typing import Any, Callable, Generic, Optional, TypeVar, Union
 
+from eth_keys import keys
+from pydantic import BaseModel, Field
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
-from bee_py.utils.hex import bytes_to_hex, is_hex_string
+from bee_py.utils.hex import bytes_to_hex
 
 Type = TypeVar("Type")
 Name = TypeVar("Name")
@@ -371,3 +373,63 @@ class BeeGenericResponse:
     def __init__(self, message: str, code: int):
         self.message = message
         self.code = code
+
+
+class PeerBalance(BaseModel):
+    """Represents a peer's balance information."""
+
+    peer: str
+    balance: str
+
+
+class BalanceResponse(BaseModel):
+    """Represents a response containing a list of peer balances."""
+
+    balances: list[PeerBalance]
+
+
+class NodeAddresses(BaseModel):
+    overlay: str
+    underlay: list[str]
+    ethereum: str
+    public_key: keys.PublicKey = Field(..., alias="publicKey")
+    pss_public_key: keys.PublicKey = Field(..., alias="pssPublicKey")
+
+
+class Peer(BaseModel):
+    address: str
+
+
+class Peers(BaseModel):
+    peers: list[Peer]
+
+
+class PingResponse(BaseModel):
+    rtt: str
+
+
+class RemovePeerResponse(BaseModel):
+    message: str
+    code: int
+
+
+# * Pydantic Field info: https://docs.pydantic.dev/latest/concepts/fields/
+
+
+class Bin(BaseModel):
+    population: int
+    connected: int
+    disconnected_peers: list[Peer] = Field(..., alias="disconnectedPeers")
+    connected_peers: list[Peer] = Field(..., alias="connectedPeers")
+
+
+class Topology(BaseModel):
+    base_address: str = Field(..., alias="baseAddr")
+    population: int
+    connected: int
+    timestamp: str
+    nn_low_watermark: int = Field(..., alias="nnLowWatermark")
+    depth: int
+    reachability: str
+    network_availability: str = Field(..., alias="networkAvailability")
+    bins: dict[str, Bin]

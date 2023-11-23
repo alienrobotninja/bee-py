@@ -1,15 +1,12 @@
 from typing import Optional
 
-from structlog import get_logger
-
 from bee_py.types.type import BatchId, BeeRequestOptions, Reference, UploadOptions
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.hex import remove_0x_prefix
 from bee_py.utils.http import http
+from bee_py.utils.logging import logger
 
 SOC_ENDPOINT = "soc"
-
-logger = get_logger()
 
 
 def upload(
@@ -36,7 +33,7 @@ def upload(
     Returns:
         Reference: The reference of the uploaded chunk.
     """
-    # https://docs.ethswarm.org/api/#tag/Single-owner-chunk
+    # * https://docs.ethswarm.org/api/#tag/Single-owner-chunk
     owner = remove_0x_prefix(owner)
     identifier = remove_0x_prefix(identifier)
     signature = remove_0x_prefix(signature)
