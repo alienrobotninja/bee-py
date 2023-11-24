@@ -46,7 +46,7 @@ jobs:
      
      - name: Run Ruff
        run: |
-        pdm run ruff --check .
+        pdm run ruff .
 
  type-check:
    runs-on: ${{ matrix.os }}
