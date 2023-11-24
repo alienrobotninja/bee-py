@@ -1,32 +1,15 @@
 # Bee Py
 
 <div align="center">
-    <p align="center">
-        <img src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white" alt="Python" />
-        <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions" />
-    </p>
-<p align="center">
-    <a href="https://pypi.org/project/bee-py/"><img src="https://img.shields.io/pypi/v/bee-py.svg" alt="PyPI"></a>
-    <a href="https://pypi.org/project/bee-py/"><img src="https://img.shields.io/pypi/status/bee-py.svg" alt="Status"></a>
-    <a href="https://pypi.org/project/bee-py/"><img src="https://img.shields.io/pypi/pyversions/bee-py" alt="Python Version"></a>
-    <a href="https://pypi.org/project/bee-py/"><img src="https://img.shields.io/pypi/l/bee-py" alt="License"></a>
-</p>
 
-<p align="center">
-    <a href="https://bee-py.readthedocs.io/"><img src="https://img.shields.io/readthedocs/bee-py/latest.svg?label=Read%20the%20Docs" alt="Read the Documentation"></a>
-    <a href="https://github.com/aviksaikat/bee-py/actions?workflow=Tests"><img src="https://github.com/aviksaikat/bee-py/workflows/Tests/badge.svg" alt="Tests"></a>
-    <a href="https://app.codecov.io/gh/aviksaikat/bee-py"><img src="https://codecov.io/gh/aviksaikat/bee-py/branch/main/graph/badge.svg" alt="Codecov"></a>
-</p>
+|            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Technology | [![Python](https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white)](https://www.python.org/) [![Ape](https://img.shields.io/badge/Build%20with-Ape-blue.svg)](https://www.python.org/) [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white)](https://github.com/features/actions)                                                                                                                                                                                                                                                                                                                        |
+| CI/CD      | [![CI - Test](https://github.com/aviksaikat/bee-py/actions/workflows/Tests/badge.svg)](https://github.com/aviksaikat/bee-py/actions/workflows/Tests/badge.svg)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Docs       | [![Read the Docs](https://img.shields.io/readthedocs/bee-py/latest.svg?label=Read%20the%20Docs)](https://bee-py.readthedocs.io/)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Package    | [![PyPI - Version](https://img.shields.io/pypi/v/bee-py.svg)](https://pypi.org/project/bee-py/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/bee-py)](https://pypi.org/project/bee-py/) [![PyPI - License](https://img.shields.io/pypi/l/bee-py)](https://pypi.org/project/bee-py/)                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Meta       | [![GitHub license](https://img.shields.io/github/license/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py/blob/main/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py/commits/main) [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py/graphs/commit-activity) [![GitHub top language](https://img.shields.io/github/languages/top/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py) |
 
-<p align="center">
-    <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="pre-commit"></a>
-    <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black"></a>
-    <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a>
-</p>
-    <img src="https://img.shields.io/github/license/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub license" />
-    <img src="https://img.shields.io/github/last-commit/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="git-last-commit" />
-    <img src="https://img.shields.io/github/commit-activity/m/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub commit activity" />
-    <img src="https://img.shields.io/github/languages/top/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub top language" />
 </div>
 
 ## 📖 Table of Contents
