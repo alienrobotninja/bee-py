@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:66b4f45b149ec2fe470963a6c14873b13d565da3a5da3d12c017f352fbb0b18f"
+content_hash = "sha256:592512a1b60ecf2a30b55e4fdf743aa94334b8994c1fdc00aa1b94ce2be39fba"
 
 [[package]]
 name = "aiohttp"
@@ -2350,14 +2350,6 @@ dependencies = [
 files = [
     {file = "pyproject_hooks-1.0.0-py3-none-any.whl", hash = "sha256:283c11acd6b928d2f6a7c73fa0d01cb2bdc5f07c57a2eeb6e83d5e56b97976f8"},
     {file = "pyproject_hooks-1.0.0.tar.gz", hash = "sha256:f271b298b97f5955d53fb12b72c1fb1948c22c1a6b70b315c54cedaca0264ef5"},
-]
-
-[[package]]
-name = "pysha3"
-version = "1.0.2"
-summary = "SHA-3 (Keccak) for Python 2.7 - 3.5"
-files = [
-    {file = "pysha3-1.0.2.tar.gz", hash = "sha256:fe988e73f2ce6d947220624f04d467faf05f1bbdbc64b0a201296bb3af92739e"},
 ]
 
 [[package]]
