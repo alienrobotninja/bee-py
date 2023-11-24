@@ -100,11 +100,19 @@ jobs:
      - name: Install Dependencies
        run: |
          pdm install --dev
-     - name: Install Docker
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y docker-ce
+    #  - name: Install Docker
+    #    run: |
+    #      sudo apt-get update
+    #      sudo apt-get install -y docker-ce
 
+     - name: Install Docker CLI
+       run: |
+         if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+           brew install --cask docker
+         else
+           sudo apt-get update
+           sudo apt-get install -y docker-ce
+         fi
      - name: Install bee-factory
        run: |
          npm install -g @ethersphere/bee-factory
