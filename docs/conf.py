@@ -1,7 +1,7 @@
 """Sphinx configuration."""
 project = "Bee Py"
 author = "Saikat Karmakar"
-copyright = "2023, Saikat Karmakar"
+# copyright = "2023, Saikat Karmakar"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
