@@ -1,3 +1,4 @@
+# uncomment this & add the environment for automatic pip publishing
 name: Release
 
 on:

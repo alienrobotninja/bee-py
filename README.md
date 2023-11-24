@@ -2,7 +2,6 @@
 
 <div align="center">
     <p align="center">
-        <img src="https://img.shields.io/badge/YAML-CB171E.svg?style=flat&logo=YAML&logoColor=white" alt="YAML" />
         <img src="https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white" alt="Python" />
         <img src="https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white" alt="GitHub%20Actions" />
     </p>
@@ -22,6 +21,7 @@
 <p align="center">
     <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white" alt="pre-commit"></a>
     <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Black"></a>
+    <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a>
 </p>
     <img src="https://img.shields.io/github/license/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="GitHub license" />
     <img src="https://img.shields.io/github/last-commit/alienrobotninja/bee-py?style=flat&color=5D6D7E" alt="git-last-commit" />
