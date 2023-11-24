@@ -16,7 +16,7 @@ jobs:
 
    strategy:
      matrix:
-       os: [ubuntu-latest, macos-latest]
+       os: [ubuntu-latest, windows-latest, macos-latest]
        python-version: ["3.9", "3.10", "3.11"]
 
    steps:
@@ -34,19 +34,6 @@ jobs:
      - name: Install Dependencies
        run: |
          pdm install --dev
-
-     - name: Install Docker
-       run: |
-         sudo apt-get update
-         sudo apt-get install -y docker-ce
-
-     - name: Install bee-factory
-       run: |
-         npm install -g @ethersphere/bee-factory
-
-     - name: Run Bee Factory
-       run: |
-         bee-factory start --detach 1.9.0
 
      - name: Run Black
        run: pdm run black --check .
@@ -66,7 +53,7 @@ jobs:
 
    strategy:
      matrix:
-       os: [ubuntu-latest, macos-latest]
+       os: [ubuntu-latest, windows-latest, macos-latest]
        python-version: ["3.9", "3.10", "3.11"]
 
    steps:
@@ -93,7 +80,7 @@ jobs:
 
    strategy:
      matrix:
-       os: [ubuntu-latest, macos-latest]
+       os: [ubuntu-latest, windows-latest, macos-latest]
        python-version: ["3.9", "3.10", "3.11"]
 
    steps:
@@ -113,6 +100,18 @@ jobs:
      - name: Install Dependencies
        run: |
          pdm install --dev
+     - name: Install Docker
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y docker-ce
+
+     - name: Install bee-factory
+       run: |
+         npm install -g @ethersphere/bee-factory
+
+     - name: Run Bee Factory
+       run: |
+         bee-factory start --detach 1.9.0
 
      - name: Run Tests
        run: pdm run pytest
@@ -138,6 +137,18 @@ jobs:
      - name: Install Dependencies
        run: |
          pdm install --dev
+     - name: Install Docker
+       run: |
+         sudo apt-get update
+         sudo apt-get install -y docker-ce
 
+     - name: Install bee-factory
+       run: |
+         npm install -g @ethersphere/bee-factory
+
+     - name: Run Bee Factory
+       run: |
+         bee-factory start --detach 1.9.0
+         
      - name: Run Tests
        run: pdm run pytest
