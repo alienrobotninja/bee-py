@@ -17,6 +17,6 @@ def test_upload_single_owner_chunk(
 
     response = upload_single_owner_chunk(bee_ky_options, soc, get_postage_batch)
 
-    print(response)
+    # print(response)
 
     assert soc_address == response
