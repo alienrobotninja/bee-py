@@ -4,7 +4,7 @@ from eth_account.messages import encode_defunct
 from eth_utils import is_same_address
 from hexbytes import HexBytes
 
-from bee_py.chunk.signer import public_key_to_address, recover_addres, sign
+from bee_py.chunk.signer import public_key_to_address, recover_address, sign
 
 
 def test_make_private_key_signer(signer, expected_signature_hex):
@@ -25,7 +25,7 @@ def test_make_private_key_signer_bytes_data(signer, expected_signature_hex):
 def test_recover_address_from_signature(signer):
     msg = encode_defunct(text="Hi from bee_py")
     signature = sign(data=msg, account=signer)
-    recovered_address = recover_addres(msg, signature)
+    recovered_address = recover_address(msg, signature)
 
     assert recovered_address == signer.address
 

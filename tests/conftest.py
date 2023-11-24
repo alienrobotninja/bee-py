@@ -38,8 +38,8 @@ def read_bee_postage() -> dict:
 
 
 @pytest.fixture
-def bee_ky_options() -> dict:
-    return {"baseURL": MOCK_SERVER_URL, "timeout": 30, "onRequest": True}
+def bee_ky_options(bee_debug_url) -> dict:
+    return {"baseURL": bee_debug_url, "timeout": 30, "onRequest": True}
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 import json
-from typing import Any, Callable, Generic, Optional, TypeVar, Union
+from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from pydantic import BaseModel, Field
 from requests import PreparedRequest, Response
@@ -17,7 +17,7 @@ BeeRequestOptions = dict[str, Optional[Union[str, int, dict[str, str], PreparedR
 
 BeeRequest = dict[str, Union[str, dict[str, str], Optional[str]]]
 BeeResponse = dict[str, Union[dict[str, str], int, str, BeeRequest]]
-
+NumberString = Annotated[str, "NumberString"]
 
 SPAN_SIZE = 8
 SECTION_SIZE = 32
@@ -444,3 +444,160 @@ class Topology(BaseModel):
     reachability: str
     network_availability: str = Field(..., alias="networkAvailability")
     bins: dict[str, Bin]
+
+
+class Settlements(BaseModel):
+    peer: str
+    received: str
+    sent: str
+
+
+class AllSettlements(BaseModel):
+    total_received: str = Field(..., alias="totalReceived")
+    total_sent: str = Field(..., alias="totalSent")
+    settlements: list[Settlements]
+
+
+class RedistributionState(BaseModel):
+    minimum_gas_funds: str = Field(..., alias="minimumGasFunds")
+    has_sufficient_funds: bool = Field(..., alias="hasSufficientFunds")
+    is_frozen: bool = Field(..., alias="isFrozen")
+    is_fully_synced: bool = Field(..., alias="isFullySynced")
+    phase: str
+    round_: int
+    last_won_round: int = Field(..., alias="lastWonRound")
+    last_played_round: int = Field(..., alias="lastPlayedRound")
+    last_frozen_round: int = Field(..., alias="lastFrozenRound")
+    last_selected_round: int = Field(..., alias="lastSelectedRound")
+    last_sample_duration: str = Field(..., alias="lastSampleDuration")
+    block: int
+    reward: str
+    fees: str
+
+
+class TransactionOptions(BaseModel):
+    gas_price: str = Field(..., alias="gasPrice")
+    gas_limit: str = Field(..., alias="gasLimit")
+
+
+class GetStake(BaseModel):
+    staked_amount: str = Field(..., alias="stakedAmount")
+
+
+class ChequebookAddressResponse(BaseModel):
+    chequebook_address: str = Field(..., alias="chequebookAddress")
+
+
+class ChequebookBalanceResponse(BaseModel):
+    total_balance: str = Field(..., alias="totalBalance")
+    available_balance: str = Field(..., alias="availableBalance")
+
+
+class Cheque(BaseModel):
+    beneficiary: str
+    chequebook: str
+    payout: str
+
+
+class CashoutResult(BaseModel):
+    recipient: str
+    last_payout: str = Field(..., alias="lastPayout")
+    bounced: bool
+
+
+class LastCashoutActionResponse(BaseModel):
+    peer: str
+    uncashed_amount: str = Field(..., alias="uncashedAmount")
+    transaction_hash: Optional[str] = Field(..., alias="transactionHash")
+    last_cashed_cheque: Optional[Cheque] = Field(..., alias="lastCashedCheque")
+    result: Optional[CashoutResult]
+
+
+class LastChequesForPeerResponse(BaseModel):
+    peer: str
+    last_received: Cheque = Field(..., alias="lastreceived")
+    last_sent: Cheque = Field(..., alias="lastsent")
+
+
+class LastChequesResponse(BaseModel):
+    lastcheques: list[LastChequesForPeerResponse]
+
+
+TransactionHash = NewType("TransactionHash", str)
+
+
+class TransactionHashModel(BaseModel):
+    transaction_hash: TransactionHash
+
+
+class TransactionResponse(BaseModel):
+    transaction_hash: TransactionHash = Field(..., alias="transactionHash")
+
+
+class PostageBatch(BaseModel):
+    batch_id: str = Field(..., alias="batchID")
+    utilization: int
+    usable: bool
+    label: str
+    depth: int
+    amount: str
+    bucket_depth: int = Field(..., alias="bucketDepth")
+    block_number: int = Field(..., alias="blockNumber")
+    immutable_flag: bool = Field(..., alias="immutableFlag")
+    batch_ttl: int = Field(..., alias="batchTTL")
+    exists: bool
+
+
+class BatchBucket(BaseModel):
+    bucket_id: int = Field(..., alias="bucketID")
+    collisions: int
+
+
+class PostageBatchBuckets(BaseModel):
+    depth: int
+    bucket_depth: int = Field(..., alias="bucketDepth")
+    bucket_upper_bound: int = Field(..., alias="bucketUpperBound")
+    buckets: Optional[list[BatchBucket]]
+
+
+class PostageBatchOptions(BaseModel):
+    label: Optional[str]
+    gas_price: Optional[str] = Field(None, alias="gasPrice")
+    immutable_flag: Optional[bool]
+    wait_for_usable: Optional[bool] = Field(True, alias="waitForUsable")
+    wait_for_usable_timeout: Optional[int] = Field(120, alias="waitForUsableTimeout")
+
+
+class StampResponse(BaseModel):
+    batch_id: str = Field(..., alias="batchID")
+
+
+class GetAllStampsResponse(BaseModel):
+    stamps: list[PostageBatch]
+
+
+class ChainState(BaseModel):
+    block: int
+    total_amount: str = Field(..., alias="totalAmount")
+    current_price: str = Field(..., alias="currentPrice")
+
+
+class ReserveState(BaseModel):
+    radius: int
+    commitment: int
+    storage_radius: int = Field(..., alias="storageRadius")
+
+
+# * @deprecate
+class WalletBalanceOLD(BaseModel):
+    bzz: str = Field(..., alias="bzz")
+    contract_address: str = Field(..., alias="contractAddress")
+    x_dai: str = Field(..., alias="xDai")
+
+
+class WalletBalance(BaseModel):
+    bzz_balance: str = Field(..., alias="bzzBalance")
+    native_token_balance: str = Field(..., alias="nativeTokenBalance")
+    chain_id: int = Field(..., alias="chainID")
+    chequebook_contract_address: str = Field(..., alias="chequebookContractAddress")
+    wallet_address: str = Field(..., alias="walletAddress")

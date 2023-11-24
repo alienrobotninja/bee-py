@@ -25,7 +25,7 @@ def get_node_addresses(request_options: BeeRequestOptions) -> NodeAddresses:
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     addresses_response = response.json()
@@ -48,7 +48,7 @@ def get_peers(request_options: NodeAddresses) -> Peers:
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     peers_response = response.json()
@@ -71,7 +71,7 @@ def get_blocklist(request_options: BeeRequestOptions) -> Peers:
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     blocklist_response = response.json()
@@ -94,7 +94,7 @@ def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResp
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     return RemovePeerResponse.parse_obj(response.json())
@@ -116,7 +116,7 @@ def get_topology(request_options: BeeRequestOptions) -> Topology:
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
     logger.error(response.raise_for_status())
 
     return Topology.parse_obj(response.json())
@@ -136,7 +136,7 @@ def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     return PingResponse.parse_obj(response.json())

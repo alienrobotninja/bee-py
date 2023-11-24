@@ -1,7 +1,6 @@
 from typing import NewType, Union
 
-from bee_py.chunk.serialize import serialize_bytes
-from bee_py.chunk.soc import make
+# from bee_py.chunk.serialize import serialize_bytes
 
 TIMESTAMP_PAYLOAD_SIZE = 8
 TIMESTAMP_PAYLOAD_SIZE_HEX = 16

@@ -14,6 +14,11 @@ BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 
 
 @pytest.fixture
+def bee_url() -> str:
+    return MOCK_SERVER_URL
+
+
+@pytest.fixture
 def bee_debug_url() -> str:
     return "http://127.0.0.1:1635"
 
@@ -31,8 +36,8 @@ def read_bee_postage() -> dict:
 
 
 @pytest.fixture
-def bee_ky_options() -> dict:
-    return {"baseURL": MOCK_SERVER_URL, "timeout": 30, "onRequest": True}
+def bee_ky_options(bee_url) -> dict:
+    return {"baseURL": bee_url, "timeout": 30, "onRequest": True}
 
 
 @pytest.fixture

@@ -25,4 +25,4 @@ if __name__ == "__main__":
     l = bytes([1, 2, 3])  # noqa: E741
     p = bytes([4, 5, 6])
     _hash = keccak256_hash(l, p)
-    print(_hash)  # noqa: T201
+    print(_hash)

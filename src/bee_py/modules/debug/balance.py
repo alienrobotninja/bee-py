@@ -21,7 +21,7 @@ def get_all_balances(request_options: BeeRequestOptions) -> BalanceResponse:
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     balances_response = response.json()
@@ -43,7 +43,7 @@ def get_peer_balance(request_options: BeeRequestOptions, address: AddressType) -
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
     balances_response = response.json()
 
@@ -63,7 +63,7 @@ def get_past_due_consumption_balances(request_options: BeeRequestOptions) -> Bal
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     balances_response = response.json()
@@ -84,7 +84,7 @@ def get_past_due_consumption_peer_balance(request_options: BeeRequestOptions, ad
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
-        print(response.json())  # noqa: T201
+        logger.info(response.json())
         logger.error(response.raise_for_status())
 
     balances_response = response.json()
