@@ -7,6 +7,7 @@ authors = [{ name = "SAIKAT KARMAKAR", email = "saikickkarma@protonmail.com" }]
 dependencies = [
     "eth-ape>=0.6.25",
     "structlog>=23.2.0",
+    "semver>=3.0.2",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
@@ -44,7 +45,6 @@ test = [
     "nox>=2023.4.22",
     "build>=1.0.3",
     "requests-mock>=1.11.0",
-    # "pysha3>=1.0.2",
 ]
 lint = [
     "black>=23.11.0",              # Auto-formatter and linter

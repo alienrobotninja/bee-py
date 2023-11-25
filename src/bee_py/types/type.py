@@ -1,6 +1,7 @@
 import json
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
+from ape.types import AddressType
 from pydantic import BaseModel, Field
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
@@ -601,3 +602,45 @@ class WalletBalance(BaseModel):
     chain_id: int = Field(..., alias="chainID")
     chequebook_contract_address: str = Field(..., alias="chequebookContractAddress")
     wallet_address: str = Field(..., alias="walletAddress")
+
+
+class ExtendedTag(BaseModel):
+    total: int
+    split: int
+    seen: int
+    stored: int
+    sent: int
+    synced: int
+    uid: int
+    address: str
+    started_at: str = Field(..., alias="startedAt")
+
+
+class Tag(BaseModel):
+    split: int = 0
+    seen: int = 0
+    stored: int = 0
+    sent: int = 0
+    synced: int = 0
+    uid: int
+    started_at: str = Field(..., alias="startedAt")
+
+
+class TransactionInfo(BaseModel):
+    transaction_hash: str = Field(..., alias="transactionHash")
+    to: AddressType
+    nonce: int
+    gas_price: str = Field(..., alias="gasPrice")
+    gas_limit: int = Field(..., alias="gasLimit")
+    data: str
+    created: str
+    description: str
+    value: str
+
+
+class PendingTransactionsResponse(BaseModel):
+    pending_transactions: list[TransactionInfo] = Field(..., alias="pendingTransactions")
+
+
+class TransactionResponse(BaseModel):
+    transaction_hash: str = Field(..., alias="transactionHash")

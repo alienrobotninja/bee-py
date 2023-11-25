@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -11,8 +12,8 @@ class BeeModes(Enum):
 
 
 class DebugStatus(BaseModel):
-    peer: str = Field(..., alias="peer")
-    proximity: float = Field(..., alias="proximity")
+    peer: str
+    proximity: float
     bee_mode: BeeModes = Field(..., alias="beeMode")
     reserve_size: int = Field(..., alias="reserveSize")
     pullsync_rate: float = Field(..., alias="pullsyncRate")
@@ -23,13 +24,9 @@ class DebugStatus(BaseModel):
     is_reachable: bool = Field(..., alias="isReachable")
 
 
-class HealthStatus(Enum):
-    OK = "ok"
-
-
 class Health(BaseModel):
-    status: HealthStatus = Field(..., alias="status")
-    version: str = Field(..., alias="version")
+    status: str = "ok"
+    version: str
     api_version: str = Field(..., alias="apiVersion")
     debug_api_version: str = Field(..., alias="debugApiVersion")
 
@@ -49,7 +46,16 @@ class NodeInfo(BaseModel):
         @see [Bee docs - SWAP](https://docs.ethswarm.org/docs/introduction/terminology#swap)
     """
 
-    gateway_mode: bool = Field(..., alias="gatewayMode")
+    gateway_mode: Optional[bool] = Field(None, alias="gatewayMode")
     bee_mode: BeeModes = Field(..., alias="beeMode")
     chequebook_enabled: bool = Field(..., alias="chequebookEnabled")
     swap_enabled: bool = Field(..., alias="swapEnabled")
+
+
+class BeeVersions(BaseModel):
+    supported_bee_version: str
+    supported_bee_api_version: str
+    supported_bee_debug_api_version: str
+    bee_version: str
+    bee_api_version: str
+    bee_debug_api_version: str
