@@ -1,6 +1,7 @@
-from typing import NewType, Optional
+from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
+from eth_account import Account
 from eth_typing import ChecksumAddress as AddressType
 from hexbytes import HexBytes
 from pydantic.dataclasses import dataclass
@@ -164,7 +165,7 @@ def make_soc_address(identifier: Identifier, address: AddressType) -> bytes:
 def make_single_owner_chunk(
     chunk: Chunk,
     identifier: Identifier,
-    signer: AccountAPI,
+    signer: Union[AccountAPI, Account],
 ) -> SingleOwnerChunk:
     """
     Creates a single owner chunk object.
@@ -173,6 +174,7 @@ def make_single_owner_chunk(
         chunk: A chunk object used for the span and payload.
         identifier: The identifier of the chunk.
         signer: The singer interface for signing the chunk.
+            signer can be a ape account API or a eth_account object.
 
     Returns:
         SingleOwnerChunk: SingleOwnerChunk object.
@@ -182,7 +184,15 @@ def make_single_owner_chunk(
 
     digest = keccak256_hash(identifier, chunk_address)
     signature = sign(account=signer, data=digest)
-    data = serialize_bytes(identifier, signature.encode_vrs(), chunk.span, chunk.payload())
+
+    if isinstance(signer, AccountAPI):
+        encoded_signature = signature.encode_vrs()
+        data = serialize_bytes(identifier, encoded_signature, chunk.span, chunk.payload())
+    else:
+        encoded_signature = signature.signature.hex()
+        encoded_signature_bytes = hex_to_bytes(encoded_signature)
+        data = serialize_bytes(identifier, encoded_signature_bytes, chunk.span, chunk.payload())
+
     address = make_soc_address(identifier, signer.address)
 
     # return {
@@ -198,7 +208,7 @@ def make_single_owner_chunk(
     return SingleOwnerChunk(
         data=data,
         identifier=identifier,
-        signature=signature.encode_vrs(),
+        signature=encoded_signature,
         span=chunk.span,
         payload=chunk.payload(),
         address=address,

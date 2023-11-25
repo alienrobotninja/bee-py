@@ -70,12 +70,12 @@ def stamp_cost_in_plur(depth=20, amount=20_000_000_000):
 
 # test_http
 
-MOCK_SERVER_URL = "http://localhost:12345/"
+BEE_API_URL = "http://localhost:12345/"
 
 
 @pytest.fixture
 def ky_options() -> dict:
-    return {"baseURL": MOCK_SERVER_URL, "onRequest": True}
+    return {"baseURL": BEE_API_URL, "onRequest": True}
 
 
 # test eth

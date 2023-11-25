@@ -2,14 +2,14 @@ import pytest
 
 from bee_py.utils.http import http
 
-MOCK_SERVER_URL = "http://localhost:12345/"
+BEE_API_URL = "http://localhost:12345/"
 
 
 def test_http_with_requests_mock(requests_mock, ky_options):
     HTML_RESPONSE = "<html><body><h1>Some error!</h1></body></html>"  # noqa: N806
     requests_mock.get("http://localhost:12345/endpoint", text=HTML_RESPONSE)
 
-    config = {"url": MOCK_SERVER_URL + "endpoint", "method": "get"}
+    config = {"url": BEE_API_URL + "endpoint", "method": "get"}
     response = http(ky_options, config)
 
     assert response.status_code == 200

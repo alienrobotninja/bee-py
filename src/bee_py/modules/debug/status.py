@@ -16,3 +16,4 @@ NODE_INFO_URL = "node"
 STATUS_URL = "status"
 HEALTH_URL = "health"
 READINESS_URL = "readiness"
+

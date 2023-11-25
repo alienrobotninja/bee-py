@@ -7,7 +7,8 @@ from bee_py.types.type import BatchId
 
 # test_chunk
 
-MOCK_SERVER_URL = "http://localhost:1633"
+BEE_API_URL = "http://localhost:1633"
+BEE_PEER_API_URL = "http://127.0.0.1:11633"
 PROJECT_PATH = Path(__file__).parent
 DATA_FOLDER = PROJECT_PATH / "../../data"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
@@ -15,7 +16,12 @@ BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 
 @pytest.fixture
 def bee_url() -> str:
-    return MOCK_SERVER_URL
+    return BEE_API_URL
+
+
+@pytest.fixture
+def bee_peer_url() -> str:
+    return BEE_PEER_API_URL
 
 
 @pytest.fixture

@@ -12,12 +12,21 @@ def max_int() -> int:
     return 9007199254740991
 
 
-# test_chunk
-
-MOCK_SERVER_URL = "http://localhost:1633"
+BEE_API_URL = "http://localhost:1633"
+BEE_PEER_API_URL = "http://127.0.0.1:11633"
 PROJECT_PATH = Path(__file__).parent
 DATA_FOLDER = PROJECT_PATH / "data"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
+
+
+@pytest.fixture
+def bee_url() -> str:
+    return BEE_API_URL
+
+
+@pytest.fixture
+def bee_peer_url() -> str:
+    return BEE_PEER_API_URL
 
 
 @pytest.fixture
@@ -32,6 +41,9 @@ def bee_peer_debug_url() -> str:
 
 @pytest.fixture
 def read_bee_postage() -> dict:
+    """
+    make it dynamic
+    """
     with open(BEE_DATA_FILE) as f:
         data = json.loads(f.read())
     return data

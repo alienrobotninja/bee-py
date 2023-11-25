@@ -3,15 +3,17 @@ from pathlib import Path
 
 import ape
 import pytest
+from eth_account import Account
 
 from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
 from bee_py.types.type import BatchId
 from bee_py.utils.hex import bytes_to_hex
 
-MOCK_SERVER_URL = "http://localhost:1633"
+BEE_API_URL = "http://localhost:1633"
 PROJECT_PATH = Path(__file__).parent
 DATA_FOLDER = PROJECT_PATH / "../../data"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
+ACCOUNT_FILE = DATA_FOLDER / "test_account.json"
 
 
 @pytest.fixture
@@ -33,7 +35,7 @@ def read_bee_postage() -> dict:
 
 @pytest.fixture
 def bee_ky_options() -> dict:
-    return {"baseURL": MOCK_SERVER_URL, "timeout": 30, "onRequest": True}
+    return {"baseURL": BEE_API_URL, "timeout": 30, "onRequest": True}
 
 
 @pytest.fixture
@@ -109,3 +111,9 @@ def payload() -> bytes:
 @pytest.fixture
 def soc_hash() -> str:
     return "9d453ebb73b2fedaaf44ceddcf7a0aa37f3e3d6453fea5841c31f0ea6d61dc85"
+
+
+@pytest.fixture
+def soc_signer():
+    private_key = json.loads(open(ACCOUNT_FILE).read())["private_key"]
+    return Account.from_key(private_key)
