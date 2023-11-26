@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
 from bee_py.types.type import BatchId
 
 # test_chunk
@@ -43,29 +44,50 @@ def read_bee_postage() -> dict:
 
 @pytest.fixture
 def bee_ky_options(bee_url) -> dict:
-    return {"baseURL": bee_url, "timeout": 30, "onRequest": True}
+    return {"baseURL": bee_url, "timeout": 100, "onRequest": True}
 
 
 @pytest.fixture
 def bee_debug_ky_options(bee_debug_url) -> dict:
-    return {"baseURL": bee_debug_url, "timeout": 30, "onRequest": True}
+    return {"baseURL": bee_debug_url, "timeout": 100, "onRequest": True}
 
 
 @pytest.fixture
-def get_postage_batch(request, url: str = "bee_debug_url") -> BatchId:
+def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
     stamp: BatchId
 
-    if url == "bee_debug_url":
-        stamp = request.getfixturevalue("read_bee_postage")["BEE_POSTAGE"]
-    elif url == "bee_peer_debug_url":
-        stamp = request.getfixturevalue("read_bee_postage")["BEE_PEER_POSTAGE"]
-    else:
-        msg = f"Unknown url: {url}"
-        raise ValueError(msg)
+    printer("[*]Getting Debug Postage....")
+    stamp = create_postage_batch(bee_debug_ky_options, 100, 20)
 
     if not stamp:
-        msg = f"There is no postage stamp configured for URL: {url}"
+        msg = "There is no valid postage stamp"
         raise ValueError(msg)
+
+    printer("[*]Waiting for postage to be usable....")
+    while True:
+        usable = get_postage_batch(bee_debug_ky_options, stamp).usable
+        if usable:
+            break
+    printer(f"[*]Valid Postage found: {stamp}")
+    return stamp
+
+
+@pytest.fixture
+def get_peer_debug_postage(printer, bee_peer_debug_ky_options) -> BatchId:
+    stamp: BatchId
+    printer("[*]Getting Debug Postage....")
+    stamp = create_postage_batch(bee_peer_debug_ky_options, 100, 20)
+
+    if not stamp:
+        msg = "There is no valid postage stamp"
+        raise ValueError(msg)
+
+    printer("[*]Waiting for postage to be usable....")
+    while True:
+        usable = get_postage_batch(bee_peer_debug_ky_options, stamp).usable
+        if usable:
+            break
+    printer(f"[*]Valid Postage found: {stamp}")
     return stamp
 
 

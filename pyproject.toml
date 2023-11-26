@@ -5,7 +5,7 @@ version = "0.1.0"
 description = "Python client library for connecting to Bee decentralised storage"
 authors = [{ name = "SAIKAT KARMAKAR", email = "saikickkarma@protonmail.com" }]
 dependencies = [
-    "eth-ape>=0.6.25",
+    "eth-ape>=0.6.26",
     "structlog>=23.2.0",
     "semver>=3.0.2",
 ]
@@ -45,6 +45,7 @@ test = [
     "nox>=2023.4.22",
     "build>=1.0.3",
     "requests-mock>=1.11.0",
+    "pytest-print>=1.0.0",
 ]
 lint = [
     "black>=23.11.0",              # Auto-formatter and linter

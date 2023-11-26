@@ -35,12 +35,12 @@ def read_bee_postage() -> dict:
 
 @pytest.fixture
 def bee_ky_options() -> dict:
-    return {"baseURL": BEE_API_URL, "timeout": 30, "onRequest": True}
+    return {"baseURL": BEE_API_URL, "timeout": 300, "onRequest": True}
 
 
 @pytest.fixture
 def bee_debug_ky_options(bee_debug_url) -> dict:
-    return {"baseURL": bee_debug_url, "timeout": 30, "onRequest": True}
+    return {"baseURL": bee_debug_url, "timeout": 300, "onRequest": True}
 
 
 @pytest.fixture

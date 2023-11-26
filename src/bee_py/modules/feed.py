@@ -2,8 +2,7 @@ from typing import Optional
 
 from eth_typing import ChecksumAddress as AddressType
 
-from bee_py.feed.type import FeedType
-from bee_py.types.type import BatchId, BeeRequestOptions, Reference, ReferenceResponse, Topic
+from bee_py.types.type import BeeRequestOptions, FeedType, FeedUpdateOptions, Reference, ReferenceResponse, Topic
 from bee_py.utils.error import BeeError
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
@@ -24,27 +23,6 @@ class CreateFeedOptions:
         :_type type: Optional[FeedType]
         """
         self.type = _type
-
-
-class FeedUpdateOptions:
-    """
-    Options for updating a feed.
-    """
-
-    def __init__(self, at: Optional[int] = None, _type: Optional[FeedType] = "sequence", index: Optional[str] = None):
-        """
-        Constructor for FeedUpdateOptions.
-
-        :param at: The start date as a Unix timestamp.
-        :type at: Optional[int]
-        :param type: The type of the feed (default: 'sequence').
-        :_type type: Optional[FeedType]
-        :param index: Fetch a specific previous feed's update (default fetches the latest update).
-        :type index: Optional[str]
-        """
-        self.at = at
-        self.type = _type
-        self.index = index
 
 
 class FeedUpdateHeaders:
@@ -77,7 +55,7 @@ def create_feed_manifest(
     request_options: BeeRequestOptions,
     owner: AddressType,
     topic: Topic,
-    postage_batch_id: BatchId,
+    postage_batch_id: str,
     options: Optional[CreateFeedOptions] = None,
 ) -> Reference:
     """

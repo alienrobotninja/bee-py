@@ -1,18 +1,4 @@
-from enum import Enum
-
-
-class FeedType(Enum):
-    """
-    Enum class for feed types.
-
-    Attributes:
-        SEQUENCE: Sequential feed type.
-        EPOCH: Epoch feed type.
-    """
-
-    SEQUENCE = "sequence"
-    EPOCH = "epoch"
-
+from bee_py.types.type import FeedType  # BatchId, BeeRequestOptions, FeedType
 
 DEFAULT_FEED_TYPE = FeedType.SEQUENCE
 

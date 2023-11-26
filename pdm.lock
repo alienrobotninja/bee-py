@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:ebade2119bf52cabb3fc9b1e6dc265b60a0426a712678629631a64d864c00746"
+content_hash = "sha256:9cb9a2342a342aeb0fab4f4979abb82f8eabd8d4bc9a050239e270da6b31f81f"
 
 [[package]]
 name = "aiohttp"
@@ -796,7 +796,7 @@ files = [
 
 [[package]]
 name = "eth-ape"
-version = "0.6.25"
+version = "0.6.26"
 requires_python = ">=3.8,<4"
 summary = "Ape Ethereum Framework"
 dependencies = [
@@ -832,8 +832,8 @@ dependencies = [
     "web3[tester]<7,>=6.7.0",
 ]
 files = [
-    {file = "eth-ape-0.6.25.tar.gz", hash = "sha256:c6b0331bb36d1f1e7e7973b36698edb17491d6abb5e183330481bcee5626d5e3"},
-    {file = "eth_ape-0.6.25-py3-none-any.whl", hash = "sha256:940458827f171dfeff8cfb96f4059e336b2271458b9c75602a3d79130f09d062"},
+    {file = "eth-ape-0.6.26.tar.gz", hash = "sha256:f30d596b5c3fbe214b37eda53ae9fe24d04be2f3ad31b1ca41b142a6a2ac6894"},
+    {file = "eth_ape-0.6.26-py3-none-any.whl", hash = "sha256:b3ab04820126353ba5e8eb51f1653c72097d9aac9a5f0b40345724a084c9a3a0"},
 ]
 
 [[package]]
@@ -2382,6 +2382,19 @@ dependencies = [
 files = [
     {file = "pytest-cov-4.1.0.tar.gz", hash = "sha256:3904b13dfbfec47f003b8e77fd5b589cd11904a21ddf1ab38a64f204d6a10ef6"},
     {file = "pytest_cov-4.1.0-py3-none-any.whl", hash = "sha256:6ba70b9e97e69fcc3fb45bfeab2d0a138fb65c4d0d6a41ef33983ad114be8c3a"},
+]
+
+[[package]]
+name = "pytest-print"
+version = "1.0.0"
+requires_python = ">=3.8"
+summary = "pytest-print adds the printer fixture you can use to print messages to the user (directly to the pytest runner, not stdout)"
+dependencies = [
+    "pytest>=7.4",
+]
+files = [
+    {file = "pytest_print-1.0.0-py3-none-any.whl", hash = "sha256:23484f42b906b87e31abd564761efffeb0348a6f83109fb857ee6e8e5df42b69"},
+    {file = "pytest_print-1.0.0.tar.gz", hash = "sha256:1fcde9945fba462227a8959271369b10bb7a193be8452162707e63cd60875ca0"},
 ]
 
 [[package]]

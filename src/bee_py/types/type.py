@@ -1,12 +1,17 @@
 import json
+from abc import abstractmethod
+from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
+from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from pydantic import BaseModel, Field
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
 from bee_py.utils.hex import bytes_to_hex
+
+# Befine all the types here
 
 Type = TypeVar("Type")
 Name = TypeVar("Name")
@@ -642,5 +647,81 @@ class PendingTransactionsResponse(BaseModel):
     pending_transactions: list[TransactionInfo] = Field(..., alias="pendingTransactions")
 
 
-class TransactionResponse(BaseModel):
-    transaction_hash: str = Field(..., alias="transactionHash")
+class FeedType(Enum):
+    """
+    Enum class for feed types.
+
+    Attributes:
+        SEQUENCE: Sequential feed type.
+        EPOCH: Epoch feed type.
+    """
+
+    SEQUENCE = "sequence"
+    EPOCH = "epoch"
+
+
+class FeedUpdateOptions:
+    """
+    Options for updating a feed.
+    """
+
+    def __init__(self, at: Optional[int] = None, _type: Optional[FeedType] = "sequence", index: Optional[str] = None):
+        """
+        Constructor for FeedUpdateOptions.
+
+        :param at: The start date as a Unix timestamp.
+        :type at: Optional[int]
+        :param type: The type of the feed (default: 'sequence').
+        :_type type: Optional[FeedType]
+        :param index: Fetch a specific previous feed's update (default fetches the latest update).
+        :type index: Optional[str]
+        """
+        self.at = at
+        self.type = _type
+        self.index = index
+
+
+class FeedReader(BaseModel):
+    Type: FeedType
+    owner: str
+    topic: str
+
+    @abstractmethod
+    def download(self, options: Optional[FeedUpdateOptions] = None):
+        pass
+
+
+class FeedUploadOptions(UploadOptions, FeedUpdateOptions):
+    pass
+
+
+class FeedWriter(FeedReader):
+    @abstractmethod
+    def upload(
+        self,
+        postage_batch_id: Union[str, BatchId],
+        reference: Union[bytes, Reference],
+        options: Optional[FeedUploadOptions] = None,
+    ) -> Reference:
+        pass
+
+
+class JsonFeedOptions(BaseModel):
+    address: Optional[AddressType] = None
+    signer: Optional[Union[AccountAPI, str]] = None
+    Type: Optional[FeedType] = None
+
+
+class UploadResult(BaseModel):
+    reference: Reference
+    tag_uid: Optional[int] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class UploadOptions(BaseModel):
+    pin: Optional[bool] = False
+    encrypt: Optional[bool] = False
+    tag: Optional[int] = None
+    deferred: Optional[bool] = True
