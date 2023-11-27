@@ -761,3 +761,11 @@ class FileUploadHeaders(UploadHeaders):
 class CollectionUploadHeaders(UploadHeaders):
     swarm_index_document: Optional[str] = None
     swarm_error_document: Optional[str] = None
+
+
+class Pin(BaseModel):
+    reference: str
+
+
+class GetAllPinResponse(BaseModel):
+    references: list[Reference]
