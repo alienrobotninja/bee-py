@@ -170,3 +170,6 @@ pyproject.toml.bak
 
 # ruff
 .ruff_cache/*
+
+# debugging scripts
+funky_experiments/*

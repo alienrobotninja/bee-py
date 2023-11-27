@@ -1,7 +1,7 @@
 import json
 from abc import abstractmethod
 from enum import Enum
-from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
+from typing import Annotated, Any, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
@@ -16,7 +16,7 @@ from bee_py.utils.hex import bytes_to_hex
 Type = TypeVar("Type")
 Name = TypeVar("Name")
 Length = TypeVar("Length", bound=int)
-T = TypeVar("T", bound=Callable)
+T: TypeAlias = str
 
 BeeRequestOptions = dict[str, Optional[Union[str, int, dict[str, str], PreparedRequest, Response]]]
 
@@ -171,7 +171,7 @@ class HexString(Generic[Length]):
         return self.__length
 
 
-class PrefixedHexString(Generic[T]):
+class PrefixedHexString:
     """
     Type for HexString with prefix.
 
@@ -277,17 +277,12 @@ class UploadOptions:
         self.deferred = deferred
 
 
-class FileHeaders:
+class FileHeaders(BaseModel):
     """Represents the headers for a file."""
 
     name: Optional[str]
     tag_uid: Optional[int]
     content_type: Optional[str]
-
-    def __init__(self, name: Optional[str] = None, tag_uid: Optional[int] = None, content_type: Optional[str] = None):
-        self.name = name
-        self.tagUid = tag_uid
-        self.contentType = content_type
 
 
 class OverLayAddress:
@@ -725,3 +720,44 @@ class UploadOptions(BaseModel):
     encrypt: Optional[bool] = False
     tag: Optional[int] = None
     deferred: Optional[bool] = True
+
+
+class FileUploadOptions(UploadOptions):
+    size: Optional[int] = None
+    content_type: Optional[str] = Field(None, alias="contentType")
+
+
+class CollectionEntry(BaseModel):
+    data: T
+    path: str
+
+
+class Collection(BaseModel):
+    entries: list[CollectionEntry]
+
+
+class CollectionUploadOptions(UploadOptions):
+    index_document: Optional[str] = Field(None, alias="indexDocument")
+    error_document: Optional[str] = Field(None, alias="errorDocument")
+
+
+class FileData(FileHeaders, BaseModel):
+    headers: FileHeaders
+    data: T
+
+
+class UploadHeaders(BaseModel):
+    swarm_pin: Optional[str] = None
+    swarm_encrypt: Optional[str] = None
+    swarm_tag: Optional[str] = None
+    swarm_postage_batch_id: Optional[str] = None
+
+
+class FileUploadHeaders(UploadHeaders):
+    content_length: Optional[str] = None
+    content_type: Optional[str] = None
+
+
+class CollectionUploadHeaders(UploadHeaders):
+    swarm_index_document: Optional[str] = None
+    swarm_error_document: Optional[str] = None

@@ -1,11 +1,11 @@
 import re
-from typing import Optional, Union
+from typing import Optional
 
 from bee_py.types.type import BatchId, FileHeaders, UploadOptions
 from bee_py.utils.error import BeeError
 
 
-def read_content_disposition_filename(header: Union[str, None]) -> str:
+def read_content_disposition_filename(header: Optional[str]) -> str:
     """Reads the filename from the content-disposition header.
 
     See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
@@ -24,15 +24,15 @@ def read_content_disposition_filename(header: Union[str, None]) -> str:
     # Regex was found here
 
     # https://stackoverflow.com/questions/23054475/javascript-regex-for-extracting-filename-from-content-disposition-header
-    disposition_match = re.match(r"filename[^;\n]*=(UTF-\d['\"]*)?((['\"])(.*?[.])\4|[^;\n]*)", header, re.I)
+    disposition_match = re.search(r"filename[^;\n]*=(UTF-\d['\"]*)?((['\"])(.*?[.])\4|[^;\n]*)", header, re.I)
 
     if disposition_match and len(disposition_match.groups()) > 0:
-        return disposition_match.group(1)
+        return disposition_match.group(0).split("=")[-1].strip('"')
     msg = "invalid content-disposition header"
     raise BeeError(msg)
 
 
-def read_tag_uid(header: Union[str, None]) -> Union[int, None]:
+def read_tag_uid(header: Optional[str] = None) -> Optional[int]:
     """Reads the tag UID from the header.
 
     Args:
@@ -61,11 +61,11 @@ def read_file_headers(headers: dict[str, str]) -> FileHeaders:
       The file headers.
     """
 
-    name = read_content_disposition_filename(headers.get("content-disposition"))
+    name = read_content_disposition_filename(headers.get("Content-Disposition"))
     tag_uid = read_tag_uid(headers.get("swarm-tag-uid"))
-    content_type = headers.get("content-type")
+    content_type = headers.get("Content-Type")
 
-    return FileHeaders(name, tag_uid, content_type)
+    return FileHeaders(name=name, tag_uid=tag_uid, content_type=content_type)
 
 
 def extract_upload_headers(postage_batch_id: BatchId, options: Optional[UploadOptions] = None) -> dict[str, str]:

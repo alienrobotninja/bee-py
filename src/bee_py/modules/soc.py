@@ -43,7 +43,7 @@ def upload(
         "url": f"{SOC_ENDPOINT}/{owner}/{identifier}",
         "data": data,
         "headers": {
-            "content-type": "application/octet-stream",
+            "Content-Type": "application/octet-stream",
             **extract_upload_headers(postage_batch_id, options),
         },
         "params": {"sig": signature},

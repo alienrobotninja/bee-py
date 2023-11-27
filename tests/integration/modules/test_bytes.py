@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from bee_py.modules.bytes import download, download_readable, upload
+from bee_py.modules.bytes import download, upload
 
 
 def test_store_and_retrieve_data(bee_ky_options, get_debug_postage):

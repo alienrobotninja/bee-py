@@ -1,5 +1,8 @@
+import io
 import tarfile
 from typing import Protocol
+
+from bee_py.types.type import Collection
 
 
 class StringLike(Protocol):
@@ -19,7 +22,7 @@ def fix_unicode_path(path: str) -> StringLike:
     return StringLike(length=len(codes), char_code_at=lambda index: codes[index])
 
 
-def make_tar(data: list[tuple[str, bytes]]) -> bytes:
+def make_tar(data: Collection) -> bytes:
     """Creates a tar archive from the given data.
 
     Args:
@@ -31,12 +34,8 @@ def make_tar(data: list[tuple[str, bytes]]) -> bytes:
         A bytes object containing the tar archive.
     """
 
-    tar = tarfile.open("w:gz")
-
-    for _, entry in enumerate(data):
-        path, data = entry
-        tar.add(fix_unicode_path(path), data)
-
-    tar.close()
-
-    return tar.getvalue()
+    tar_io = io.BytesIO()
+    with tarfile.open(fileobj=tar_io, mode="w") as tar:
+        for entry in data:
+            tar.addfile(tarfile.TarInfo(name=entry["path"]), io.BytesIO(entry["data"]))
+    return tar_io.getvalue()
