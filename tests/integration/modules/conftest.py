@@ -99,3 +99,8 @@ def bee_debug_url_postage(get_postage_batch) -> BatchId:
 @pytest.fixture
 def bee_peer_debug_url_postage(get_postage_batch) -> BatchId:
     return get_postage_batch("bee_peer_debug_url")
+
+
+@pytest.fixture
+def invalid_reference() -> str:
+    return "0000000000000000000000000000000000000000000000000000000000000000"

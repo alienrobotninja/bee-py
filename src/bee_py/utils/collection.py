@@ -1,16 +1,14 @@
-# from bee_py.types.type import Collection
 # from bee_py.utils.error import BeeArgumentError
 from typing import Any
+
+from bee_py.types.type import Collection
 
 
 def is_collection(data: Any):
     if not isinstance(data, list):
-        return False
-
-    return all(
-        isinstance(entry, dict) and "data" in entry and "path" in entry and isinstance(entry["data"], bytes)
-        for entry in data
-    )
+        if not isinstance(data, Collection):
+            return False
+    return True
 
 
 def assert_collection(data: Any):

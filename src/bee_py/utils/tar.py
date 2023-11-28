@@ -1,8 +1,8 @@
 import io
 import tarfile
-from typing import Protocol
+from typing import Protocol, Union
 
-from bee_py.types.type import Collection
+from bee_py.types.type import Collection, CollectionEntry
 
 
 class StringLike(Protocol):
@@ -22,7 +22,7 @@ def fix_unicode_path(path: str) -> StringLike:
     return StringLike(length=len(codes), char_code_at=lambda index: codes[index])
 
 
-def make_tar(data: Collection) -> bytes:
+def make_tar(data: Union[Collection, list[dict]]) -> bytes:
     """Creates a tar archive from the given data.
 
     Args:
@@ -34,12 +34,18 @@ def make_tar(data: Collection) -> bytes:
         A bytes object containing the tar archive.
     """
 
+    if isinstance(data, list):
+        # * Convert the list of dictionaries to a list of CollectionEntry objects
+        entries = [CollectionEntry(**entry) for entry in data]
+        # * Create a Collection object from the list of CollectionEntry objects
+        data = Collection(entries=entries)
+
     tar_buffer = io.BytesIO()
 
     with tarfile.open(mode="w", fileobj=tar_buffer) as tar:
-        for entry in data:
-            entry_path = entry["path"]
-            entry_data = entry["data"]
+        for entry in data.entries:
+            entry_path = entry.path
+            entry_data = entry.data.encode()
 
             info = tarfile.TarInfo(name=entry_path)
             info.size = len(entry_data)

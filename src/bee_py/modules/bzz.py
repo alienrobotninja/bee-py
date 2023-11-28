@@ -1,14 +1,12 @@
 from typing import Optional, Union
 
-from bee_py.types.type import (  # Reference,; UploadHeaders,; Data,; CollectionEntry,
+from bee_py.types.type import (  # Reference,; UploadHeaders,; Data,; CollectionEntry,; CollectionUploadHeaders,; FileUploadHeaders,  # noqa: E501
     BatchId,
     BeeRequestOptions,
     Collection,
-    CollectionUploadHeaders,
     CollectionUploadOptions,
     FileData,
     FileHeaders,
-    FileUploadHeaders,
     FileUploadOptions,
     Reference,
     ReferenceOrENS,
@@ -25,16 +23,16 @@ from bee_py.utils.type import make_tag_uid
 BZZ_ENDPOINT = "bzz"
 
 
-def extract_file_upload_headers(
-    postage_batch_id: BatchId, options: Optional[FileUploadOptions] = None
-) -> FileUploadHeaders:
+def extract_file_upload_headers(postage_batch_id: BatchId, options: Optional[FileUploadOptions] = None) -> dict:
     headers = extract_upload_headers(postage_batch_id, options)
 
+    options = FileUploadOptions.parse_obj(options)
+
     if options and options.size:
-        headers.content_length = str(options.size)
+        headers["content-length"] = str(options.size)
 
     if options and options.content_type:
-        headers.content_type = options.content_type
+        headers["content-type"] = options.content_type
 
     return headers
 
@@ -45,7 +43,7 @@ def upload_file(
     postage_batch_id: BatchId,
     name: Optional[str] = None,
     options: Optional[FileUploadOptions] = None,
-):
+) -> UploadResult:
     """
     Uploads a single file to the Bee node.
 
@@ -60,8 +58,8 @@ def upload_file(
         UploadResult: The result of the upload operation.
     """
 
-    if options.content_type:
-        options = options or {}
+    if not options or isinstance(options, dict):
+        options = FileUploadOptions.parse_obj(options)
         options.content_type = "application/octet-stream"
 
     headers = extract_file_upload_headers(postage_batch_id, options)
@@ -110,9 +108,9 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
         logger.error(response.raise_for_status())
 
     file_headers = FileHeaders.parse_obj(read_file_headers(response.headers))
-    file_data = wrap_bytes_with_helpers(response.content).text()
+    file_data = wrap_bytes_with_helpers(response.content)
 
-    return FileData(headers=file_headers, data=file_data)
+    return FileData(headers=file_headers, data=file_data.data)
 
 
 def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceOrENS, path: str = "") -> FileData:
@@ -162,10 +160,10 @@ def extract_collection_upload_headers(
         options = CollectionUploadOptions.parse_obj(options)
 
     if options and options.index_document:
-        headers["swarm_index_document"] = options.index_document
+        headers["swarm-index-document"] = options.index_document
 
     if options and options.error_document:
-        headers["swarm_error_document"] = options.error_document
+        headers["swarm-error-document"] = options.error_document
 
     return headers
 
@@ -174,7 +172,7 @@ def upload_collection(
     request_options: BeeRequestOptions,
     collection: Union[Collection, list],
     postage_batch_id: BatchId,
-    options: Optional[CollectionUploadOptions] = None,
+    options: Optional[Union[CollectionUploadOptions, dict]] = None,
 ) -> UploadResult:
     """
     Uploads a collection of data to the Bee node.
@@ -191,12 +189,6 @@ def upload_collection(
     """
 
     assert_collection(collection)
-
-    # if isinstance(collection, list):
-    #     new_collection = []
-    #     for item in collection:
-    #         new_collection.append(CollectionEntry.parse_obj(item))
-    #     collection = Collection(entries=new_collection)
 
     tar_data = make_tar(collection)
 

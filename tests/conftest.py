@@ -1,4 +1,5 @@
 import json
+import random
 from os import environ
 from pathlib import Path
 
@@ -167,3 +168,10 @@ def peer_overlay(bee_peer_debug_ky_options) -> str:
     node_addresses = get_node_addresses(bee_peer_debug_ky_options)
 
     return node_addresses.overlay
+
+
+@pytest.fixture
+def random_byte_array(length=10, seed=500):
+    # * not completely random
+    random.seed(seed)
+    return bytearray(random.randint(0, 255) for _ in range(length))  # noqa: S311

@@ -88,12 +88,12 @@ number = true
 [tool.flake8]
 max-line-length= 120
 ignore = ["E203", "W503"]
-exclude = ["__pycache__", ".venv/*"]
+exclude = ["__pycache__", ".venv/*", "funky_experiments/*"]
 docstring-convention = "google"
 
 # mypy
 [tool.mypy]
-exclude = ["build/", "dist/", "docs/"]
+exclude = ["build/", "dist/", "docs/", "funky_experiments/*"]
 check_untyped_defs = true
 
 [tool.mypy-pytest]

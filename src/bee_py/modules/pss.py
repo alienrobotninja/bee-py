@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 import websockets
 
-from bee_py.types.type import BatchId, BeeRequestOptions, Pin, Reference
+from bee_py.types.type import BatchId, BeeRequestOptions
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger

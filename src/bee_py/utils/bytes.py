@@ -197,7 +197,7 @@ def wrap_bytes_with_helpers(data: bytes) -> Data:
         msg = "Data must be a byte array."
         raise TypeError(msg)
 
-    return Data(data)
+    return Data(data=data)
 
 
 def bytes_at_offset(data: bytes, offset: int, length: Length) -> bytes:

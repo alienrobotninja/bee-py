@@ -9,14 +9,14 @@ from pydantic import BaseModel, Field
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
-from bee_py.utils.hex import bytes_to_hex
+# from bee_py.utils.hex import bytes_to_hex
 
-# Befine all the types here
+# Define all the types here
 
 Type = TypeVar("Type")
 Name = TypeVar("Name")
 Length = TypeVar("Length", bound=int)
-T: TypeAlias = str
+T: TypeAlias = Union[str, bytes]
 
 BeeRequestOptions = dict[str, Optional[Union[str, int, dict[str, str], PreparedRequest, Response]]]
 
@@ -198,11 +198,8 @@ class PrefixedHexString:
         return self.__value
 
 
-class Data:
-    """A class representing binary data with additional helper methods."""
-
-    def __init__(self, data):
-        self.data = data
+class Data(BaseModel):
+    data: bytes
 
     def text(self) -> str:
         """Converts the binary data using UTF-8 decoding into string.
@@ -210,7 +207,6 @@ class Data:
         Returns:
           The decoded string.
         """
-
         return self.data.decode("utf-8")
 
     def hex(self) -> str:  # noqa: A003
@@ -219,8 +215,7 @@ class Data:
         Returns:
           The hexadecimal string representation of the data.
         """
-
-        return bytes_to_hex(self.data)
+        return self.data.hex()
 
     def json(self) -> dict[str, Any]:
         """Converts the binary data into string which is then parsed into JSON.
@@ -730,7 +725,7 @@ class UploadOptions(BaseModel):
 
 class FileUploadOptions(UploadOptions):
     size: Optional[int] = None
-    content_type: Optional[str] = Field(None, alias="contentType")
+    content_type: Optional[str] = None
 
 
 class CollectionEntry(BaseModel):
@@ -749,7 +744,7 @@ class CollectionUploadOptions(UploadOptions):
 
 class FileData(FileHeaders, BaseModel):
     headers: FileHeaders
-    data: T
+    data: bytes
 
 
 class UploadHeaders(BaseModel):
