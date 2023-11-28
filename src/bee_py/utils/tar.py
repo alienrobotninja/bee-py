@@ -34,8 +34,15 @@ def make_tar(data: Collection) -> bytes:
         A bytes object containing the tar archive.
     """
 
-    tar_io = io.BytesIO()
-    with tarfile.open(fileobj=tar_io, mode="w") as tar:
+    tar_buffer = io.BytesIO()
+
+    with tarfile.open(mode="w", fileobj=tar_buffer) as tar:
         for entry in data:
-            tar.addfile(tarfile.TarInfo(name=entry["path"]), io.BytesIO(entry["data"]))
-    return tar_io.getvalue()
+            entry_path = entry["path"]
+            entry_data = entry["data"]
+
+            info = tarfile.TarInfo(name=entry_path)
+            info.size = len(entry_data)
+            tar.addfile(info, io.BytesIO(entry_data))
+
+    return tar_buffer.getvalue()

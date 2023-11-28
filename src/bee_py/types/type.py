@@ -309,6 +309,12 @@ class Reference:
     def __str__(self):
         return self._value
 
+    def __len__(self) -> int:
+        return len(self._value)
+
+    def __call__(self):
+        return self._value
+
 
 class ReferenceResponse:
     """Represents a response containing a reference."""
@@ -769,3 +775,6 @@ class Pin(BaseModel):
 
 class GetAllPinResponse(BaseModel):
     references: list[Reference]
+
+    class Config:
+        arbitrary_types_allowed = True

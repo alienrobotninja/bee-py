@@ -1,11 +1,15 @@
 import json
+from os import environ
 from pathlib import Path
 
 import pytest
+from dotenv import load_dotenv
 
 from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
 from bee_py.types.type import BatchId
+
+load_dotenv()
 
 
 @pytest.fixture
@@ -13,11 +17,24 @@ def max_int() -> int:
     return 9007199254740991
 
 
-BEE_API_URL = "http://localhost:1633"
-BEE_PEER_API_URL = "http://127.0.0.1:11633"
+if environ["BEE_API_URL"]:
+    BEE_API_URL = environ["BEE_API_URL"]
+else:
+    BEE_API_URL = "http://localhost:1633"
+
+if environ["BEE_PEER_API_URL"]:
+    BEE_PEER_API_URL = environ["BEE_API_URL"]
+else:
+    BEE_PEER_API_URL = "http://127.0.0.1:11633"
+
 PROJECT_PATH = Path(__file__).parent
 DATA_FOLDER = PROJECT_PATH / "data"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
+
+
+@pytest.fixture
+def get_data_folder() -> str:
+    return DATA_FOLDER
 
 
 @pytest.fixture
@@ -32,11 +49,15 @@ def bee_peer_url() -> str:
 
 @pytest.fixture
 def bee_debug_url() -> str:
+    if environ["BEE_DEBUG_API_URL"]:
+        return environ["BEE_DEBUG_API_URL"]
     return "http://127.0.0.1:1635"
 
 
 @pytest.fixture
 def bee_peer_debug_url() -> str:
+    if environ["BEE_DEBUG_PEER_API_URL"]:
+        return environ["BEE_DEBUG_PEER_API_URL"]
     return "http://127.0.0.1:11635"
 
 
@@ -146,6 +167,3 @@ def peer_overlay(bee_peer_debug_ky_options) -> str:
     node_addresses = get_node_addresses(bee_peer_debug_ky_options)
 
     return node_addresses.overlay
-
-
-BIG_FILE_TIMEOUT = 100_000

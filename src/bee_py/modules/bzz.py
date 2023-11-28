@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from bee_py.types.type import (  # Reference, UploadHeaders, Data,
+from bee_py.types.type import (  # Reference,; UploadHeaders,; Data,; CollectionEntry,
     BatchId,
     BeeRequestOptions,
     Collection,
@@ -142,34 +142,37 @@ def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceO
 
 
 def extract_collection_upload_headers(
-    postage_batch_id: BatchId, options: Optional[CollectionUploadOptions] = None
-) -> CollectionUploadHeaders:
+    postage_batch_id: BatchId, options: Optional[Union[CollectionUploadOptions, dict]] = None
+) -> dict[str, str]:
     """
     Extracts headers for collection upload requests.
 
     Args:
         postage_batch_id (BatchId): Postage Batch ID to be used for the upload.
-        options (CollectionUploadOptions | None): Optional collection upload options,
+        options (CollectionUploadOptions | dict | None): Optional collection upload options,
         such as index document and error document.
 
     Returns:
-        CollectionUploadHeaders: Extracted collection upload headers.
+        dict[str, str]: Extracted collection upload headers.
     """
 
     headers = extract_upload_headers(postage_batch_id, options)
 
+    if isinstance(options, dict):
+        options = CollectionUploadOptions.parse_obj(options)
+
     if options and options.index_document:
-        headers.swarm_index_document = options.index_document
+        headers["swarm_index_document"] = options.index_document
 
     if options and options.error_document:
-        headers.swarm_error_document = options.error_document
+        headers["swarm_error_document"] = options.error_document
 
     return headers
 
 
 def upload_collection(
     request_options: BeeRequestOptions,
-    collection: Collection,
+    collection: Union[Collection, list],
     postage_batch_id: BatchId,
     options: Optional[CollectionUploadOptions] = None,
 ) -> UploadResult:
@@ -178,7 +181,7 @@ def upload_collection(
 
     Args:
         request_options (BeeRequestOptions): Ky Options for making requests.
-        collection (Collection[Uint8Array]): Collection of data to upload.
+        collection (Collection | list): Collection of data to upload.
         postage_batch_id (BatchId): Postage Batch ID to be used for the upload.
         options (CollectionUploadOptions | None): Optional collection upload options,
         such as index document and error document.
@@ -188,6 +191,13 @@ def upload_collection(
     """
 
     assert_collection(collection)
+
+    # if isinstance(collection, list):
+    #     new_collection = []
+    #     for item in collection:
+    #         new_collection.append(CollectionEntry.parse_obj(item))
+    #     collection = Collection(entries=new_collection)
+
     tar_data = make_tar(collection)
 
     headers = {

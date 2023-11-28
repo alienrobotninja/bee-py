@@ -1,5 +1,5 @@
 import re
-from typing import Optional
+from typing import Optional, Union
 
 from bee_py.types.type import BatchId, FileHeaders, UploadOptions
 from bee_py.utils.error import BeeError
@@ -68,7 +68,9 @@ def read_file_headers(headers: dict[str, str]) -> FileHeaders:
     return FileHeaders(name=name, tag_uid=tag_uid, content_type=content_type)
 
 
-def extract_upload_headers(postage_batch_id: BatchId, options: Optional[UploadOptions] = None) -> dict[str, str]:
+def extract_upload_headers(
+    postage_batch_id: BatchId, options: Optional[Union[UploadOptions, dict]] = None
+) -> dict[str, str]:
     """Extracts the upload headers from the given postage batch ID and options.
 
     Args:
@@ -89,6 +91,8 @@ def extract_upload_headers(postage_batch_id: BatchId, options: Optional[UploadOp
 
     # * if not None
     if options:
+        if isinstance(options, dict):
+            options = UploadOptions.parse_obj(options)
         if options.pin:
             headers["swarm-pin"] = str(options.pin)
         if options.encrypt:
