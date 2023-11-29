@@ -43,22 +43,22 @@ def bee_debug_ky_options(bee_debug_url) -> dict:
     return {"baseURL": bee_debug_url, "timeout": 300, "onRequest": True}
 
 
-@pytest.fixture
-def get_postage_batch(request, url: str = "bee_debug_url") -> BatchId:
-    stamp: BatchId
+# @pytest.fixture
+# def get_postage_batch(request, url: str = "bee_debug_url") -> BatchId:
+#     stamp: BatchId
 
-    if url == "bee_debug_url":
-        stamp = request.getfixturevalue("read_bee_postage")["BEE_POSTAGE"]
-    elif url == "bee_peer_debug_url":
-        stamp = request.getfixturevalue("read_bee_postage")["BEE_PEER_POSTAGE"]
-    else:
-        msg = f"Unknown url: {url}"
-        raise ValueError(msg)
+#     if url == "bee_debug_url":
+#         stamp = request.getfixturevalue("read_bee_postage")["BEE_POSTAGE"]
+#     elif url == "bee_peer_debug_url":
+#         stamp = request.getfixturevalue("read_bee_postage")["BEE_PEER_POSTAGE"]
+#     else:
+#         msg = f"Unknown url: {url}"
+#         raise ValueError(msg)
 
-    if not stamp:
-        msg = f"There is no postage stamp configured for URL: {url}"
-        raise ValueError(msg)
-    return stamp
+#     if not stamp:
+#         msg = f"There is no postage stamp configured for URL: {url}"
+#         raise ValueError(msg)
+#     return stamp
 
 
 @pytest.fixture

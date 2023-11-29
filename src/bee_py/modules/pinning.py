@@ -23,7 +23,9 @@ def pin(request_options: BeeRequestOptions, reference: Reference) -> None:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if response.raise_for_status():
+            if logger.error(response.raise_for_status()):
+                logger.error(response.raise_for_status())
 
 
 def unpin(request_options: BeeRequestOptions, reference: Reference) -> None:
@@ -43,7 +45,8 @@ def unpin(request_options: BeeRequestOptions, reference: Reference) -> None:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
 
 def get_pin(request_options: BeeRequestOptions, reference: Reference) -> Pin:
@@ -69,7 +72,8 @@ def get_pin(request_options: BeeRequestOptions, reference: Reference) -> Pin:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     return Pin(reference=response.data)
 
@@ -90,7 +94,8 @@ def get_all_pins(request_options: BeeRequestOptions) -> Reference:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     response_data = response.data
     references = response_data.get("references", [])

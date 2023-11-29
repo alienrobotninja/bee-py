@@ -11,7 +11,7 @@ from bee_py.types.type import BatchId
 BEE_API_URL = "http://localhost:1633"
 BEE_PEER_API_URL = "http://127.0.0.1:11633"
 PROJECT_PATH = Path(__file__).parent
-DATA_FOLDER = PROJECT_PATH / "../../data"
+DATA_FOLDER = PROJECT_PATH / "../../test_files"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 
 
@@ -52,43 +52,43 @@ def bee_debug_ky_options(bee_debug_url) -> dict:
     return {"baseURL": bee_debug_url, "timeout": 100, "onRequest": True}
 
 
-@pytest.fixture
-def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
-    stamp: BatchId
+# @pytest.fixture
+# def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
+#     stamp: BatchId
 
-    printer("[*]Getting Debug Postage....")
-    stamp = create_postage_batch(bee_debug_ky_options, 100, 20)
+#     printer("[*]Getting Debug Postage....")
+#     stamp = create_postage_batch(bee_debug_ky_options, 100, 20)
 
-    if not stamp:
-        msg = "There is no valid postage stamp"
-        raise ValueError(msg)
+#     if not stamp:
+#         msg = "There is no valid postage stamp"
+#         raise ValueError(msg)
 
-    printer("[*]Waiting for postage to be usable....")
-    while True:
-        usable = get_postage_batch(bee_debug_ky_options, stamp).usable
-        if usable:
-            break
-    printer(f"[*]Valid Postage found: {stamp}")
-    return stamp
+#     printer("[*]Waiting for postage to be usable....")
+#     while True:
+#         usable = get_postage_batch(bee_debug_ky_options, stamp).usable
+#         if usable:
+#             break
+#     printer(f"[*]Valid Postage found: {stamp}")
+#     return stamp
 
 
-@pytest.fixture
-def get_peer_debug_postage(printer, bee_peer_debug_ky_options) -> BatchId:
-    stamp: BatchId
-    printer("[*]Getting Debug Postage....")
-    stamp = create_postage_batch(bee_peer_debug_ky_options, 100, 20)
+# @pytest.fixture
+# def get_peer_debug_postage(printer, bee_peer_debug_ky_options) -> BatchId:
+#     stamp: BatchId
+#     printer("[*]Getting Debug Postage....")
+#     stamp = create_postage_batch(bee_peer_debug_ky_options, 100, 20)
 
-    if not stamp:
-        msg = "There is no valid postage stamp"
-        raise ValueError(msg)
+#     if not stamp:
+#         msg = "There is no valid postage stamp"
+#         raise ValueError(msg)
 
-    printer("[*]Waiting for postage to be usable....")
-    while True:
-        usable = get_postage_batch(bee_peer_debug_ky_options, stamp).usable
-        if usable:
-            break
-    printer(f"[*]Valid Postage found: {stamp}")
-    return stamp
+#     printer("[*]Waiting for postage to be usable....")
+#     while True:
+#         usable = get_postage_batch(bee_peer_debug_ky_options, stamp).usable
+#         if usable:
+#             break
+#     printer(f"[*]Valid Postage found: {stamp}")
+#     return stamp
 
 
 @pytest.fixture
@@ -99,8 +99,3 @@ def bee_debug_url_postage(get_postage_batch) -> BatchId:
 @pytest.fixture
 def bee_peer_debug_url_postage(get_postage_batch) -> BatchId:
     return get_postage_batch("bee_peer_debug_url")
-
-
-@pytest.fixture
-def invalid_reference() -> str:
-    return "0000000000000000000000000000000000000000000000000000000000000000"

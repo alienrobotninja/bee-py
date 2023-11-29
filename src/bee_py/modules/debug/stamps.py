@@ -23,7 +23,8 @@ def get_all_postage_batches(request_options: BeeRequestOptions) -> PostageBatch:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     postage_batches = response.json()
     return PostageBatch.parse_obj(postage_batches)
@@ -49,7 +50,8 @@ def get_postage_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     postage_batch = response.json()
     return PostageBatch.parse_obj(postage_batch)
@@ -75,7 +77,8 @@ def get_postage_batch_buckets(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     postage_batch_buckets = response.json()
     return PostageBatchBuckets.parse_obj(postage_batch_buckets)
@@ -125,7 +128,8 @@ def create_postage_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     stamp_response = response.json()
     return stamp_response["batchID"]
@@ -154,7 +158,8 @@ def top_up_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     stamp_response = response.json()
     return stamp_response["batchID"]
@@ -183,7 +188,8 @@ def dilute_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     stamp_response = response.json()
     return stamp_response["batchID"]

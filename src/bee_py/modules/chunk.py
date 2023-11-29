@@ -4,8 +4,12 @@ from bee_py.types.type import BatchId, BeeRequestOptions, Data, Reference, Refer
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
+from bee_py.utils.logging import logger
 
 ENDPOINT = "chunks"
+
+
+# TODO: there is an issue with the upload function of chunk. tests are sutck
 
 
 def upload(
@@ -31,11 +35,14 @@ def upload(
     }
 
     response = http(request_options, config)
+    print("PoGO")
 
-    # *  Raises a HTTPError if the response status is 4xx, 5xx
-    response.raise_for_status()
+    if response.status_code != 200:  # noqa: PLR2004
+        logger.info(response.json())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
-    return response.json()["reference"]
+    return Reference(response.json()["reference"])
 
 
 def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
@@ -45,6 +52,8 @@ def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
     }
     response = http(request_options, config)
 
-    # * Raises a HTTPError if the response status is 4xx, 5xx
-    response.raise_for_status()
+    if response.status_code != 200:  # noqa: PLR2004
+        logger.info(response.json())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
     return wrap_bytes_with_helpers(response.content)

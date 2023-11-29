@@ -42,14 +42,14 @@ def send(
         "url": f"{PSS_ENDPOINT}/send/{topic}/{target}",
         "method": "POST",
         "data": data,
-        "responseType": "json",
         "headers": headers,
     }
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
 
 def subscribe(url: str, topic: str) -> websockets.WebSocketClientProtocol:

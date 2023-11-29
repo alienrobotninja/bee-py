@@ -58,8 +58,12 @@ def upload_file(
         UploadResult: The result of the upload operation.
     """
 
-    if not options or isinstance(options, dict):
-        options = FileUploadOptions.parse_obj(options)
+    if options:
+        if isinstance(options, dict):
+            options = FileUploadOptions.parse_obj(options)
+            options.content_type = "application/octet-stream"
+    else:
+        options = FileUploadOptions()
         options.content_type = "application/octet-stream"
 
     headers = extract_file_upload_headers(postage_batch_id, options)
@@ -75,7 +79,8 @@ def upload_file(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     upload_response = response.json()
     reference = Reference(upload_response["reference"])
@@ -105,7 +110,8 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     file_headers = FileHeaders.parse_obj(read_file_headers(response.headers))
     file_data = wrap_bytes_with_helpers(response.content)
@@ -131,7 +137,8 @@ def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceO
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     file_headers = read_file_headers(response.headers)
     file_data = response.data
@@ -208,7 +215,8 @@ def upload_collection(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     upload_response = response.json()
     reference = Reference(upload_response["reference"])

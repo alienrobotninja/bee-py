@@ -28,7 +28,8 @@ def create_tag(request_options: BeeRequestOptions, address: Optional[str] = None
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     tag_response = response.json()
     return Tag.parse_obj(tag_response)
@@ -53,7 +54,8 @@ def retrieve_tag(request_options: BeeRequestOptions, uid: int) -> Tag:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        logger.error(response.raise_for_status())
+        if logger.error(response.raise_for_status()):
+            logger.error(response.raise_for_status())
 
     tag_response = response.json()
     return Tag.parse_obj(tag_response)

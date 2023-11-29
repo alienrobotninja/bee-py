@@ -29,7 +29,7 @@ else:
     BEE_PEER_API_URL = "http://127.0.0.1:11633"
 
 PROJECT_PATH = Path(__file__).parent
-DATA_FOLDER = PROJECT_PATH / "data"
+DATA_FOLDER = PROJECT_PATH / "test_files"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 
 
@@ -78,6 +78,11 @@ def bee_ky_options(bee_debug_url) -> dict:
 
 
 @pytest.fixture
+def bee_peer_ky_options(bee_peer_url) -> dict:
+    return {"baseURL": bee_peer_url, "timeout": 300, "onRequest": True}
+
+
+@pytest.fixture
 def bee_debug_ky_options(bee_peer_debug_url) -> dict:
     return {"baseURL": bee_peer_debug_url, "timeout": 300, "onRequest": True}
 
@@ -101,14 +106,14 @@ def read_local_bee_peer_stamp() -> str:
 
 
 @pytest.fixture
-def get_debug_postage(printer, read_local_bee_stamp, bee_debug_ky_options) -> BatchId:
+def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
     stamp: BatchId
 
     printer("[*]Getting Debug Postage....")
 
-    if read_local_bee_stamp:
-        printer(read_local_bee_stamp)
-        return read_local_bee_stamp
+    # if read_local_bee_stamp:
+    #     printer(read_local_bee_stamp)
+    #     return read_local_bee_stamp
 
     stamp = create_postage_batch(bee_debug_ky_options, 100, 20)
 
@@ -123,6 +128,7 @@ def get_debug_postage(printer, read_local_bee_stamp, bee_debug_ky_options) -> Ba
             break
     printer(f"[*]Valid Postage found: {stamp}")
     return stamp
+    # return "7fc4f823619c539708eabc3210f2c09eb6373ec4d3b62b1a8013c85b9bb14bfd"
 
 
 @pytest.fixture
@@ -175,3 +181,22 @@ def random_byte_array(length=10, seed=500):
     # * not completely random
     random.seed(seed)
     return bytearray(random.randint(0, 255) for _ in range(length))  # noqa: S311
+
+
+@pytest.fixture
+def invalid_reference() -> str:
+    return "0000000000000000000000000000000000000000000000000000000000000000"
+
+
+@pytest.fixture
+def test_collection() -> dict:
+    return [
+        {
+            "path": "0",
+            "data": bytes([0]),
+        },
+        {
+            "path": "1",
+            "data": bytes([1]),
+        },
+    ]
