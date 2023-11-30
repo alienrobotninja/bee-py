@@ -90,7 +90,7 @@ def bee_debug_ky_options(bee_peer_debug_url) -> dict:
 @pytest.fixture
 def read_local_bee_stamp() -> str:
     with open(BEE_DATA_FILE) as f:
-        stamp = json.loads(f)
+        stamp = json.loads(f.read())
     if stamp["BEE_POSTAGE"]:
         return stamp["BEE_POSTAGE"]
     return False
@@ -99,7 +99,7 @@ def read_local_bee_stamp() -> str:
 @pytest.fixture
 def read_local_bee_peer_stamp() -> str:
     with open(BEE_DATA_FILE) as f:
-        stamp = json.loads(f)
+        stamp = json.loads(f.read())
     if stamp["BEE_PEER_POSTAGE"]:
         return stamp["BEE_PEER_POSTAGE"]
     return False

@@ -36,7 +36,7 @@ def test_send_receive_pss_message(bee_url, bee_peer_ky_options, bee_debug_ky_opt
     ws = subscribe(bee_url, topic)
 
     addresses = get_node_addresses(bee_debug_ky_options)
-    target = addresses["overlay"]
+    target = addresses.overlay
     send(bee_peer_ky_options, topic, make_test_target(target), message, get_peer_debug_postage)
 
     received_message = ws.receive()

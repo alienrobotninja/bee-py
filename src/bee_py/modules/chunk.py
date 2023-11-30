@@ -33,9 +33,9 @@ def upload(
         "data": data,
         "headers": {**extract_upload_headers(postage_batch_id, options)},
     }
+    print(config)
 
     response = http(request_options, config)
-    print("PoGO")
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
