@@ -75,7 +75,7 @@ def get_pin(request_options: BeeRequestOptions, reference: Reference) -> Pin:
         if logger.error(response.raise_for_status()):
             logger.error(response.raise_for_status())
 
-    return Pin(reference=response.data)
+    return Pin.parse_obj(response.json())
 
 
 def get_all_pins(request_options: BeeRequestOptions) -> Reference:

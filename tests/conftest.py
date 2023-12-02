@@ -1,16 +1,18 @@
 import json
+import os
 import random
-from os import environ
 from pathlib import Path
 
 import pytest
-from dotenv import load_dotenv
 
 from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
 from bee_py.types.type import BatchId
 
-load_dotenv()
+PROJECT_PATH = Path(__file__).parent
+DATA_FOLDER = PROJECT_PATH / "test_files"
+BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
+ENV_FILE = PROJECT_PATH / "../Env"
 
 
 @pytest.fixture
@@ -18,19 +20,56 @@ def max_int() -> int:
     return 9007199254740991
 
 
-if environ["BEE_API_URL"]:
-    BEE_API_URL = environ["BEE_API_URL"]
-else:
-    BEE_API_URL = "http://localhost:1633"
+@pytest.fixture(scope="session", autouse=True)
+def get_api_url():
+    if os.path.isfile(ENV_FILE):
+        with open(ENV_FILE) as f:
+            data = json.loads(f.read())
+        if data["BEE_API_URL"]:
+            BEE_API_URL = data["BEE_API_URL"]  # noqa: N806
+    else:
+        BEE_API_URL = "http://localhost:1633"  # noqa: N806
 
-if environ["BEE_PEER_API_URL"]:
-    BEE_PEER_API_URL = environ["BEE_API_URL"]
-else:
-    BEE_PEER_API_URL = "http://127.0.0.1:11633"
+    return BEE_API_URL
 
-PROJECT_PATH = Path(__file__).parent
-DATA_FOLDER = PROJECT_PATH / "test_files"
-BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
+
+@pytest.fixture(scope="session", autouse=True)
+def get_peer_api_url():
+    if os.path.isfile(ENV_FILE):
+        with open(ENV_FILE) as f:
+            data = json.loads(f.read())
+        if data["BEE_PEER_API_URL"]:
+            BEE_PEER_API_URL = data["BEE_PEER_API_URL"]  # noqa: N806
+    else:
+        BEE_PEER_API_URL = "http://localhost:11633"  # noqa: N806
+
+    return BEE_PEER_API_URL
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bee_debug_url():
+    if os.path.isfile(ENV_FILE):
+        with open(ENV_FILE) as f:
+            data = json.loads(f.read())
+        if data["BEE_DEBUG_API_URL"]:
+            BEE_DEBUG_API_URL = data["BEE_DEBUG_API_URL"]  # noqa: N806
+    else:
+        BEE_DEBUG_API_URL = "http://localhost:1635"  # noqa: N806
+
+    return BEE_DEBUG_API_URL
+
+
+@pytest.fixture(scope="session", autouse=True)
+def bee_peer_debug_url():
+    if os.path.isfile(ENV_FILE):
+        with open(ENV_FILE) as f:
+            data = json.loads(f.read())
+        if data["BEE_DEBUG_PEER_API_URL"]:
+            BEE_DEBUG_PEER_API_URL = data["BEE_DEBUG_API_URL"]  # noqa: N806
+    else:
+        BEE_DEBUG_PEER_API_URL = "http://localhost:11635"  # noqa: N806
+
+    return BEE_DEBUG_PEER_API_URL
 
 
 @pytest.fixture
@@ -39,27 +78,13 @@ def get_data_folder() -> str:
 
 
 @pytest.fixture
-def bee_url() -> str:
-    return BEE_API_URL
+def bee_url(get_api_url) -> str:
+    return get_api_url
 
 
 @pytest.fixture
-def bee_peer_url() -> str:
-    return BEE_PEER_API_URL
-
-
-@pytest.fixture
-def bee_debug_url() -> str:
-    if environ["BEE_DEBUG_API_URL"]:
-        return environ["BEE_DEBUG_API_URL"]
-    return "http://127.0.0.1:1635"
-
-
-@pytest.fixture
-def bee_peer_debug_url() -> str:
-    if environ["BEE_DEBUG_PEER_API_URL"]:
-        return environ["BEE_DEBUG_PEER_API_URL"]
-    return "http://127.0.0.1:11635"
+def bee_peer_url(get_peer_api_url) -> str:
+    return get_peer_api_url
 
 
 @pytest.fixture
@@ -73,8 +98,8 @@ def read_bee_postage() -> dict:
 
 
 @pytest.fixture
-def bee_ky_options(bee_debug_url) -> dict:
-    return {"baseURL": bee_debug_url, "timeout": 300, "onRequest": True}
+def bee_ky_options(bee_url) -> dict:
+    return {"baseURL": bee_url, "timeout": 300, "onRequest": True}
 
 
 @pytest.fixture
@@ -110,6 +135,7 @@ def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
     stamp: BatchId
 
     printer("[*]Getting Debug Postage....")
+    return "6914152b3ccac7411220f76126e31b30fc52fd52c9e73afd5aecda06c85232e3"
 
     # if read_local_bee_stamp:
     #     printer(read_local_bee_stamp)
@@ -128,7 +154,6 @@ def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
             break
     printer(f"[*]Valid Postage found: {stamp}")
     return stamp
-    # return "7fc4f823619c539708eabc3210f2c09eb6373ec4d3b62b1a8013c85b9bb14bfd"
 
 
 @pytest.fixture

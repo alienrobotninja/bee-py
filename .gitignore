@@ -173,3 +173,4 @@ pyproject.toml.bak
 
 # debugging scripts
 funky_experiments/*
+Env

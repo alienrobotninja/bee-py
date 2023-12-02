@@ -33,7 +33,6 @@ def upload(
         "data": data,
         "headers": {**extract_upload_headers(postage_batch_id, options)},
     }
-    print(config)
 
     response = http(request_options, config)
 

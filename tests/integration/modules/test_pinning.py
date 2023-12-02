@@ -83,19 +83,19 @@ def test_unpin_non_existing_data(bee_ky_options, invalid_reference):
         unpin(bee_ky_options, invalid_reference)
 
 
-# def test_pin_existing_chunk(bee_ky_options, get_debug_postage):
-#     chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
-#     assert chunk_reference == test_chunk_hash
+def test_pin_existing_chunk(bee_ky_options, get_debug_postage):
+    chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
+    assert str(chunk_reference) == test_chunk_hash
 
-#     pin(bee_ky_options, test_chunk_hash)
+    pin(bee_ky_options, test_chunk_hash)
 
 
-# def test_unpin_existing_chunk(bee_ky_options, get_debug_postage):
-#     chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
-#     assert chunk_reference == test_chunk_hash
+def test_unpin_existing_chunk(bee_ky_options, get_debug_postage):
+    chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
+    assert str(chunk_reference) == test_chunk_hash
 
-#     pin(bee_ky_options, test_chunk_hash)
-#     unpin(bee_ky_options, test_chunk_hash)
+    pin(bee_ky_options, test_chunk_hash)
+    unpin(bee_ky_options, test_chunk_hash)
 
 
 @pytest.mark.timeout(ERR_TIMEOUT)
@@ -110,13 +110,13 @@ def test_unpin_non_existing_chunk(bee_ky_options, invalid_reference):
         unpin(bee_ky_options, invalid_reference)
 
 
-# def test_return_pinning_status_of_existing_chunk(bee_ky_options, get_debug_postage):
-#     chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
-#     assert chunk_reference == test_chunk_hash
+def test_return_pinning_status_of_existing_chunk(bee_ky_options, get_debug_postage):
+    chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
+    assert str(chunk_reference) == test_chunk_hash
 
-#     pin(bee_ky_options, test_chunk_hash)
-#     pinning_status = get_pin(bee_ky_options, test_chunk_hash)
-#     assert pinning_status.reference == test_chunk_hash
+    pin(bee_ky_options, test_chunk_hash)
+    pinning_status = get_pin(bee_ky_options, test_chunk_hash)
+    assert pinning_status.reference == test_chunk_hash
 
 
 @pytest.mark.timeout(ERR_TIMEOUT)
@@ -125,8 +125,8 @@ def test_not_return_pinning_status_of_non_existing_chunk(bee_ky_options, invalid
         get_pin(bee_ky_options, invalid_reference)
 
 
-# def test_return_list_of_pinned_chunks(bee_ky_options, get_debug_postage):
-#     chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
-#     assert chunk_reference == test_chunk_hash
+def test_return_list_of_pinned_chunks(bee_ky_options, get_debug_postage):
+    chunk_reference = upload(bee_ky_options, test_chunk_data, get_debug_postage)
+    assert str(chunk_reference) == test_chunk_hash
 
-#     pin(bee_ky_options, test_chunk_hash)
+    pin(bee_ky_options, test_chunk_hash)
