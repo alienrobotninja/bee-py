@@ -8,6 +8,8 @@ dependencies = [
     "eth-ape>=0.6.26",
     "structlog>=23.2.0",
     "semver>=3.0.2",
+    "websocket-client>=1.6.4",
+    "pytest-asyncio>=0.21.1",
 ]
 requires-python = ">=3.9"
 readme = "README.md"

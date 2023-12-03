@@ -4,7 +4,7 @@ from ape.managers.accounts import AccountAPI
 from eth_account import Account
 from eth_typing import ChecksumAddress as AddressType
 from hexbytes import HexBytes
-from pydantic.dataclasses import dataclass
+from pydantic import BaseModel, Field
 
 from bee_py.chunk.bmt import bmt_hash
 from bee_py.chunk.cac import (
@@ -38,8 +38,7 @@ SOC_PAYLOAD_OFFSET = SOC_SPAN_OFFSET + SPAN_SIZE
 Identifier = NewType("Identifier", bytes)
 
 
-@dataclass
-class SingleOwnerChunkBase:
+class SingleOwnerChunkBase(BaseModel):
     """Abstract base class for Single Owner Chunks (SOCs).
 
     Represents a SOC, a type of chunk that allows a user to assign arbitrary data to an address
@@ -52,12 +51,12 @@ class SingleOwnerChunkBase:
         owner: The owner of the SOC.
     """
 
-    identifier: Identifier
-    signature: bytes
-    owner: AddressType
+    identifier: str = Field(..., description="The identifier of the SOC")
+    signature: bytes = Field(..., description="The signature of the SOC")
+    owner: str = Field(..., description="The owner of the SOC")
 
 
-class SingleOwnerChunk(SingleOwnerChunkBase, Chunk):
+class SingleOwnerChunk(Chunk, SingleOwnerChunkBase):
     """Represents a Single Owner Chunk (SOC).
 
     A concrete implementation of the SingleOwnerChunkBase class. It represents a SOC
@@ -73,21 +72,7 @@ class SingleOwnerChunk(SingleOwnerChunkBase, Chunk):
         owner: The owner of the SOC.
     """
 
-    def __init__(
-        self,
-        data: bytes,
-        identifier: Identifier,
-        signature: bytes,
-        span: bytes,
-        payload: bytes,
-        address: HexBytes,
-        owner: AddressType,
-    ):
-        SingleOwnerChunkBase.__init__(self, identifier, signature, owner)
-        self.data = data
-        self.span = span
-        self.payload = payload
-        self.address = address
+    pass
 
 
 def recover_chunk_owner(data: bytes) -> AddressType:
@@ -164,7 +149,7 @@ def make_soc_address(identifier: Identifier, address: AddressType) -> bytes:
 
 def make_single_owner_chunk(
     chunk: Chunk,
-    identifier: Identifier,
+    identifier: Union[Identifier, bytearray],
     signer: Union[AccountAPI, Account],
 ) -> SingleOwnerChunk:
     """
@@ -172,45 +157,46 @@ def make_single_owner_chunk(
 
     Args:
         chunk: A chunk object used for the span and payload.
-        identifier: The identifier of the chunk.
+        identifier|bytearray: The identifier of the chunk.
         signer: The singer interface for signing the chunk.
             signer can be a ape account API or a eth_account object.
 
     Returns:
         SingleOwnerChunk: SingleOwnerChunk object.
     """
-    chunk_address = chunk.address()
+
+    if isinstance(identifier, bytearray):
+        # make it in raw bytes
+        identifier = bytes(identifier)
+
+    chunk_address = chunk.address
     assert_valid_chunk_data(chunk.data, chunk_address)
+    print(identifier)
 
     digest = keccak256_hash(identifier, chunk_address)
+    print("Chunk address: ", bytes_to_hex(chunk_address))
+    print("Identifier: ", bytes_to_hex(identifier))
+    print("Digest: ", digest)
+
     signature = sign(account=signer, data=digest)
+    print("Signature: ", signature.encode_vrs().hex())
 
     if isinstance(signer, AccountAPI):
         encoded_signature = signature.encode_vrs()
-        data = serialize_bytes(identifier, encoded_signature, chunk.span, chunk.payload())
+        data = serialize_bytes(identifier, encoded_signature, chunk.span, chunk.payload)
     else:
         encoded_signature = signature.signature.hex()
         encoded_signature_bytes = hex_to_bytes(encoded_signature)
-        data = serialize_bytes(identifier, encoded_signature_bytes, chunk.span, chunk.payload())
+        data = serialize_bytes(identifier, encoded_signature_bytes, chunk.span, chunk.payload)
 
     address = make_soc_address(identifier, signer.address)
-
-    # return {
-    #     "data": data,
-    #     "identifier": identifier,
-    #     "signature": signature,
-    #     "span": chunk.span,
-    #     "payload": chunk.payload(),
-    #     "address": address,
-    #     "owner": signer.address,
-    # }
 
     return SingleOwnerChunk(
         data=data,
         identifier=identifier,
         signature=encoded_signature,
         span=chunk.span,
-        payload=chunk.payload(),
+        payload=chunk.payload,
         address=address,
         owner=signer.address,
     )

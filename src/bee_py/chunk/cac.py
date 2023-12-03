@@ -1,4 +1,7 @@
+from typing import Union
+
 from hexbytes import HexBytes
+from pydantic import BaseModel, Field
 
 from bee_py.chunk.bmt import bmt_hash
 from bee_py.chunk.serialize import serialize_bytes
@@ -12,7 +15,7 @@ CAC_SPAN_OFFSET = 0
 CAC_PAYLOAD_OFFSET = CAC_SPAN_OFFSET + SPAN_SIZE
 
 
-class Chunk:
+class Chunk(BaseModel):
     """
     * General chunk class for Swarm
 
@@ -23,15 +26,10 @@ class Chunk:
     the chunk that is required for the Chunk API.
     """
 
-    def __init__(self, data: bytes, span: bytes):
-        self.data = data
-        self.span = span
-
-    def payload(self) -> bytes:
-        return flex_bytes_at_offset(self.data, CAC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
-
-    def address(self) -> HexBytes:
-        return bmt_hash(self.data)
+    data: bytes = Field(..., description="The data of the chunk")
+    span: bytes = Field(..., description="The span of the chunk")
+    payload: bytes = Field(..., description="The payload of the chunk")
+    address: Union[HexBytes, bytes] = Field(..., description="The address of the chunk")
 
 
 def is_valid_chunk_data(data: bytes, chunk_address: bytes) -> bool:
@@ -72,5 +70,7 @@ def make_content_addressed_chunk(payload_bytes: bytes) -> Chunk:
     span = make_span(len(payload_bytes))
 
     data = serialize_bytes(span, payload_bytes)
+    payload = flex_bytes_at_offset(data, CAC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
+    address = bmt_hash(data)
 
-    return Chunk(data, span)
+    return Chunk(data=data, span=span, payload=payload, address=address)

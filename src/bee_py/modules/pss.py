@@ -52,7 +52,7 @@ def send(
             logger.error(response.raise_for_status())
 
 
-def subscribe(url: str, topic: str) -> websockets.WebSocketClientProtocol:
+async def subscribe(url: str, topic: str) -> websockets.WebSocketClientProtocol:
     """
     Subscribes to messages on the given topic.
 
@@ -65,4 +65,4 @@ def subscribe(url: str, topic: str) -> websockets.WebSocketClientProtocol:
     """
     ws_url = url.replace("http", "ws")
     ws_url = f"{ws_url}/{PSS_ENDPOINT}/subscribe/{topic}"
-    return websockets.connect(ws_url)
+    return await websockets.connect(ws_url)
