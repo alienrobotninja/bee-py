@@ -79,7 +79,7 @@ def upload_file(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     upload_response = response.json()
@@ -110,7 +110,7 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     file_headers = FileHeaders.parse_obj(read_file_headers(response.headers))
@@ -137,7 +137,7 @@ def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceO
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     file_headers = read_file_headers(response.headers)
@@ -215,7 +215,7 @@ def upload_collection(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     upload_response = response.json()

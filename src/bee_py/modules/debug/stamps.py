@@ -23,7 +23,7 @@ def get_all_postage_batches(request_options: BeeRequestOptions) -> PostageBatch:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     postage_batches = response.json()
@@ -50,7 +50,7 @@ def get_postage_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     postage_batch = response.json()
@@ -77,7 +77,7 @@ def get_postage_batch_buckets(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     postage_batch_buckets = response.json()
@@ -128,7 +128,7 @@ def create_postage_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     stamp_response = response.json()
@@ -158,7 +158,7 @@ def top_up_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     stamp_response = response.json()
@@ -188,7 +188,7 @@ def dilute_batch(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     stamp_response = response.json()

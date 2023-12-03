@@ -2,14 +2,15 @@ from typing import Union
 
 from eth_utils import keccak
 
-from bee_py.utils.hex import bytes_to_hex
+# from bee_py.utils.hex import bytes_to_hex
 
 
-def keccak256_hash(*messages: Union[bytes, bytearray]) -> str:
+def keccak256_hash(*messages: Union[bytes, bytearray]) -> bytes:
     """
     Helper function for calculating the keccak256 hash with
 
     @param messages Any number of messages (bytes, byte arrays)
+    returns bytes
     """
     combined = bytearray()
     for message in messages:
@@ -18,7 +19,7 @@ def keccak256_hash(*messages: Union[bytes, bytearray]) -> str:
             raise ValueError(msg)
         combined += message
 
-    return bytes_to_hex(keccak(combined))
+    return keccak(combined)
 
 
 if __name__ == "__main__":

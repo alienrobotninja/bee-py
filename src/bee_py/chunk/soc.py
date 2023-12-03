@@ -2,8 +2,8 @@ from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
 from eth_account import Account
+from eth_account.messages import encode_defunct
 from eth_typing import ChecksumAddress as AddressType
-from hexbytes import HexBytes
 from pydantic import BaseModel, Field
 
 from bee_py.chunk.bmt import bmt_hash
@@ -122,15 +122,6 @@ def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> Sing
     def payload():
         return flex_bytes_at_offset(data, SOC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
 
-    # return {
-    #     "data": data,
-    #     "identifier": identifier,
-    #     "signature": signature(),
-    #     "span": span(),
-    #     "payload": payload(),
-    #     "address": soc_address,
-    #     "owner": owner_address,
-    # }
     return SingleOwnerChunk(
         data=data,
         identifier=identifier,
@@ -171,18 +162,13 @@ def make_single_owner_chunk(
 
     chunk_address = chunk.address
     assert_valid_chunk_data(chunk.data, chunk_address)
-    print(identifier)
 
     digest = keccak256_hash(identifier, chunk_address)
-    print("Chunk address: ", bytes_to_hex(chunk_address))
-    print("Identifier: ", bytes_to_hex(identifier))
-    print("Digest: ", digest)
 
-    signature = sign(account=signer, data=digest)
-    print("Signature: ", signature.encode_vrs().hex())
+    signature = sign(data=digest, account=signer)
 
     if isinstance(signer, AccountAPI):
-        encoded_signature = signature.encode_vrs()
+        encoded_signature = signature.encode_rsv()
         data = serialize_bytes(identifier, encoded_signature, chunk.span, chunk.payload)
     else:
         encoded_signature = signature.signature.hex()
@@ -224,6 +210,7 @@ def upload_single_owner_chunk(
         owner = bytes_to_hex(chunk.owner)
     else:
         owner = chunk.owner
+
     identifier = bytes_to_hex(chunk.identifier)
     signature = bytes_to_hex(chunk.signature)
 

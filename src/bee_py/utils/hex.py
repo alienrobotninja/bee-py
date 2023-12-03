@@ -22,7 +22,7 @@ def bytes_to_hex(inp: Union[bytes, str], length: Optional[int] = None) -> str:
     if isinstance(inp, bytes):
         hex_string = to_hex(inp)
     elif isinstance(inp, str):
-        hex_string = to_bytes(hexstr=inp)
+        hex_string = to_hex(inp.encode())
 
     if length is not None and len(hex_string) != length:
         msg = f"Length mismatch for valid hex string. Expected length {length}: {hex_string}"

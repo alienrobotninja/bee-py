@@ -5,9 +5,7 @@ import ape
 import pytest
 from eth_account import Account
 
-from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
-from bee_py.types.type import BatchId
-from bee_py.utils.hex import bytes_to_hex
+# from bee_py.types.type import BatchId
 
 BEE_API_URL = "http://localhost:1633"
 PROJECT_PATH = Path(__file__).parent
@@ -16,31 +14,24 @@ BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 ACCOUNT_FILE = DATA_FOLDER / "test_account.json"
 
 
-@pytest.fixture
-def bee_debug_url() -> str:
-    return "http://127.0.0.1:1635"
+# @pytest.fixture
+# def bee_debug_url() -> str:
+#     return "http://127.0.0.1:1635"
 
 
-@pytest.fixture
-def bee_peer_debug_url() -> str:
-    return "http://127.0.0.1:11635"
+# @pytest.fixture
+# def bee_peer_debug_url() -> str:
+#     return "http://127.0.0.1:11635"
 
 
-@pytest.fixture
-def read_bee_postage() -> dict:
-    with open(BEE_DATA_FILE) as f:
-        data = json.loads(f.read())
-    return data
+# @pytest.fixture
+# def bee_ky_options() -> dict:
+#     return {"baseURL": BEE_API_URL, "timeout": 300, "onRequest": True}
 
 
-@pytest.fixture
-def bee_ky_options() -> dict:
-    return {"baseURL": BEE_API_URL, "timeout": 300, "onRequest": True}
-
-
-@pytest.fixture
-def bee_debug_ky_options(bee_debug_url) -> dict:
-    return {"baseURL": bee_debug_url, "timeout": 300, "onRequest": True}
+# @pytest.fixture
+# def bee_debug_ky_options(bee_debug_url) -> dict:
+#     return {"baseURL": bee_debug_url, "timeout": 300, "onRequest": True}
 
 
 # @pytest.fixture
@@ -61,31 +52,14 @@ def bee_debug_ky_options(bee_debug_url) -> dict:
 #     return stamp
 
 
-@pytest.fixture
-def bee_debug_url_postage(get_postage_batch) -> BatchId:
-    return get_postage_batch("bee_debug_url")
+# @pytest.fixture
+# def bee_debug_url_postage(get_postage_batch) -> BatchId:
+#     return get_postage_batch("bee_debug_url")
 
 
-@pytest.fixture
-def bee_peer_debug_url_postage(get_postage_batch) -> BatchId:
-    return get_postage_batch("bee_peer_debug_url")
-
-
-@pytest.fixture
-def try_delete_chunk_from_local_storage(soc_hash, bee_debug_ky_options):
-    address = soc_hash
-    if isinstance(address, bytes):
-        address = bytes_to_hex(address)
-
-    try:
-        response = delete_chunk_from_local_storage(bee_debug_ky_options, address)
-        return response
-    except ValueError as e:
-        try:
-            response.status_code == 400  # noqa: B015
-            return response
-        except:  # noqa: E722
-            raise e  # noqa: B904
+# @pytest.fixture
+# def bee_peer_debug_url_postage(get_postage_batch) -> BatchId:
+#     return get_postage_batch("bee_peer_debug_url")
 
 
 @pytest.fixture(scope="session")
@@ -113,7 +87,7 @@ def soc_hash() -> str:
     return "9d453ebb73b2fedaaf44ceddcf7a0aa37f3e3d6453fea5841c31f0ea6d61dc85"
 
 
-@pytest.fixture
-def soc_signer():
-    private_key = json.loads(open(ACCOUNT_FILE).read())["private_key"]
-    return Account.from_key(private_key)
+# @pytest.fixture
+# def soc_signer():
+#     private_key = json.loads(open(ACCOUNT_FILE).read())["private_key"]
+#     return Account.from_key(private_key)

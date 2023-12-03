@@ -53,7 +53,7 @@ def upload(
     response = http(request_options, config)
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     return response.json()["reference"]

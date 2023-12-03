@@ -21,7 +21,7 @@ def retrieve_extended_tag(request_options: BeeRequestOptions, uid: int) -> Exten
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     debug_status_response = response.json()

@@ -23,7 +23,7 @@ def get_all_transactions(request_options: BeeRequestOptions) -> TransactionInfo:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     transactions_response = response.json()
@@ -50,7 +50,7 @@ def get_transaction(request_options: BeeRequestOptions, transaction_hash: Transa
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     transaction_response = response.json()
@@ -74,7 +74,7 @@ def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     rebroadcasted_transaction_response = response.json()
@@ -106,7 +106,7 @@ def cancel_transaction(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     canceled_transaction_response = response.json()

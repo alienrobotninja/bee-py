@@ -1,10 +1,8 @@
 from ape import accounts
 
 from bee_py.chunk.cac import make_content_addressed_chunk
-from bee_py.chunk.signer import sign
 from bee_py.chunk.soc import make_single_owner_chunk
-from bee_py.modules.soc import upload
-from bee_py.utils.hex import bytes_to_hex, hex_to_bytes
+from bee_py.utils.hex import bytes_to_hex
 
 
 def test_single_owner_chunk_creation():
@@ -13,16 +11,15 @@ def test_single_owner_chunk_creation():
     identifier = bytearray(32)
 
     cac = make_content_addressed_chunk(payload)
-    print(bytes_to_hex(cac.data))
 
     signer = accounts.load("bee")
     signer.set_autosign(True, passphrase="a")
 
     soc = make_single_owner_chunk(cac, identifier, signer)
-    print(bytes_to_hex(soc.data))
 
     soc_address = bytes_to_hex(soc.address)
     owner = soc.owner
 
-    assert soc_address == soc_hash
+    # * Remove the 0x
+    assert soc_address[2:] == soc_hash
     assert owner == signer.address

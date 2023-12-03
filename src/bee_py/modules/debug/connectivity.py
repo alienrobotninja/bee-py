@@ -26,7 +26,7 @@ def get_node_addresses(request_options: BeeRequestOptions) -> NodeAddresses:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     addresses_response = response.json()
@@ -50,7 +50,7 @@ def get_peers(request_options: NodeAddresses) -> Peers:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     peers_response = response.json()
@@ -74,7 +74,7 @@ def get_blocklist(request_options: BeeRequestOptions) -> Peers:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     blocklist_response = response.json()
@@ -98,7 +98,7 @@ def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResp
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     return RemovePeerResponse.parse_obj(response.json())
@@ -121,7 +121,7 @@ def get_topology(request_options: BeeRequestOptions) -> Topology:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-    if logger.error(response.raise_for_status()):
+    if response.raise_for_status():
         logger.error(response.raise_for_status())
 
     return Topology.parse_obj(response.json())
@@ -142,7 +142,7 @@ def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     return PingResponse.parse_obj(response.json())

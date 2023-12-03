@@ -33,7 +33,7 @@ def get_chequebook_address(request_options: BeeRequestOptions) -> ChequebookAddr
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     chequebook_address_response = response.json()
@@ -57,7 +57,7 @@ def get_chequebook_balance(request_options: BeeRequestOptions) -> ChequebookBala
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     chequebook_balance_response = response.json()
@@ -85,7 +85,7 @@ def get_last_cashout_action(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     last_cashout_action_response = response.json()
@@ -130,7 +130,7 @@ def cashout_last_cheque(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     transaction_response = response.json()
@@ -158,7 +158,7 @@ def get_last_cheques_for_peer(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     last_cheques_for_peer_response = response.json()
@@ -182,7 +182,7 @@ def get_last_cheques(request_options: BeeRequestOptions) -> LastChequesResponse:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     last_cheques_response = response.json()
@@ -222,7 +222,7 @@ def deposit_tokens(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     transaction_response = response.json()
@@ -262,7 +262,7 @@ def withdraw_tokens(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if logger.error(response.raise_for_status()):
+        if response.raise_for_status():
             logger.error(response.raise_for_status())
 
     transaction_response = response.json()

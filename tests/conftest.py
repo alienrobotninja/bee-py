@@ -5,9 +5,11 @@ from pathlib import Path
 
 import pytest
 
+from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
 from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
 from bee_py.types.type import BatchId
+from bee_py.utils.hex import bytes_to_hex
 
 PROJECT_PATH = Path(__file__).parent
 DATA_FOLDER = PROJECT_PATH / "test_files"
@@ -135,7 +137,7 @@ def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
     stamp: BatchId
 
     printer("[*]Getting Debug Postage....")
-    #return "6be2b2aacd687180a109d960cb9b1da0b446f4fca3966c6b7fdd84e6d9fdad52"
+    #return "0717e834668a3da917dacacacab61ca5a3ea1e5411e1e3d2de5f96a9fb8a0a0d"
 
     # if read_local_bee_stamp:
     #     printer(read_local_bee_stamp)
@@ -162,7 +164,7 @@ def get_peer_debug_postage(printer, bee_peer_debug_ky_options) -> BatchId:
 
     # if read_local_bee_peer_stamp:
     #     return read_local_bee_peer_stamp
-    #return "6be2b2aacd687180a109d960cb9b1da0b446f4fca3966c6b7fdd84e6d9fdad52"
+    # return "6be2b2aacd687180a109d960cb9b1da0b446f4fca3966c6b7fdd84e6d9fdad52"
 
     printer("[*]Getting Debug Postage....")
     stamp = create_postage_batch(bee_peer_debug_ky_options, 100, 20)
@@ -226,3 +228,23 @@ def test_collection() -> dict:
             "data": bytes([1]),
         },
     ]
+
+
+@pytest.fixture
+def try_delete_chunk_from_local_storage(bee_debug_ky_options):
+    def _method(soc_hash):
+        address = soc_hash
+        if isinstance(address, bytes):
+            address = bytes_to_hex(address)
+
+        try:
+            response = delete_chunk_from_local_storage(bee_debug_ky_options, address)
+            return response
+        except ValueError as e:
+            try:
+                response.status_code == 400  # noqa: B015
+                return response
+            except:  # noqa: E722
+                raise e  # noqa: B904
+
+    return _method
