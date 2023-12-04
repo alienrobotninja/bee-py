@@ -5,7 +5,7 @@ from typing import Annotated, Any, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
@@ -331,18 +331,27 @@ class ReferenceResponse:
         return f"ReferenceResponse(reference={self.reference})"
 
 
-class Topic:
-    def __init__(self, value: str):
-        self._validate(value)
-        self._value = value
+class Topic(BaseModel):
+    """
+    Represents a topic.
 
-    def _validate(self, value: str):
-        if len(value) != self.TOPIC_HEX_LENGTH or not all(c in "0123456789abcdefABCDEF" for c in value):
-            msg = f"Topic must be a hex string of length {self.TOPIC_HEX_LENGTH}"
+    Attributes:
+        value: The value of the topic.
+    """
+
+    value: str
+
+    TOPIC_HEX_LENGTH = 32  # define the length of the topic hex string
+
+    @validator("value")
+    def validate_value(cls, v):
+        if len(v) != cls.TOPIC_HEX_LENGTH or not all(c in "0123456789abcdefABCDEF" for c in v):
+            msg = f"Topic must be a hex string of length {cls.TOPIC_HEX_LENGTH}"
             raise ValueError(msg)
+        return v
 
     def __str__(self):
-        return self._value
+        return self.value
 
 
 ReferenceOrENS = Union[Reference, str]
@@ -363,17 +372,17 @@ def assert_address(value: Any):
         raise ValueError(msg)
 
 
-class BeeGenericResponse:
-    """Represents a generic response from the Bee API.
+class BeeGenericResponse(BaseModel):
+    """
+    Represents a generic response from the Bee API.
 
     Attributes:
         message: The human-readable message associated with the response.
         code: The numerical code associated with the response.
     """
 
-    def __init__(self, message: str, code: int):
-        self.message = message
-        self.code = code
+    message: str
+    code: int
 
 
 class PeerBalance(BaseModel):
@@ -656,25 +665,21 @@ class FeedType(Enum):
     EPOCH = "epoch"
 
 
-class FeedUpdateOptions:
+class FeedUpdateOptions(UploadOptions, BaseModel):
     """
     Options for updating a feed.
+
+    :param at: The start date as a Unix timestamp.
+    :type at: Optional[int]
+    :param type: The type of the feed (default: 'sequence').
+    :type type: Optional[FeedType]
+    :param index: Fetch a specific previous feed's update (default fetches the latest update).
+    :type index: Optional[str]
     """
 
-    def __init__(self, at: Optional[int] = None, _type: Optional[FeedType] = "sequence", index: Optional[str] = None):
-        """
-        Constructor for FeedUpdateOptions.
-
-        :param at: The start date as a Unix timestamp.
-        :type at: Optional[int]
-        :param type: The type of the feed (default: 'sequence').
-        :_type type: Optional[FeedType]
-        :param index: Fetch a specific previous feed's update (default fetches the latest update).
-        :type index: Optional[str]
-        """
-        self.at = at
-        self.type = _type
-        self.index = index
+    at: Optional[int] = None
+    _type: Optional[FeedType] = "sequence"
+    index: Optional[str] = None
 
 
 class FeedReader(BaseModel):
@@ -687,8 +692,18 @@ class FeedReader(BaseModel):
         pass
 
 
-class FeedUploadOptions(UploadOptions, FeedUpdateOptions):
-    pass
+class FeedUploadOptions(BaseModel):
+    """
+    Options for uploading a feed.
+
+    :param upload_options: Options for the upload.
+    :type upload_options: UploadOptions
+    :param feed_update_options: Options for updating the feed.
+    :type feed_update_options: FeedUpdateOptions
+    """
+
+    upload_options: UploadOptions
+    feed_update_options: FeedUpdateOptions
 
 
 class FeedWriter(FeedReader):

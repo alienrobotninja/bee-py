@@ -251,14 +251,6 @@ def try_delete_chunk_from_local_storage(bee_debug_ky_options):
     return _method
 
 
-@pytest.fixture
-def test_create_file(tmp_path):
-    d = tmp_path / "sub"
-    d.mkdir()
-    p = d / "hello.txt"
-    p.write_bytes(b"a" * 32)
-
-
 @pytest.fixture(scope="session")
 def create_fake_file(tmp_path_factory):
     # Create a temporary file in the tmp_path directory
