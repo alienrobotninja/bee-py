@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:34bef2080daeb6af0955bfd33fdc70c5cdad6c3975e365d9d8f79d6717a53946"
+content_hash = "sha256:610db2a529c0c1d0931a491f396a83db4c16a8e5161076d6929d11c433167b76"
 
 [[package]]
 name = "aiohttp"
@@ -158,6 +158,20 @@ summary = "Base58 and Base58Check implementation"
 files = [
     {file = "base58-1.0.3-py3-none-any.whl", hash = "sha256:6aa0553e477478993588303c54659d15e3c17ae062508c854a8b752d07c716bd"},
     {file = "base58-1.0.3.tar.gz", hash = "sha256:9a793c599979c497800eb414c852b80866f28daaed5494703fc129592cc83e60"},
+]
+
+[[package]]
+name = "bases"
+version = "0.2.1"
+requires_python = ">=3.7"
+summary = "Python library for general Base-N encodings."
+dependencies = [
+    "typing-extensions",
+    "typing-validation",
+]
+files = [
+    {file = "bases-0.2.1-py3-none-any.whl", hash = "sha256:d030b5e349773ad2a067bfaaf3a9794b70d23a1f923033c15c2e0ce869854f6d"},
+    {file = "bases-0.2.1.tar.gz", hash = "sha256:b0999e14725b59bff38974b00e918629e0e29f3d80a40e022c6f0f8d5cdff9d4"},
 ]
 
 [[package]]
@@ -1742,6 +1756,51 @@ files = [
 ]
 
 [[package]]
+name = "multiformats"
+version = "0.2.1"
+requires_python = ">=3.7"
+summary = "Python implementation of multiformats protocols."
+dependencies = [
+    "bases",
+    "multiformats-config",
+    "typing-extensions",
+    "typing-validation",
+]
+files = [
+    {file = "multiformats-0.2.1-py3-none-any.whl", hash = "sha256:0655fad05cff4cb9eaae3a0f61c4cf8189857fef5a5d0ade6aa25d6b8439e204"},
+    {file = "multiformats-0.2.1.tar.gz", hash = "sha256:4aee6eb5289c3cd00315e3f2b97e36b60db6af9bcec91d65f32d7155942dbef9"},
+]
+
+[[package]]
+name = "multiformats-config"
+version = "0.2.0.post4"
+requires_python = ">=3.7"
+summary = "Pre-loading configuration module for the 'multiformats' package."
+dependencies = [
+    "multiformats",
+]
+files = [
+    {file = "multiformats-config-0.2.0.post4.tar.gz", hash = "sha256:3b5d0be63211681edbcf887abe149fc17b43a79d0c009fb44232af9addf7a309"},
+    {file = "multiformats_config-0.2.0.post4-py3-none-any.whl", hash = "sha256:221a630732f7bb2cd6cb708b94a85da683e29618e4a2055eea1bf4f980feefce"},
+]
+
+[[package]]
+name = "multiformats-fix"
+version = "0.2.2"
+requires_python = ">=3.7"
+summary = "Python implementation of multiformats protocols."
+dependencies = [
+    "bases",
+    "multiformats-config",
+    "typing-extensions",
+    "typing-validation-fix",
+]
+files = [
+    {file = "multiformats-fix-0.2.2.tar.gz", hash = "sha256:00b80d630e7bf8dc9a491295bd0ccf84ad756a14db1d28d21d7273fb0a931e1a"},
+    {file = "multiformats_fix-0.2.2-py3-none-any.whl", hash = "sha256:e674e9be82b8a730ce4b3ffbbf15f31f6bc46d01e10ba69694314a24e0731729"},
+]
+
+[[package]]
 name = "mypy"
 version = "1.7.1"
 requires_python = ">=3.8"
@@ -2152,6 +2211,22 @@ files = [
 ]
 
 [[package]]
+name = "py-multiformats-cid"
+version = "0.4.4"
+requires_python = ">=3.6"
+summary = "Self-describing content-addressed identifiers for distributed systems"
+dependencies = [
+    "base58",
+    "morphys",
+    "py-multibase",
+    "py-multicodec",
+    "py-multihash",
+]
+files = [
+    {file = "py_multiformats_cid-0.4.4-py2.py3-none-any.whl", hash = "sha256:83f6c3109ed56664799c7367703a68d1724b1e9bd79b45c8935c77660560d1dd"},
+]
+
+[[package]]
 name = "py-multihash"
 version = "0.2.3"
 summary = "Multihash implementation in Python"
@@ -2353,6 +2428,14 @@ files = [
 ]
 
 [[package]]
+name = "pysha3"
+version = "1.0.2"
+summary = "SHA-3 (Keccak) for Python 2.7 - 3.5"
+files = [
+    {file = "pysha3-1.0.2.tar.gz", hash = "sha256:fe988e73f2ce6d947220624f04d467faf05f1bbdbc64b0a201296bb3af92739e"},
+]
+
+[[package]]
 name = "pytest"
 version = "7.4.3"
 requires_python = ">=3.7"
@@ -2395,6 +2478,19 @@ dependencies = [
 files = [
     {file = "pytest-cov-4.1.0.tar.gz", hash = "sha256:3904b13dfbfec47f003b8e77fd5b589cd11904a21ddf1ab38a64f204d6a10ef6"},
     {file = "pytest_cov-4.1.0-py3-none-any.whl", hash = "sha256:6ba70b9e97e69fcc3fb45bfeab2d0a138fb65c4d0d6a41ef33983ad114be8c3a"},
+]
+
+[[package]]
+name = "pytest-mock"
+version = "3.12.0"
+requires_python = ">=3.8"
+summary = "Thin-wrapper around the mock package for easier use with pytest"
+dependencies = [
+    "pytest>=5.0",
+]
+files = [
+    {file = "pytest-mock-3.12.0.tar.gz", hash = "sha256:31a40f038c22cad32287bb43932054451ff5583ff094bca6f675df2f8bc1a6e9"},
+    {file = "pytest_mock-3.12.0-py3-none-any.whl", hash = "sha256:0972719a7263072da3a21c7f4773069bcc7486027d7e8e1f81d98a47e701bc4f"},
 ]
 
 [[package]]
@@ -2965,6 +3061,21 @@ files = [
 ]
 
 [[package]]
+name = "swarm-cid-py"
+version = "0.1.0"
+requires_python = ">=3.9,<4.0"
+summary = "Utility library written in Python to convert Swarm hex references into Swarm CIDs"
+dependencies = [
+    "multiformats-fix<0.3.0,>=0.2.2",
+    "py-multiformats-cid<0.5.0,>=0.4.4",
+    "pysha3<2.0.0,>=1.0.2",
+]
+files = [
+    {file = "swarm_cid_py-0.1.0-py3-none-any.whl", hash = "sha256:d51e6ebd1f09ff87203d5ae96f0772f3ccad08f7b9ccaf7b790254f86ce2c172"},
+    {file = "swarm_cid_py-0.1.0.tar.gz", hash = "sha256:7f1be35a4debe157fca99eeea158ff5bff81d6bcd171f3b3c5f7007b769a10f9"},
+]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 requires_python = ">=3.7"
@@ -3073,6 +3184,26 @@ summary = "Backported and Experimental Type Hints for Python 3.8+"
 files = [
     {file = "typing_extensions-4.8.0-py3-none-any.whl", hash = "sha256:8f92fc8806f9a6b641eaa5318da32b44d401efaac0f6678c9bc448ba3605faa0"},
     {file = "typing_extensions-4.8.0.tar.gz", hash = "sha256:df8e4339e9cb77357558cbdbceca33c303714cf861d1eef15e1070055ae8b7ef"},
+]
+
+[[package]]
+name = "typing-validation"
+version = "1.0.0.post2"
+requires_python = ">=3.7"
+summary = "A simple library for runtime type-checking."
+files = [
+    {file = "typing-validation-1.0.0.post2.tar.gz", hash = "sha256:6a30dec74373f9dca29db6f79ef65eb765a6934c09d87639cf422288933b2aa4"},
+    {file = "typing_validation-1.0.0.post2-py3-none-any.whl", hash = "sha256:c9f5cb42435ee59fcf5a1a69dc88ccd5dc6f904436e61b5b8c276906a1c9e454"},
+]
+
+[[package]]
+name = "typing-validation-fix"
+version = "1.2"
+requires_python = ">=3.7"
+summary = "A simple library for runtime type-checking."
+files = [
+    {file = "typing-validation-fix-1.2.tar.gz", hash = "sha256:9b7d1727a229076ae79a3acf4d20d1743b02f25ba08a7a66581c39426568a41b"},
+    {file = "typing_validation_fix-1.2-py3-none-any.whl", hash = "sha256:217dd1c2955301ad6ec0c6246d8a0fe562d9bf52541c47fe80dfa929de136080"},
 ]
 
 [[package]]

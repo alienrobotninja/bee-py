@@ -1,16 +1,17 @@
 import codecs
 import json
+from typing import Optional, Union
 
+from bee_py.bee import Bee
 # from bee_py.feed.type import FeedType
-# from bee_py.types.type import (
-#     BatchId,
-#     BeeRequestOptions,
-#     FeedReader,
-#     FeedWriter,
-#     JsonFeedOptions,
-#     Reference,
-#     UploadOptions,
-# )
+from bee_py.types.type import (  # Reference,
+    BatchId,
+    BeeRequestOptions,
+    FeedReader,
+    FeedWriter,
+    JsonFeedOptions,
+    UploadOptions,
+)
 
 
 def serialize_json(data: dict) -> bytes:
@@ -29,3 +30,42 @@ def serialize_json(data: dict) -> bytes:
     except Exception as e:
         e.args = (f"JsonFeed: {e.args[0]}",) + e.args[1:]
         raise
+
+
+def get_json_data(bee: Bee, reader: FeedReader):
+    """
+    Get JSON data from a feed.
+
+    @param bee: Bee instance
+    @param reader: FeedReader instance
+    @return: JSON data
+    """
+    feed_update = reader.download()
+    retrieved_data = bee.download_data(feed_update.reference)
+    #! Update this Bee class
+    return json.loads(retrieved_data.text)
+
+
+def set_json_data(
+    bee: Bee,
+    writer: FeedWriter,
+    postage_batch_id: BatchId,
+    data,
+    options: Optional[Union[JsonFeedOptions, UploadOptions]] = None,
+    request_options: Optional[BeeRequestOptions] = None,
+):
+    """
+    Set JSON data to a feed.
+
+    @param bee: Bee instance
+    @param writer: FeedWriter instance
+    @param postage_batch_id: Batch ID
+    @param data: Any JSON data
+    @param options: JSON feed options and upload options
+    @param request_options: Bee request options
+    @return: Reference
+    """
+    serialized_data = json.dumps(data)
+    response = bee.upload_data(postage_batch_id, serialized_data, options, request_options)
+    reference = response["reference"]
+    return writer.upload(postage_batch_id, reference)
