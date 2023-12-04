@@ -11,6 +11,7 @@ from typing_extensions import TypeAlias
 
 from bee_py.feed.feed import download_feed_update, update_feed
 from bee_py.modules.feed import fetch_latest_feed_update
+from bee_py.utils.error import BeeError
 from bee_py.utils.hex import bytes_to_hex
 from bee_py.utils.reference import make_bytes_reference
 
@@ -20,13 +21,8 @@ Type = TypeVar("Type")
 Name = TypeVar("Name")
 Length = TypeVar("Length", bound=int)
 T: TypeAlias = Union[str, bytes]
-
-BeeRequestOptions = dict[str, Optional[Union[str, int, dict[str, str], PreparedRequest, Response]]]
-
-
-BeeRequest = dict[str, Union[str, dict[str, str], Optional[str]]]
-BeeResponse = dict[str, Union[dict[str, str], int, str, BeeRequest]]
 NumberString = Annotated[str, "NumberString"]
+Signer = TypeVar("Signer", bound=AccountAPI)
 
 SPAN_SIZE = 8
 SECTION_SIZE = 32
@@ -61,6 +57,79 @@ TOPIC_HEX_LENGTH = 64
 # Type aliases
 BatchId: TypeAlias = str
 AddressPrefix: TypeAlias = str
+
+
+class BeeRequest(BaseModel):
+    """
+    Bee request model.
+
+    Attributes:
+        url: The URL of the request.
+        method: The HTTP method of the request.
+        headers: The headers of the request.
+        params: The parameters of the request.
+    """
+
+    url: str
+    method: str
+    headers: Optional[dict[str, str]] = None
+    params: Optional[dict[str, str]] = None
+
+
+class BeeResponse(BaseModel):
+    """
+    Bee response model.
+
+    Attributes:
+        headers: The headers of the response.
+        status: The status code of the response.
+        statusText: The status text of the response.
+        request: The request that was made.
+    """
+
+    headers: dict[str, str]
+    status: int
+    status_text: Optional[str] = Field(None, alias="statusText")
+    request: BeeRequest
+
+
+class BeeRequestOptions(BaseModel):
+    base_url: Optional[str] = Field(None, alias="baseURL")
+    timeout: Union[int, bool] = None
+    retry: Union[int, bool] = None
+    headers: dict = {}
+    adapter: Optional[object] = None
+    on_request: Optional[callable] = Field(None, alias="onRequest")
+
+
+class PssSubscription(BaseModel):
+    """
+    Pss subscription model.
+
+    Attributes:
+       topic: The topic of the subscription.
+       cancel: A function to cancel the subscription.
+    """
+
+    topic: str
+    cancel: callable[[], None]
+
+
+class PssMessageHandler(BaseModel):
+    """
+    Pss message handler model.
+
+    Attributes:
+      onMessage: A function to handle messages.
+      onError: A function to handle errors.
+    """
+
+    onMessage: callable[[str, PssSubscription], None]  # noqa: N815
+    onError: callable[[BeeError, PssSubscription], None]  # noqa: N815
+
+
+class BeeOptions(BeeRequestOptions):
+    signer: Optional[Union[str, bytes, object]] = None
 
 
 class BrandedType(Generic[Type, Name]):
@@ -346,9 +415,6 @@ class Topic(BaseModel):
 
     def __str__(self):
         return self.value
-
-
-ReferenceOrENS = Union[Reference, str]
 
 
 def assert_address(value: Any):
@@ -736,7 +802,7 @@ class FeedWriter(FeedReader):
         upload: The upload function.
     """
 
-    signer: AccountAPI
+    signer: Signer
 
     def upload(
         self,
@@ -840,3 +906,63 @@ class GetAllPinResponse(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
+
+
+class SOCReader(BaseModel):
+    """
+    SOCReader model.
+
+    Attributes:
+      owner: The owner of the SOCReader.
+      download: A function to download a single owner chunk.
+    """
+
+    owner: AddressType
+    download: callable
+
+
+class SOCWriter(SOCReader):
+    """
+    SOCWriter model.
+
+    Attributes:
+     upload: A function to upload a single owner chunk.
+    """
+
+    upload: callable[[Union(str, BatchId), bytes, bytes, UploadOptions], Reference]
+
+
+class UploadResultWithCid(UploadResult):
+    """
+    UploadResultWithCid model.
+
+    Attributes:
+     cid: A function that converts the reference into Swarm CIDs.
+    """
+
+    cid: callable[[], str]
+
+
+class AllTagsOptions(BaseModel):
+    limit: Optional[int] = None
+    offest: Optional[int] = None
+
+
+class FeedManifestResult(BaseModel):
+    """
+    reference: Reference of the uploaded data
+    cid: Function that converts the reference into Swarm Feed CID.
+
+    https://github.com/aviksaikat/swarm-cid-py
+    """
+
+    reference: Reference
+    cid: callable[[], str]
+
+
+# * Type that represents either Swarm's reference in hex string or
+# * ESN domain (something.eth).
+ReferenceOrENS = Union[Reference, str]
+# * Type that represents either Swarm's reference in hex string,
+# * ESN domain (something.eth) or CID using one of the Swarm's codecs.
+ReferenceCidOrENS = Union[ReferenceOrENS, str]
