@@ -2,53 +2,20 @@ from typing import Optional
 
 from eth_typing import ChecksumAddress as AddressType
 
-from bee_py.types.type import BeeRequestOptions, FeedType, FeedUpdateOptions, Reference, ReferenceResponse, Topic
+from bee_py.types.type import (
+    BeeRequestOptions,
+    CreateFeedOptions,
+    FeedUpdateHeaders,
+    FeedUpdateOptions,
+    FetchFeedUpdateResponse,
+    Reference,
+    Topic,
+)
 from bee_py.utils.error import BeeError
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
 
 FEED_ENDPOINT = "feeds"
-
-
-class CreateFeedOptions:
-    """
-    Options for creating a feed.
-    """
-
-    def __init__(self, _type: Optional[FeedType] = None):
-        """
-        Constructor for CreateFeedOptions.
-
-        :param type: The type of the feed.
-        :_type type: Optional[FeedType]
-        """
-        self.type = _type
-
-
-class FeedUpdateHeaders:
-    """
-    Headers for a feed update.
-    """
-
-    def __init__(self, feed_index: str, feed_index_next: str):
-        """
-        Constructor for FeedUpdateHeaders.
-
-        :param feed_index: The current feed's index.
-        :type feed_index: str
-        :param feed_index_next: The feed's index for the next update.
-        :type feed_index_next: str
-        """
-        self.feed_index = feed_index
-        self.feed_index_next = feed_index_next
-
-
-class FetchFeedUpdateResponse(ReferenceResponse, FeedUpdateHeaders):
-    """
-    Response for fetching a feed update.
-    """
-
-    pass
 
 
 def create_feed_manifest(
@@ -144,4 +111,6 @@ def fetch_latest_feed_update(
     # Extract feed update headers from response headers
     headers = read_feed_update_headers(response.headers)
 
-    return FetchFeedUpdateResponse(data["reference"], headers.feed_index, headers.feed_index_next)
+    return FetchFeedUpdateResponse(
+        reference=data["reference"], feed_index=headers.feed_index, feed_index_next=headers.feed_index_next
+    )

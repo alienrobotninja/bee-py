@@ -1,3 +1,4 @@
+import struct
 from typing import Optional, Union
 
 from bee_py.types.type import BatchId, BeeRequestOptions, Data, Reference, ReferenceOrENS, UploadOptions, UploadResult
@@ -95,3 +96,44 @@ def download_readable(request_options: BeeRequestOptions, _hash: ReferenceOrENS)
             logger.error(response.raise_for_status())
 
     return response
+
+
+def make_bytes(length: int) -> bytearray:
+    """
+    Creates a byte array of a given length.
+
+    :param length: The length of the byte array.
+    :type length: int
+    :return: The byte array.
+    :rtype: bytearray
+    """
+    return bytearray(length)
+
+
+def write_big_endian(value: int, bytes_data: Optional[bytes] = None):
+    """
+    Writes a 64-bit unsigned integer to a byte array in big-endian order.
+
+    :param value: The value to write.
+    :type value: int
+    :param bytes: The byte array to write to (default is None).
+    :type bytes: bytearray
+    :return: The byte array.
+    :rtype: bytearray
+    """
+    if bytes_data:
+        bytes_data = make_bytes(8)
+    struct.pack_into(">Q", bytes_data, 0, value)
+    return bytes_data
+
+
+def read_big_endian(bytes_data: bytes) -> int:
+    """
+    Reads a 64-bit unsigned integer from a byte array in big-endian order.
+
+    :param bytes: The byte array.
+    :type bytes: bytearray
+    :return: The 64-bit unsigned integer.
+    :rtype: int
+    """
+    return struct.unpack(">Q", bytes_data)[0]

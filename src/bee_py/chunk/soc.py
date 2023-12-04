@@ -2,7 +2,6 @@ from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
 from eth_account import Account
-from eth_account.messages import encode_defunct
 from eth_typing import ChecksumAddress as AddressType
 from pydantic import BaseModel, Field
 

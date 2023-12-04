@@ -1,19 +1,6 @@
 from typing import Optional
 
-from swarm_cid import ReferenceType
-
 from bee_py.chunk.signer import sign
-from bee_py.chunk.soc import download_single_owner_chunk, upload_single_owner_chunk_data
-from bee_py.feed.feed import Index, IndexBytes
-from bee_py.types.type import (  # Reference,
-    BatchId,
-    BeeRequestOptions,
-    FeedReader,
-    FeedWriter,
-    JsonFeedOptions,
-    UploadOptions,
-)
-from bee_py.utils.collection import assert_collection, make_collection
 from bee_py.utils.urls import assert_bee_url, strip_last_slash
 
 
@@ -55,3 +42,6 @@ class Bee:
             "onRequest": options.get("onRequest", None),
             "adapter": options.get("adapter", None),
         }
+
+    def download_chunk(self):
+        ...

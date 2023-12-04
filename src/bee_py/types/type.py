@@ -9,7 +9,10 @@ from pydantic import BaseModel, Field, validator
 from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
-# from bee_py.utils.hex import bytes_to_hex
+from bee_py.feed.feed import download_feed_update, update_feed
+from bee_py.modules.feed import fetch_latest_feed_update
+from bee_py.utils.hex import bytes_to_hex
+from bee_py.utils.reference import make_bytes_reference
 
 # Define all the types here
 
@@ -284,48 +287,39 @@ class OverLayAddress:
     value: str
 
 
-class Reference:
+class Reference(BaseModel):
     """
     Represents a reference that can be either a non-encrypted reference, which is a hex string of length 64,
     or an encrypted reference, which is a hex string of length 128.
     """
 
-    def __init__(self, value):
-        self._validate(value)
-        self._value = value
+    value: str
 
-    def _validate(self, value):
-        if len(value) not in (REFERENCE_HEX_LENGTH, ENCRYPTED_REFERENCE_HEX_LENGTH) or not all(
-            c in "0123456789abcdefABCDEF" for c in value
+    @validator("value")
+    def validate_value(cls, v):  # noqa: N805
+        if len(v) not in (REFERENCE_HEX_LENGTH, ENCRYPTED_REFERENCE_HEX_LENGTH) or not all(
+            c in "0123456789abcdefABCDEF" for c in v
         ):
             msg = "Reference must be a hex string of length 64 or 128"
             raise ValueError(msg)
+        return v
 
     def __str__(self):
-        return self._value
+        return self.value
 
-    def __len__(self) -> int:
-        return len(self._value)
+    def __len__(self):
+        return len(self.value)
 
     def __call__(self):
-        return self._value
+        return self.value
 
 
-class ReferenceResponse:
-    """Represents a response containing a reference."""
+class ReferenceResponse(BaseModel):
+    """
+    Represents a response containing a reference.
+    """
 
-    def __init__(self, reference: Reference):
-        """Initializes the ReferenceResponse with the provided reference."""
-        self.reference = reference
-
-    @property
-    def reference(self) -> Reference:
-        """The reference associated with the response."""
-        return self._reference
-
-    @reference.setter
-    def reference(self, reference: Reference):
-        self._reference = reference
+    reference: str
 
     def __str__(self):
         return f"ReferenceResponse(reference={self.reference})"
@@ -344,7 +338,7 @@ class Topic(BaseModel):
     TOPIC_HEX_LENGTH = 32  # define the length of the topic hex string
 
     @validator("value")
-    def validate_value(cls, v):
+    def validate_value(cls, v):  # noqa: N805
         if len(v) != cls.TOPIC_HEX_LENGTH or not all(c in "0123456789abcdefABCDEF" for c in v):
             msg = f"Topic must be a hex string of length {cls.TOPIC_HEX_LENGTH}"
             raise ValueError(msg)
@@ -682,14 +676,83 @@ class FeedUpdateOptions(UploadOptions, BaseModel):
     index: Optional[str] = None
 
 
+class CreateFeedOptions(BaseModel):
+    """
+    Options for creating a feed.
+    """
+
+    _type: Optional[FeedType]
+
+
+class FeedUpdateHeaders(BaseModel):
+    """
+    Headers for a feed update.
+    """
+
+    feed_index: str
+    feed_index_next: str
+
+
+class FetchFeedUpdateResponse(ReferenceResponse, FeedUpdateHeaders):
+    """
+    Response for fetching a feed update.
+    """
+
+    pass
+
+
 class FeedReader(BaseModel):
     Type: FeedType
     owner: str
     topic: str
+    request_options: Optional[BeeRequestOptions] = None
 
     @abstractmethod
     def download(self, options: Optional[FeedUpdateOptions] = None):
         pass
+
+
+class MakeFeedReader(FeedReader):
+    def download(self, options: Optional[FeedUpdateOptions]) -> FetchFeedUpdateResponse:
+        if options and options.index:
+            update = download_feed_update(
+                self.request_options, bytes.fromhex(self.owner), self.topic, self.options.index
+            )
+            return FetchFeedUpdateResponse(
+                reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
+            )
+        else:
+            return fetch_latest_feed_update(self.request_options, self.owner, self.topic, options)
+
+
+class FeedWriter(FeedReader):
+    """
+    Represents a feed writer.
+
+    Attributes:
+        type: The type of the feed.
+        owner: The owner of the feed.
+        topic: The topic of the feed.
+        upload: The upload function.
+    """
+
+    signer: AccountAPI
+
+    def upload(
+        self,
+        postage_batch_id: Union[BatchId, AddressType],
+        reference: Reference,
+        options: Optional[FeedUpdateOptions] = None,
+    ):
+        canonical_reference = make_bytes_reference(reference)
+        return update_feed(
+            self.request_options,
+            self.signer,
+            self.topic,
+            canonical_reference,
+            postage_batch_id,
+            {**options, type: self.Type},
+        )
 
 
 class FeedUploadOptions(BaseModel):
@@ -704,17 +767,6 @@ class FeedUploadOptions(BaseModel):
 
     upload_options: UploadOptions
     feed_update_options: FeedUpdateOptions
-
-
-class FeedWriter(FeedReader):
-    @abstractmethod
-    def upload(
-        self,
-        postage_batch_id: Union[str, BatchId],
-        reference: Union[bytes, Reference],
-        options: Optional[FeedUploadOptions] = None,
-    ) -> Reference:
-        pass
 
 
 class JsonFeedOptions(BaseModel):
