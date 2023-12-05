@@ -4,34 +4,17 @@ from ens.utils import is_valid_ens_name
 from swarm_cid import ReferenceType, decodeCid, encodeReference
 
 from bee_py.types.type import (
-    ADDRESS_HEX_LENGTH,
-    BATCH_ID_HEX_LENGTH,
     ENCRYPTED_REFERENCE_HEX_LENGTH,
     PSS_TARGET_HEX_LENGTH_MAX,
     PUBKEY_HEX_LENGTH,
     REFERENCE_HEX_LENGTH,
-    TAGS_LIMIT_MAX,
-    TAGS_LIMIT_MIN,
-    AddressPrefix,
     AllTagsOptions,
-    BatchId,
-    BeeRequestOptions,
-    CashoutOptions,
-    CollectionUploadOptions,
-    FileUploadOptions,
-    NumberString,
-    PostageBatchOptions,
-    PssMessageHandler,
-    Reference,
     ReferenceOrENS,
     Tag,
-    TransactionHash,
-    TransactionOptions,
-    UploadOptions,
     UploadResult,
     UploadResultWithCid,
 )
-from bee_py.utils.error import BeeArgumentError, BeeError
+from bee_py.utils.error import BeeError
 from bee_py.utils.hex import assert_hex_string, is_hex_string, is_prefixed_hex_string
 
 
@@ -161,5 +144,254 @@ def add_cid_conversion_function(result: UploadResult, cid_type: ReferenceType) -
     return UploadResultWithCid(cid=cid)
 
 
-def assert_upload_options():
-    ...
+def assert_request_options(options: any, name: str = "RequestOptions") -> None:
+    """
+    Checks that a value is a valid BeeRequestOptions object.
+
+    Args:
+       options (Any): The value to check.
+       name (str): The name of the object, for error messages.
+
+    Raises:
+       TypeError: If the value is not an object.
+       ValueError: If the `retry` or `timeout` options are not non-negative integers.
+    """
+    if options is None:
+        return
+
+    if options.retry:
+        if not isinstance(options.retry, int) or options.retry < 0:
+            msg = f"{name}.retry has to be a non-negative integer!"
+            raise ValueError(msg)
+
+    if options.timeout:
+        if not isinstance(options.timeout, int) or options.timeout < 0:
+            msg = f"{name}.timeout has to be a non-negative integer!"
+            raise ValueError(msg)
+
+
+def assert_upload_options(value: any, name: str = "UploadOptions") -> None:
+    """
+    Asserts that a value is a valid BeeRequestOptions object.
+
+    Args:
+        value (Any): The value to check.
+        name (str): The name of the object, for error messages.
+
+    Raises:
+        TypeError: If the value is not an object.
+        ValueError: If the `retry` or `timeout` options are not non-negative integers.
+    """
+    assert_request_options(value, name)
+
+    options = value
+
+    if options.pin and not isinstance(options.pin, bool):
+        msg = f"options.pin property in {name} has to be boolean or undefined!"
+        raise TypeError(msg)
+
+    if options.encrypt and not isinstance(options.encrypt, bool):
+        msg = f"options.encrypt property in {name} has to be boolean or undefined!"
+        raise TypeError(msg)
+
+    if options.tag and (not isinstance(options.tag, int) and options.tag >= 0):
+        msg = f"options.tag property in {name} has to be number or undefined!"
+        raise TypeError(msg)
+
+
+def assert_file_upload_options(value: any, name: str = "FileUploadOptions") -> None:
+    """
+    Asserts that a value is a valid FileUploadOptions object.
+
+    Args:
+        value (any): The value to check.
+        name (str): The name of the object, for error messages.
+
+    Raises:
+        TypeError: If the value is not an object.
+        ValueError: If the `size` or `contentType` options are not of the correct type.
+    """
+
+    assert_upload_options(value, name)
+
+    options = value
+
+    if options.size and not isinstance(options.size, int):
+        msg = "size property in FileUploadOptions has to be number or undefined!"
+        raise TypeError(msg)
+
+    if options.size and options.size < 0:
+        msg = "size property in FileUploadOptions has to be a non-negative integer"
+        raise ValueError(msg)
+
+    if options.content_type and not isinstance(options.content_type, str):
+        msg = "contentType property in FileUploadOptions has to be string or undefined!"
+        raise TypeError(msg)
+
+
+def assert_collection_upload_options(value: any, name: str = "CollectionUploadOptions") -> None:
+    """
+    Asserts that a value is a valid CollectionUploadOptions object.
+
+    Args:
+        value (any): The value to check.
+        name (str): The name of the object, for error messages.
+
+    Raises:
+        TypeError: If the value is not an object.
+        ValueError: If the `indexDocument` or `errorDocument` options are not of the correct type.
+    """
+
+    assert_upload_options(value, name)
+
+    options = value
+
+    if options.index_document:
+        if not isinstance(options.index_document, str):
+            msg = "indexDocument property in CollectionUploadOptions has to be string or undefined!"
+            raise TypeError(msg)
+
+    if options.error_document:
+        if not isinstance(options.error_document, str):
+            msg = "errorDocument property in CollectionUploadOptions has to be string or undefined!"
+            raise TypeError(msg)
+
+
+def is_tag(value: any) -> bool:
+    """
+    Checks whether the given value is a valid Tag object.
+
+    Args:
+        value (Any): The value to check.
+
+    Returns:
+        bool: True if the value is a valid Tag object, False otherwise.
+    """
+    return isinstance(value, Tag)
+
+
+def assert_address_prefix(value: str, name: str = "AddressPrefix") -> None:
+    """
+    Asserts that a value is a valid Bee address prefix.
+
+    Args:
+        value (str): The value to check.
+        name (str): The name of the argument, for error messages.
+
+    Raises:
+        TypeError: If the value is not a string.
+        ValueError: If the value is not a valid hex string or if it exceeds the maximum length.
+    """
+
+    assert_hex_string(value)
+
+    if len(value) > PSS_TARGET_HEX_LENGTH_MAX:
+        msg = f"{name} must have a maximum length of {PSS_TARGET_HEX_LENGTH_MAX}. Got string with length {len(value)}"
+        raise ValueError(msg)
+
+
+def assert_postage_batch_options(value: any, name: str = "PostageBatchOptions") -> None:
+    """
+    Asserts that a value is a valid PostageBatchOptions object.
+
+    Args:
+        value (Any): The value to check.
+        name (str): The name of the object, for error messages.
+
+    Raises:
+        TypeError: If the value is not an object.
+        ValueError: If the `gasPrice`, `immutableFlag`, `waitForUsable`, or `waitForUsableTimeout` options
+        are not of the correct type or have invalid values.
+    """
+
+    if value is None:
+        return
+
+    options = value
+
+    assert_request_options(options, name)
+
+    if options.gas_price:
+        if not isinstance(options.gas_price, int) or options.gas_price < 0:
+            msg = "gasPrice must be a non-negative integer"
+            raise ValueError(msg)
+
+    if options.immutable_flag:
+        if not isinstance(options.immutable_flag, bool):
+            msg = "immutableFlag must be a boolean"
+            raise ValueError(msg)
+
+    if options.wait_for_usable:
+        if not isinstance(options.wait_for_usable, bool):
+            msg = "waitForUsable must be a boolean"
+            raise ValueError(msg)
+
+    if options.wait_for_usable_timeout:
+        if not isinstance(options.wait_for_usable_timeout, int) or options.wait_for_usable_timeout < 0:
+            msg = "waitForUsableTimeout must be a non-negative integer"
+            raise ValueError(msg)
+
+
+def assert_transaction_options(value: any, name: str = "TransactionOptions"):
+    """
+    Validates that a value is a valid TransactionOptions object.
+
+    Args:
+        value (Any): The value to check.
+        name (str): The name of the object, for error messages.
+
+    Raises:
+        ValueError: If the `gasLimit` or `gasPrice` options are not non-negative integers.
+    """
+    if value is None:
+        return
+
+    options = value
+    assert_request_options(options, "TransactionOptions")
+
+    if options.gas_price:
+        if not isinstance(options.gas_price, int) or options.gas_price < 0:
+            msg = f"{name}.gas_price must be a non-negative integer"
+            raise ValueError(msg)
+
+    if options.gas_limit:
+        if not isinstance(options.gas_limit, int) or options.gas_limit < 0:
+            msg = f"{name}.gas_limit must be a non-negative integer"
+            raise ValueError(msg)
+
+
+def assert_cashout_options(value: any, name: str = "CashoutOptions"):
+    """
+    CashoutOptions is an alias for TransactionOptions
+    """
+    assert_transaction_options(value, name)
+
+
+def assert_all_tags_options(value: any, name: str = "AllTagsOptions"):
+    if not isinstance(value, AllTagsOptions):
+        msg = f"Not a valid {name} data"
+        raise TypeError(msg)
+
+
+def assert_transaction_hash(transaction_hash: any, name: str = "TransactionHash"):
+    """
+    Validates that a value is a valid TransactionHash.
+
+    Args:
+        transaction_hash (Any): The value to check.
+        name (str): The name of the object, for error messages.
+
+    Raises:
+        TypeError: If the transaction_hash is not a string or does not have the correct length.
+    """
+    if not isinstance(transaction_hash, str):
+        msg = "TransactionHash has to be a string!"
+        raise TypeError(msg)
+
+    if not is_prefixed_hex_string(transaction_hash):
+        raise TypeError()
+
+    # Hash is 64 long + '0x' prefix = 66
+    if len(transaction_hash) != PUBKEY_HEX_LENGTH:
+        msg = f"{name} has to be prefixed hex string with total length 66 (0x prefix including)"
+        raise TypeError(msg)

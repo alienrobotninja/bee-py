@@ -6,7 +6,8 @@ from typing import Annotated, Any, Generic, NewType, Optional, TypeVar, Union
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from pydantic import BaseModel, Field, validator
-from requests import PreparedRequest, Response
+
+# from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
 from bee_py.feed.feed import download_feed_update, update_feed

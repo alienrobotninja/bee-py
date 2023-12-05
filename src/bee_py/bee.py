@@ -11,14 +11,14 @@ from bee_py.feed.retrievable import get_all_sequence_update_references
 from bee_py.feed.topic import make_topic, make_topic_from_string
 from bee_py.feed.type import is_feed_type
 from bee_py.modules import bytes as bytes_api
-from bee_py.modules.bzz import *
-from bee_py.modules.chunk import *
+from bee_py.modules import bzz as bzz_api
+from bee_py.modules import chunks as chunks_api
+from bee_py.modules import pinning as pinning_api
+from bee_py.modules import pss as pss_api
+from bee_py.modules import status as status_api
+from bee_py.modules import stewardship as stewardship_api
+from bee_py.modules import tag as tag_api
 from bee_py.modules.feed import create_feed_manifest
-from bee_py.modules.pinning import *
-from bee_py.modules.pss import *
-from bee_py.modules.status import *
-from bee_py.modules.stewardship import *
-from bee_py.modules.tag import *
 from bee_py.types.type import (  # Reference,
     CHUNK_SIZE,
     DEFAULT_FEED_TYPE,
@@ -63,6 +63,7 @@ from bee_py.utils.type import (
     add_cid_conversion_function,
     assert_reference,
     assert_reference_or_ens,
+    assert_upload_options,
     make_reference_or_ens,
     make_tag_uid,
 )
@@ -122,10 +123,9 @@ class Bee:
         options: Optional[UploadOptions] = None,
         request_options: Optional[BeeRequestOptions] = None,
     ):
-        # if options:
-        #     assert_upload_options(options)
-        # return bytes_api.upload(request_options, data, postage_batch_id, options)
-        ...
+        if options:
+            assert_upload_options(options)
+        return bytes_api.upload(request_options, data, postage_batch_id, options)
 
     def download_chunk(self):
         ...
