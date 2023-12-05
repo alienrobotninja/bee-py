@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from ape.types import AddressType
 from swarm_cid import ReferenceType
@@ -10,7 +10,7 @@ from bee_py.feed.json import get_json_data, set_json_data
 from bee_py.feed.retrievable import get_all_sequence_update_references
 from bee_py.feed.topic import make_topic, make_topic_from_string
 from bee_py.feed.type import is_feed_type
-from bee_py.modules.bytes import *
+from bee_py.modules import bytes as bytes_api
 from bee_py.modules.bzz import *
 from bee_py.modules.chunk import *
 from bee_py.modules.feed import create_feed_manifest
@@ -56,27 +56,15 @@ from bee_py.types.type import (  # Reference,
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.collection import assert_collection, make_collection_from_file_list
 from bee_py.utils.collection_node import make_collection_from_fs
-from bee_py.utils.data import prepare_web_socket_data
+from bee_py.utils.data import prepare_websocket_data
 from bee_py.utils.error import BeeArgumentError, BeeError
 from bee_py.utils.eth import make_eth_address, make_hex_eth_address
-from bee_py.utils.file import is_file
 from bee_py.utils.type import (
-    addCidConversionFunction,
-    assertAddressPrefix,
-    assertAllTagsOptions,
-    assertBatchId,
-    assertCollectionUploadOptions,
-    assertData,
-    assertFileData,
-    assertFileUploadOptions,
-    assertPssMessageHandler,
-    assertPublicKey,
-    assertReference,
-    assertReferenceOrEns,
-    assertRequestOptions,
-    assertUploadOptions,
+    add_cid_conversion_function,
+    assert_reference,
+    assert_reference_or_ens,
+    make_reference_or_ens,
     make_tag_uid,
-    makeReferenceOrEns,
 )
 from bee_py.utils.urls import assert_bee_url, strip_last_slash
 
@@ -94,7 +82,14 @@ class Bee:
         request_options: Ky instance that defines connection to Bee node.
     """
 
-    def __init__(self, url: str, options: Optional[dict] = None):
+    # URL on which is the main API of Bee node exposed
+    url: str
+    # Default Signer object used for signing operations, mainly Feeds
+    signer: Optional[Signer]
+    # Ky instance that defines connection to Bee node
+    request_options: BeeRequestOptions
+
+    def __init__(self, url: str, options: Optional[BeeOptions] = None):
         """
         Constructs a new Bee instance.
 
@@ -119,6 +114,18 @@ class Bee:
             "onRequest": options.get("onRequest", None),
             "adapter": options.get("adapter", None),
         }
+
+    def upload_data(
+        self,
+        postage_batch_id: Union[str, BatchId],
+        data: Union[str, bytes],
+        options: Optional[UploadOptions] = None,
+        request_options: Optional[BeeRequestOptions] = None,
+    ):
+        # if options:
+        #     assert_upload_options(options)
+        # return bytes_api.upload(request_options, data, postage_batch_id, options)
+        ...
 
     def download_chunk(self):
         ...

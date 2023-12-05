@@ -129,7 +129,7 @@ class PssMessageHandler(BaseModel):
 
 
 class BeeOptions(BeeRequestOptions):
-    signer: Optional[Union[str, bytes, object]] = None
+    signer: Optional[Union[str, bytes]] = None
 
 
 class BrandedType(Generic[Type, Name]):
@@ -551,6 +551,9 @@ class TransactionOptions(BaseModel):
     gas_limit: str = Field(..., alias="gasLimit")
 
 
+CashoutOptions = TransactionOptions
+
+
 class GetStake(BaseModel):
     staked_amount: str = Field(..., alias="stakedAmount")
 
@@ -849,6 +852,17 @@ class UploadResult(BaseModel):
         arbitrary_types_allowed = True
 
 
+class UploadResultWithCid(UploadResult):
+    """
+    Function that converts the reference into Swarm CIDs
+
+    @throws TypeError if the reference is encrypted reference (eq. 128 chars long) which is not supported in CID
+    @see https://github.com/aviksaikat/swarm-cid-py
+    """
+
+    cid: callable[[], str]
+
+
 class UploadOptions(BaseModel):
     pin: Optional[bool] = False
     encrypt: Optional[bool] = False
@@ -930,17 +944,6 @@ class SOCWriter(SOCReader):
     """
 
     upload: callable[[Union(str, BatchId), bytes, bytes, UploadOptions], Reference]
-
-
-class UploadResultWithCid(UploadResult):
-    """
-    UploadResultWithCid model.
-
-    Attributes:
-     cid: A function that converts the reference into Swarm CIDs.
-    """
-
-    cid: callable[[], str]
 
 
 class AllTagsOptions(BaseModel):

@@ -223,3 +223,11 @@ def remove_0x_prefix(input_string: str) -> str:
         return input_string[2:]
     else:
         return input_string
+
+
+def assert_hex_string(value: bytes, length: Optional[int] = None) -> Optional[bool]:
+    if len(value) != length:
+        return False
+    if not is_hex_string(value):
+        msg = f"{value} is not a valid hex string"
+        raise TypeError(msg)
