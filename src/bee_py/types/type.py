@@ -1,7 +1,7 @@
 import json
 from abc import abstractmethod
 from enum import Enum
-from typing import Annotated, Any, Generic, NewType, Optional, TypeVar, Union
+from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
@@ -10,11 +10,12 @@ from pydantic import BaseModel, Field, validator
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
-from bee_py.feed.feed import download_feed_update, update_feed
-from bee_py.modules.feed import fetch_latest_feed_update
+# from bee_py.feed.feed import download_feed_update, update_feed
+# from bee_py.modules.feed import fetch_latest_feed_update
 from bee_py.utils.error import BeeError
 from bee_py.utils.hex import bytes_to_hex
-from bee_py.utils.reference import make_bytes_reference
+
+# from bee_py.utils.reference import make_bytes_reference
 
 # Define all the types here
 
@@ -96,11 +97,10 @@ class BeeResponse(BaseModel):
 
 class BeeRequestOptions(BaseModel):
     base_url: Optional[str] = Field(None, alias="baseURL")
-    timeout: Union[int, bool] = None
+    timeout: Optional[int] = None
     retry: Union[int, bool] = None
     headers: dict = {}
-    adapter: Optional[object] = None
-    on_request: Optional[callable] = Field(None, alias="onRequest")
+    on_request: bool = Field(None, alias="onRequest")
 
 
 class PssSubscription(BaseModel):
@@ -113,7 +113,7 @@ class PssSubscription(BaseModel):
     """
 
     topic: str
-    cancel: callable[[], None]
+    cancel: Callable[[], None]
 
 
 class PssMessageHandler(BaseModel):
@@ -125,8 +125,8 @@ class PssMessageHandler(BaseModel):
       onError: A function to handle errors.
     """
 
-    onMessage: callable[[str, PssSubscription], None]  # noqa: N815
-    onError: callable[[BeeError, PssSubscription], None]  # noqa: N815
+    onMessage: Callable[[str, PssSubscription], None]  # noqa: N815
+    onError: Callable[[BeeError, PssSubscription], None]  # noqa: N815
 
 
 class BeeOptions(BeeRequestOptions):
@@ -698,6 +698,9 @@ class Tag(BaseModel):
     synced: int = 0
     uid: int
     started_at: str = Field(..., alias="startedAt")
+    # ? deprecated added for backwards compatibility
+    total: int = 0
+    processed: int = 0
 
 
 class TransactionInfo(BaseModel):
@@ -782,17 +785,17 @@ class FeedReader(BaseModel):
         pass
 
 
-class MakeFeedReader(FeedReader):
-    def download(self, options: Optional[FeedUpdateOptions]) -> FetchFeedUpdateResponse:
-        if options and options.index:
-            update = download_feed_update(
-                self.request_options, bytes.fromhex(self.owner), self.topic, self.options.index
-            )
-            return FetchFeedUpdateResponse(
-                reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
-            )
-        else:
-            return fetch_latest_feed_update(self.request_options, self.owner, self.topic, options)
+# class MakeFeedReader(FeedReader):
+#     def download(self, options: Optional[FeedUpdateOptions]) -> FetchFeedUpdateResponse:
+#         if options and options.index:
+#             update = download_feed_update(
+#                 self.request_options, bytes.fromhex(self.owner), self.topic, self.options.index
+#             )
+#             return FetchFeedUpdateResponse(
+#                 reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
+#             )
+#         else:
+#             return fetch_latest_feed_update(self.request_options, self.owner, self.topic, options)
 
 
 class FeedWriter(FeedReader):
@@ -808,21 +811,23 @@ class FeedWriter(FeedReader):
 
     signer: Signer
 
+    @abstractmethod
     def upload(
         self,
         postage_batch_id: Union[BatchId, AddressType],
         reference: Reference,
         options: Optional[FeedUpdateOptions] = None,
     ):
-        canonical_reference = make_bytes_reference(reference)
-        return update_feed(
-            self.request_options,
-            self.signer,
-            self.topic,
-            canonical_reference,
-            postage_batch_id,
-            {**options, type: self.Type},
-        )
+        # canonical_reference = make_bytes_reference(reference)
+        # return update_feed(
+        #     self.request_options,
+        #     self.signer,
+        #     self.topic,
+        #     canonical_reference,
+        #     postage_batch_id,
+        #     {**options, type: self.Type},
+        # )
+        pass
 
 
 class FeedUploadOptions(BaseModel):
@@ -837,6 +842,9 @@ class FeedUploadOptions(BaseModel):
 
     upload_options: UploadOptions
     feed_update_options: FeedUpdateOptions
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
 class JsonFeedOptions(BaseModel):
@@ -861,7 +869,7 @@ class UploadResultWithCid(UploadResult):
     @see https://github.com/aviksaikat/swarm-cid-py
     """
 
-    cid: callable[[], str]
+    cid: Callable[[], str]
 
 
 class UploadOptions(BaseModel):
@@ -933,7 +941,7 @@ class SOCReader(BaseModel):
     """
 
     owner: AddressType
-    download: callable
+    download: Callable
 
 
 class SOCWriter(SOCReader):
@@ -944,7 +952,7 @@ class SOCWriter(SOCReader):
      upload: A function to upload a single owner chunk.
     """
 
-    upload: callable[[Union(str, BatchId), bytes, bytes, UploadOptions], Reference]
+    upload: Callable[[Union[str, BatchId], bytes, bytes, UploadOptions], Reference]
 
 
 class AllTagsOptions(BaseModel):
@@ -961,7 +969,7 @@ class FeedManifestResult(BaseModel):
     """
 
     reference: Reference
-    cid: callable[[], str]
+    cid: Callable[[], str]
 
 
 # * Type that represents either Swarm's reference in hex string or

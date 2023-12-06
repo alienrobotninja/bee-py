@@ -6,10 +6,7 @@ from eth_typing import ChecksumAddress as AddressType
 from pydantic import BaseModel
 
 from bee_py.chunk.serialize import serialize_bytes
-from bee_py.chunk.soc import (
-    make_single_owner_chunk_from_data,
-    upload_single_owner_chunk_data,
-)
+from bee_py.chunk.soc import make_single_owner_chunk_from_data, upload_single_owner_chunk_data
 from bee_py.feed.identifiers import make_feed_identifier
 from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian

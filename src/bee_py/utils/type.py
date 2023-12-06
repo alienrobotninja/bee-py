@@ -126,20 +126,20 @@ def make_reference_or_ens(value: any, expected_cid_type: ReferenceType) -> Refer
     return value
 
 
-def add_cid_conversion_function(result: UploadResult, cid_type: ReferenceType) -> UploadResultWithCid:
+def add_cid_conversion_function(result: UploadResult, cid_type: str) -> UploadResultWithCid:
     """
     Adds a getter method to the result object that converts the reference to a CID base32 encoded string.
 
     Args:
         result (UploadResult): The object to add the getter method to.
-        cid_type (ReferenceType): The type of the CID.
+        cid_type (str): The type of the CID.
 
     Returns:
         UploadResultWithCid
     """
 
     def cid():
-        return encodeReference(result.reference, cid_type)
+        return encodeReference(str(result.reference), cid_type)
 
     return UploadResultWithCid(cid=cid)
 
