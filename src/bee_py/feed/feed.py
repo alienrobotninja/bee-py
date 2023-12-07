@@ -1,4 +1,5 @@
 import datetime
+from functools import partial
 from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
@@ -12,14 +13,14 @@ from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian
 from bee_py.modules.chunk import download
 from bee_py.modules.feed import fetch_latest_feed_update
-from bee_py.types.type import (  # Reference,
+from bee_py.types.type import (  # Reference,; FeedType,
     FEED_INDEX_HEX_LENGTH,
     BatchId,
     BeeRequestOptions,
-    FeedType,
+    FeedReader,
     FeedUpdateOptions,
     FeedWriter,
-    MakeFeedReader,
+    FetchFeedUpdateResponse,
     Reference,
     Topic,
 )
@@ -85,7 +86,7 @@ def find_next_index(
     Fetches the latest feed update and returns the next feed index.
 
     Args:
-        request_options (AsyncClient): The HTTP client instance for making requests to the Bee API.
+        request_options (BeeRequestOptions): The HTTP client instance for making requests to the Bee API.
         owner (bytes): The owner of the feed.
         topic (bytes): The topic of the feed.
         options (Optional[FeedUpdateOptions]): Additional options for fetching the latest feed update.
@@ -111,7 +112,7 @@ def update_feed(
     postage_batch_id: BatchId,
     options: Optional[FeedUpdateOptions] = None,
     index: str = "latest",
-):
+) -> Reference:
     """
     Updates a feed.
 
@@ -196,12 +197,12 @@ def make_feed_reader(
     topic: Topic,
     owner: AddressType,
     options: Optional[FeedUpdateOptions] = None,
-) -> MakeFeedReader:
+) -> FeedReader:
     """
     Creates a new feed reader object.
 
     Args:
-        request_options (AsyncClient): The HTTP client instance for making requests to the Bee API.
+        request_options (BeeRequestOptions): The HTTP client instance for making requests to the Bee API.
         type (str): The type of feed.
         topic (bytes): The topic of the feed.
         owner (bytes): The owner of the feed.
@@ -209,7 +210,28 @@ def make_feed_reader(
     Returns:
         FeedReader: The feed reader object.
     """
-    return MakeFeedReader(request_options=request_options, Type=_type, owner=owner, topic=topic, options=options)
+
+    def __download(
+        options: Optional[FeedUpdateOptions] = None,
+    ) -> FetchFeedUpdateResponse:
+        if options and options.index:
+            update = download_feed_update(request_options, bytes.fromhex(owner), topic, options.index)
+            return FetchFeedUpdateResponse(
+                reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
+            )
+        else:
+            return fetch_latest_feed_update(request_options, owner, topic, options)
+
+    download_partial = partial(__download, request_options, topic, owner, options)
+
+    return FeedReader(
+        request_options=request_options,
+        Type=_type,
+        owner=owner,
+        topic=topic,
+        options=options,
+        downalod=download_partial,
+    )
 
 
 def make_feed_writer(
@@ -227,4 +249,20 @@ def make_feed_writer(
     Returns:
         FeedWriter: The feed writer object.
     """
-    return FeedWriter(request_options=request_options, type=_type, topic=topic, signer=signer)
+
+    def __upload(
+        postage_batch_id: Union[BatchId, AddressType],
+        reference: Reference,
+        options: Optional[FeedUpdateOptions] = None,
+    ) -> Reference:
+        canonical_reference = make_bytes_reference(reference)
+        return update_feed(
+            request_options,
+            signer,
+            topic,
+            canonical_reference,
+            postage_batch_id,
+            {**options, type: _type},
+        )
+
+    return FeedWriter(request_options=request_options, type=_type, topic=topic, signer=signer, upload=__upload)

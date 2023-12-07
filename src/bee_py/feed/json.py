@@ -3,6 +3,7 @@ import json
 from typing import Optional, Union
 
 from bee_py.bee import Bee
+
 # from bee_py.feed.type import FeedType
 from bee_py.types.type import (  # Reference,
     BatchId,

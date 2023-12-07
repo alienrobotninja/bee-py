@@ -9,6 +9,7 @@ from bee_py.types.type import (
     PUBKEY_HEX_LENGTH,
     REFERENCE_HEX_LENGTH,
     AllTagsOptions,
+    FeedType,
     ReferenceOrENS,
     Tag,
     UploadResult,
@@ -51,7 +52,7 @@ def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
     Raises:
         TypeError: If the tag UID is not a non-negative integer.
     """
-    if tag_uid is None:
+    if not tag_uid:
         msg = "TagUid was expected but got null instead!"
         raise TypeError(msg)
 
@@ -394,4 +395,36 @@ def assert_transaction_hash(transaction_hash: any, name: str = "TransactionHash"
     # Hash is 64 long + '0x' prefix = 66
     if len(transaction_hash) != PUBKEY_HEX_LENGTH:
         msg = f"{name} has to be prefixed hex string with total length 66 (0x prefix including)"
+        raise TypeError(msg)
+
+
+def assert_public_key(value: any) -> None:
+    assert_hex_string(value, PUBKEY_HEX_LENGTH)
+
+
+def is_feed_type(_type: Union[FeedType, str]) -> bool:
+    """
+    Check if the given value is a valid feed type.
+
+    Args:
+        _type (Union[FeedType, str]): The value to check.
+
+    Returns:
+        bool: True if the value is a valid feed type, False otherwise.
+    """
+    return isinstance(_type, str) and _type in [member.value for member in FeedType]
+
+
+def assert_feed_type(_type: Union[FeedType, str]) -> None:
+    """
+    Assert that the given value is a valid feed type.
+
+    Args:
+        _type (Union[FeedType, str]): The value to check.
+
+    Raises:
+        TypeError: If the value is not a valid feed type.
+    """
+    if not is_feed_type(_type):
+        msg = "Invalid feed type"
         raise TypeError(msg)

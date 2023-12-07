@@ -99,4 +99,6 @@ def get_all_pins(request_options: BeeRequestOptions) -> Reference:
 
     response_data = response.data
     references = response_data.get("references", [])
-    return references
+
+    print("REFERENCE FROM PINNING: ", references)
+    return Reference(value=references)

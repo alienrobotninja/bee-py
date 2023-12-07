@@ -1,5 +1,6 @@
 import json
-from abc import abstractmethod
+
+# from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
@@ -13,7 +14,8 @@ from typing_extensions import TypeAlias
 # from bee_py.feed.feed import download_feed_update, update_feed
 # from bee_py.modules.feed import fetch_latest_feed_update
 from bee_py.utils.error import BeeError
-from bee_py.utils.hex import bytes_to_hex
+
+# from bee_py.utils.hex import bytes_to_hex
 
 # from bee_py.utils.reference import make_bytes_reference
 
@@ -780,22 +782,8 @@ class FeedReader(BaseModel):
     topic: str
     request_options: Optional[BeeRequestOptions] = None
 
-    @abstractmethod
-    def download(self, options: Optional[FeedUpdateOptions] = None):
-        pass
-
-
-# class MakeFeedReader(FeedReader):
-#     def download(self, options: Optional[FeedUpdateOptions]) -> FetchFeedUpdateResponse:
-#         if options and options.index:
-#             update = download_feed_update(
-#                 self.request_options, bytes.fromhex(self.owner), self.topic, self.options.index
-#             )
-#             return FetchFeedUpdateResponse(
-#                 reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
-#             )
-#         else:
-#             return fetch_latest_feed_update(self.request_options, self.owner, self.topic, options)
+    download: Callable
+    upload: Callable
 
 
 class FeedWriter(FeedReader):
@@ -810,24 +798,6 @@ class FeedWriter(FeedReader):
     """
 
     signer: Signer
-
-    @abstractmethod
-    def upload(
-        self,
-        postage_batch_id: Union[BatchId, AddressType],
-        reference: Reference,
-        options: Optional[FeedUpdateOptions] = None,
-    ):
-        # canonical_reference = make_bytes_reference(reference)
-        # return update_feed(
-        #     self.request_options,
-        #     self.signer,
-        #     self.topic,
-        #     canonical_reference,
-        #     postage_batch_id,
-        #     {**options, type: self.Type},
-        # )
-        pass
 
 
 class FeedUploadOptions(BaseModel):
