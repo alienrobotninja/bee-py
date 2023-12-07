@@ -1,3 +1,5 @@
+from typing import Union
+
 from pydantic import ValidationError
 
 from bee_py.types.type import BeeRequestOptions, ChainState, ReserveState, WalletBalance, WalletBalanceOLD
@@ -67,15 +69,17 @@ def map_wallet_properties(data: WalletBalance) -> WalletBalance:
         WalletBalance: The modified wallet balance data.
     """
 
-    data_dict = data
-    data_dict["bzz_balance"] = data_dict.pop("bzz")
-    data_dict["native_token_balance"] = data_dict.pop("xDai")
-    data_dict["chequebook_contract_address"] = data_dict.pop("contractAddress")
+    data_dict = {}
+    data_dict["bzz_balance"] = data.bzz
+    data_dict["native_token_balance"] = data.xDai
+    data_dict["chequebook_contract_address"] = data.contractAddress
+    data_dict["chain_id"] = data.chain_id
+    data_dict["wallet_address"] = data.wallet_address
 
     return WalletBalance.parse_obj(data_dict)
 
 
-def get_wallet_balance(request_options: BeeRequestOptions) -> WalletBalance:
+def get_wallet_balance(request_options: BeeRequestOptions) -> Union[WalletBalance, None]:
     """
     Retrieves the wallet balances for xDai and BZZ of the Bee node.
 
@@ -93,6 +97,7 @@ def get_wallet_balance(request_options: BeeRequestOptions) -> WalletBalance:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())
+            return None
 
     wallet_balance_response = response.json()
 

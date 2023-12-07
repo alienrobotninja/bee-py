@@ -1,5 +1,4 @@
 import json
-
 # from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
@@ -7,7 +6,6 @@ from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from pydantic import BaseModel, Field, validator
-
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
@@ -678,6 +676,11 @@ class WalletBalance(BaseModel):
     chain_id: int = Field(..., alias="chainID")
     chequebook_contract_address: str = Field(..., alias="chequebookContractAddress")
     wallet_address: str = Field(..., alias="walletAddress")
+
+    # deprecated
+    bzz: Optional[str] = None
+    xDai: Optional[str] = None  # noqa: N815
+    contract_address: Optional[str] = Field(None, alias="contractAddress")
 
 
 class ExtendedTag(BaseModel):

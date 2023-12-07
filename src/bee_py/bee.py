@@ -129,7 +129,7 @@ class Bee:
 
     def __get_request_options_for_call(
         self,
-        options: Optional[UploadOptions] = None,
+        options: Optional[BeeRequestOptions] = None,
     ) -> dict:
         """
         Returns the request options for a call, merging the default options with the provided options.

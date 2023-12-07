@@ -67,6 +67,7 @@ lint = [
     "mdformat-frontmatter>=2.0.8", # Needed for frontmatters-style
     "mdformat-pyproject>=0.0.1",   # Allows configuring in pyproject.toml
     "Flake8-pyproject>=1.2.3",
+    
 ]
 
 
@@ -97,7 +98,7 @@ docstring-convention = "google"
 
 # mypy
 [tool.mypy]
-exclude = ["build/", "dist/", "docs/", "funky_experiments/*"]
+exclude = ["build/", "dist/", "docs/", "funky_experiments/*", "noxfile.py"]
 check_untyped_defs = true
 
 [tool.mypy-pytest]

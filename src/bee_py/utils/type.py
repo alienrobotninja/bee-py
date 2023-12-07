@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 from ens.utils import is_valid_ens_name
 from swarm_cid import ReferenceType, decodeCid, encodeReference
@@ -75,14 +75,14 @@ def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
     raise TypeError(msg)
 
 
-def assert_reference(value: any) -> None:
+def assert_reference(value: Any) -> None:
     try:
         assert_hex_string(value, REFERENCE_HEX_LENGTH)
     except TypeError:
         assert_hex_string(value, ENCRYPTED_REFERENCE_HEX_LENGTH)
 
 
-def assert_reference_or_ens(value: any) -> ReferenceOrENS:
+def assert_reference_or_ens(value: Any) -> None:
     if not isinstance(value, str):
         msg = "ReferenceOrEns has to be a string!"
         raise TypeError(msg)
@@ -96,7 +96,7 @@ def assert_reference_or_ens(value: any) -> ReferenceOrENS:
         raise TypeError(msg)
 
 
-def make_reference_or_ens(value: any, expected_cid_type: ReferenceType) -> ReferenceOrENS:
+def make_reference_or_ens(value: Any, expected_cid_type: ReferenceType) -> ReferenceOrENS:
     """
     Converts a Swarm CID or ENS name to a hex-encoded Swarm Reference.
 
@@ -145,7 +145,7 @@ def add_cid_conversion_function(result: UploadResult, cid_type: str) -> UploadRe
     return UploadResultWithCid(cid=cid)
 
 
-def assert_request_options(options: any, name: str = "RequestOptions") -> None:
+def assert_request_options(options: Any, name: str = "RequestOptions") -> None:
     """
     Checks that a value is a valid BeeRequestOptions object.
 
@@ -171,7 +171,7 @@ def assert_request_options(options: any, name: str = "RequestOptions") -> None:
             raise ValueError(msg)
 
 
-def assert_upload_options(value: any, name: str = "UploadOptions") -> None:
+def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:
     """
     Asserts that a value is a valid BeeRequestOptions object.
 
@@ -200,12 +200,12 @@ def assert_upload_options(value: any, name: str = "UploadOptions") -> None:
         raise TypeError(msg)
 
 
-def assert_file_upload_options(value: any, name: str = "FileUploadOptions") -> None:
+def assert_file_upload_options(value: Any, name: str = "FileUploadOptions") -> None:
     """
     Asserts that a value is a valid FileUploadOptions object.
 
     Args:
-        value (any): The value to check.
+        value (Any): The value to check.
         name (str): The name of the object, for error messages.
 
     Raises:
@@ -230,12 +230,12 @@ def assert_file_upload_options(value: any, name: str = "FileUploadOptions") -> N
         raise TypeError(msg)
 
 
-def assert_collection_upload_options(value: any, name: str = "CollectionUploadOptions") -> None:
+def assert_collection_upload_options(value: Any, name: str = "CollectionUploadOptions") -> None:
     """
     Asserts that a value is a valid CollectionUploadOptions object.
 
     Args:
-        value (any): The value to check.
+        value (Any): The value to check.
         name (str): The name of the object, for error messages.
 
     Raises:
@@ -258,7 +258,7 @@ def assert_collection_upload_options(value: any, name: str = "CollectionUploadOp
             raise TypeError(msg)
 
 
-def is_tag(value: any) -> bool:
+def is_tag(value: Any) -> bool:
     """
     Checks whether the given value is a valid Tag object.
 
@@ -291,7 +291,7 @@ def assert_address_prefix(value: str, name: str = "AddressPrefix") -> None:
         raise ValueError(msg)
 
 
-def assert_postage_batch_options(value: any, name: str = "PostageBatchOptions") -> None:
+def assert_postage_batch_options(value: Any, name: str = "PostageBatchOptions") -> None:
     """
     Asserts that a value is a valid PostageBatchOptions object.
 
@@ -333,7 +333,7 @@ def assert_postage_batch_options(value: any, name: str = "PostageBatchOptions") 
             raise ValueError(msg)
 
 
-def assert_transaction_options(value: any, name: str = "TransactionOptions"):
+def assert_transaction_options(value: Any, name: str = "TransactionOptions"):
     """
     Validates that a value is a valid TransactionOptions object.
 
@@ -361,20 +361,20 @@ def assert_transaction_options(value: any, name: str = "TransactionOptions"):
             raise ValueError(msg)
 
 
-def assert_cashout_options(value: any, name: str = "CashoutOptions"):
+def assert_cashout_options(value: Any, name: str = "CashoutOptions"):
     """
     CashoutOptions is an alias for TransactionOptions
     """
     assert_transaction_options(value, name)
 
 
-def assert_all_tags_options(value: any, name: str = "AllTagsOptions"):
+def assert_all_tags_options(value: Any, name: str = "AllTagsOptions"):
     if not isinstance(value, AllTagsOptions):
         msg = f"Not a valid {name} data"
         raise TypeError(msg)
 
 
-def assert_transaction_hash(transaction_hash: any, name: str = "TransactionHash"):
+def assert_transaction_hash(transaction_hash: Any, name: str = "TransactionHash"):
     """
     Validates that a value is a valid TransactionHash.
 
@@ -398,7 +398,7 @@ def assert_transaction_hash(transaction_hash: any, name: str = "TransactionHash"
         raise TypeError(msg)
 
 
-def assert_public_key(value: any) -> None:
+def assert_public_key(value: Any) -> None:
     assert_hex_string(value, PUBKEY_HEX_LENGTH)
 
 

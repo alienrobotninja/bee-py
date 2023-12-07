@@ -2,6 +2,8 @@ from urllib.parse import urljoin
 
 import requests
 
+from bee_py.types.type import BeeRequestOptions
+
 DEFAULT_HTTP_CONFIG = {
     "headers": {
         "accept": "application/json, text/plain, */*",
@@ -9,7 +11,7 @@ DEFAULT_HTTP_CONFIG = {
 }
 
 
-def http(options: dict, config: dict) -> requests.Response:
+def http(options: BeeRequestOptions, config: dict) -> requests.Response:
     """Makes an HTTP request.
 
     Args:
