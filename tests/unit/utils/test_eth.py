@@ -1,5 +1,5 @@
 import pytest
-from hexbytes import HexBytes
+from eth_pydantic_types import HexBytes
 
 from bee_py.utils.eth import (
     assert_eth_address,

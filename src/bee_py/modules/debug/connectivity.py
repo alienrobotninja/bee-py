@@ -1,4 +1,11 @@
-from bee_py.types.type import BeeRequestOptions, NodeAddresses, Peers, PingResponse, RemovePeerResponse, Topology
+from bee_py.types.type import (
+    BeeRequestOptions,
+    NodeAddresses,
+    Peers,
+    PingResponse,
+    RemovePeerResponse,
+    Topology,
+)
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 
@@ -30,7 +37,7 @@ def get_node_addresses(request_options: BeeRequestOptions) -> NodeAddresses:
             logger.error(response.raise_for_status())
 
     addresses_response = response.json()
-    return NodeAddresses.parse_obj(addresses_response)
+    return NodeAddresses.model_validate(addresses_response)
 
 
 def get_peers(request_options: NodeAddresses) -> Peers:
@@ -54,7 +61,7 @@ def get_peers(request_options: NodeAddresses) -> Peers:
             logger.error(response.raise_for_status())
 
     peers_response = response.json()
-    return Peers.parse_obj(peers_response)
+    return Peers.model_validate(peers_response)
 
 
 def get_blocklist(request_options: BeeRequestOptions) -> Peers:
@@ -79,8 +86,8 @@ def get_blocklist(request_options: BeeRequestOptions) -> Peers:
 
     blocklist_response = response.json()
     # * Extract the 'address' field from each peer in the 'peers' list
-    # peers = [Peer.parse_obj({"address": peer["address"]["address"]}) for peer in blocklist_response["peers"]]
-    return Peers.parse_obj(blocklist_response)
+    # peers = [Peer.model_validate({"address": peer["address"]["address"]}) for peer in blocklist_response["peers"]]
+    return Peers.model_validate(blocklist_response)
 
 
 def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResponse:
@@ -101,7 +108,7 @@ def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResp
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    return RemovePeerResponse.parse_obj(response.json())
+    return RemovePeerResponse.model_validate(response.json())
 
 
 def get_topology(request_options: BeeRequestOptions) -> Topology:
@@ -124,7 +131,7 @@ def get_topology(request_options: BeeRequestOptions) -> Topology:
     if response.raise_for_status():
         logger.error(response.raise_for_status())
 
-    return Topology.parse_obj(response.json())
+    return Topology.model_validate(response.json())
 
 
 def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
@@ -145,4 +152,4 @@ def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    return PingResponse.parse_obj(response.json())
+    return PingResponse.model_validate(response.json())

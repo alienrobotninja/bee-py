@@ -30,7 +30,7 @@ def get_all_transactions(request_options: BeeRequestOptions) -> TransactionInfo:
 
     pending_transactions = transactions_response["pendingTransactions"]
 
-    return [TransactionInfo.parse_obj(transaction) for transaction in pending_transactions]
+    return [TransactionInfo.model_validate(transaction) for transaction in pending_transactions]
 
 
 def get_transaction(request_options: BeeRequestOptions, transaction_hash: TransactionHash) -> TransactionInfo:
@@ -54,7 +54,7 @@ def get_transaction(request_options: BeeRequestOptions, transaction_hash: Transa
             logger.error(response.raise_for_status())
 
     transaction_response = response.json()
-    return TransactionInfo.parse_obj(transaction_response)
+    return TransactionInfo.model_validate(transaction_response)
 
 
 def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash: TransactionHash) -> TransactionHash:

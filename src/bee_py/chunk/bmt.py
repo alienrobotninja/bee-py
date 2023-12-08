@@ -1,5 +1,5 @@
+from eth_pydantic_types import HexBytes
 from eth_utils import keccak
-from hexbytes import HexBytes
 
 MAX_CHUNK_PAYLOAD_SIZE = 4096
 SEGMENT_SIZE = 32

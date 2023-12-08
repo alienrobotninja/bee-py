@@ -1,8 +1,8 @@
 import eth_utils
 import pytest
 from eth_account.messages import encode_defunct
+from eth_pydantic_types import HexBytes
 from eth_utils import is_same_address
-from hexbytes import HexBytes
 
 from bee_py.chunk.signer import public_key_to_address, recover_address, sign
 

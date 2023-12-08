@@ -1,9 +1,10 @@
 from ape.types import AddressType
 
-from bee_py.bee import Bee
-from bee_py.feed.feed import Index, get_feed_update_chunk_reference
+from bee_py.feed.feed import get_feed_update_chunk_reference
+
+# from bee_py.bee import Bee
 from bee_py.modules.bytes import read_big_endian
-from bee_py.types.type import BeeRequestOptions, Reference, Topic
+from bee_py.types.type import BeeRequestOptions, Index, Reference, Topic
 from bee_py.utils.hex import bytes_to_hex
 
 
@@ -30,7 +31,7 @@ def make_numeric_index(index: Index):
     raise TypeError(msg)
 
 
-def is_chunk_retrievable(bee: Bee, ref: Reference, request_options: BeeRequestOptions) -> bool:
+def is_chunk_retrievable(bee, ref: Reference, request_options: BeeRequestOptions) -> bool:
     """
     Checks whether a chunk is retrievable by attempting to download it.
 
@@ -75,7 +76,7 @@ def get_all_sequence_update_references(owner: AddressType, topic: Topic, index: 
 
 
 def are_all_sequential_feeds_update_retrievable(
-    bee: Bee,
+    bee,
     owner: AddressType,
     topic: Topic,
     index: Index,

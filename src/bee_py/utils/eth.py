@@ -14,7 +14,7 @@ from eth_utils import (
     to_checksum_address,
     to_normalized_address,
 )
-from hexbytes import HexBytes
+from ethpm_types import HexBytes
 
 from bee_py.Exceptions import AccountNotFoundError
 from bee_py.utils.hex import bytes_to_hex, hex_to_bytes, str_to_hex

@@ -37,7 +37,7 @@ def get_chequebook_address(request_options: BeeRequestOptions) -> ChequebookAddr
             logger.error(response.raise_for_status())
 
     chequebook_address_response = response.json()
-    return ChequebookAddressResponse.parse_obj(chequebook_address_response)
+    return ChequebookAddressResponse.model_validate(chequebook_address_response)
 
 
 def get_chequebook_balance(request_options: BeeRequestOptions) -> ChequebookBalanceResponse:
@@ -61,7 +61,7 @@ def get_chequebook_balance(request_options: BeeRequestOptions) -> ChequebookBala
             logger.error(response.raise_for_status())
 
     chequebook_balance_response = response.json()
-    return ChequebookBalanceResponse.parse_obj(chequebook_balance_response)
+    return ChequebookBalanceResponse.model_validate(chequebook_balance_response)
 
 
 def get_last_cashout_action(
@@ -89,7 +89,7 @@ def get_last_cashout_action(
             logger.error(response.raise_for_status())
 
     last_cashout_action_response = response.json()
-    return LastCashoutActionResponse.parse_obj(last_cashout_action_response)
+    return LastCashoutActionResponse.model_validate(last_cashout_action_response)
 
 
 def cashout_last_cheque(
@@ -162,7 +162,7 @@ def get_last_cheques_for_peer(
             logger.error(response.raise_for_status())
 
     last_cheques_for_peer_response = response.json()
-    return LastChequesForPeerResponse.parse_obj(last_cheques_for_peer_response)
+    return LastChequesForPeerResponse.model_validate(last_cheques_for_peer_response)
 
 
 def get_last_cheques(request_options: BeeRequestOptions) -> LastChequesResponse:
@@ -186,7 +186,7 @@ def get_last_cheques(request_options: BeeRequestOptions) -> LastChequesResponse:
             logger.error(response.raise_for_status())
 
     last_cheques_response = response.json()
-    return LastChequesResponse.parse_obj(last_cheques_response)
+    return LastChequesResponse.model_validate(last_cheques_response)
 
 
 def deposit_tokens(

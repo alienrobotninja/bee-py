@@ -28,7 +28,7 @@ def get_settlements(request_options: BeeRequestOptions, peer: str) -> Settlement
             logger.error(response.raise_for_status())
 
     settlements_response = response.json()
-    return Settlements.parse_obj(settlements_response)
+    return Settlements.model_validate(settlements_response)
 
 
 def get_all_settlements(request_options: BeeRequestOptions) -> AllSettlements:
@@ -53,4 +53,4 @@ def get_all_settlements(request_options: BeeRequestOptions) -> AllSettlements:
 
     all_settlements_response = response.json()
 
-    return AllSettlements.parse_obj(all_settlements_response)
+    return AllSettlements.model_validate(all_settlements_response)

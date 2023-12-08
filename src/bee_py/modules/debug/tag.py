@@ -25,4 +25,4 @@ def retrieve_extended_tag(request_options: BeeRequestOptions, uid: int) -> Exten
             logger.error(response.raise_for_status())
 
     debug_status_response = response.json()
-    return ExtendedTag.parse_obj(debug_status_response)
+    return ExtendedTag.model_validate(debug_status_response)

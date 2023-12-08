@@ -2,7 +2,13 @@ from typing import Union
 
 from pydantic import ValidationError
 
-from bee_py.types.type import BeeRequestOptions, ChainState, ReserveState, WalletBalance, WalletBalanceOLD
+from bee_py.types.type import (
+    BeeRequestOptions,
+    ChainState,
+    ReserveState,
+    WalletBalance,
+    WalletBalanceOLD,
+)
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 
@@ -31,7 +37,7 @@ def get_reserve_state(request_options: BeeRequestOptions) -> ReserveState:
             logger.error(response.raise_for_status())
 
     reserve_state_response = response.json()
-    return ReserveState.parse_obj(reserve_state_response)
+    return ReserveState.model_validate(reserve_state_response)
 
 
 def get_chain_state(request_options: BeeRequestOptions) -> ChainState:
@@ -54,7 +60,7 @@ def get_chain_state(request_options: BeeRequestOptions) -> ChainState:
             logger.error(response.raise_for_status())
 
     chain_state_response = response.json()
-    return ChainState.parse_obj(chain_state_response)
+    return ChainState.model_validate(chain_state_response)
 
 
 # * Maps deprecated properties to new WalletBalance object
@@ -76,7 +82,7 @@ def map_wallet_properties(data: WalletBalance) -> WalletBalance:
     data_dict["chain_id"] = data.chain_id
     data_dict["wallet_address"] = data.wallet_address
 
-    return WalletBalance.parse_obj(data_dict)
+    return WalletBalance.model_validate(data_dict)
 
 
 def get_wallet_balance(request_options: BeeRequestOptions) -> Union[WalletBalance, None]:
@@ -107,8 +113,8 @@ def get_wallet_balance(request_options: BeeRequestOptions) -> Union[WalletBalanc
         and "contractAddress" in wallet_balance_response
     ):
         try:
-            return WalletBalanceOLD.parse_obj(wallet_balance_response)
+            return WalletBalanceOLD.model_validate(wallet_balance_response)
         except ValidationError:
-            return map_wallet_properties(WalletBalance.parse_obj(wallet_balance_response))
+            return map_wallet_properties(WalletBalance.model_validate(wallet_balance_response))
     else:
-        return WalletBalance.parse_obj(wallet_balance_response)
+        return WalletBalance.model_validate(wallet_balance_response)

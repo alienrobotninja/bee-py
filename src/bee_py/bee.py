@@ -4,16 +4,18 @@ from typing import Optional, Union
 
 import websockets
 from ape.types import AddressType
-from hexbytes import HexBytes
+from eth_pydantic_types import HexBytes
+from requests import HTTPError
 from swarm_cid import ReferenceType
 
 from bee_py.chunk.signer import sign
 from bee_py.chunk.soc import download_single_owner_chunk, upload_single_owner_chunk_data
-from bee_py.feed.feed import Index, IndexBytes, make_feed_reader, make_feed_writer
-from bee_py.feed.json import get_json_data, set_json_data
+from bee_py.feed import json as json_api  # get_json_data, set_json_data
+from bee_py.feed.feed import make_feed_reader as _make_feed_reader
+from bee_py.feed.feed import make_feed_writer as _make_feed_writer
 from bee_py.feed.retrievable import are_all_sequential_feeds_update_retrievable, get_all_sequence_update_references
 from bee_py.feed.topic import make_topic, make_topic_from_string
-from bee_py.feed.type import is_feed_type
+from bee_py.feed.type import DEFAULT_FEED_TYPE, is_feed_type
 from bee_py.modules import bytes as bytes_api
 from bee_py.modules import bzz as bzz_api
 from bee_py.modules import chunk as chunk_api
@@ -25,7 +27,6 @@ from bee_py.modules import tag as tag_api
 from bee_py.modules.feed import create_feed_manifest as _create_feed_manifest
 from bee_py.types.type import (  # Reference,
     CHUNK_SIZE,
-    DEFAULT_FEED_TYPE,
     SPAN_SIZE,
     AddressPrefix,
     AllTagsOptions,
@@ -35,14 +36,14 @@ from bee_py.types.type import (  # Reference,
     Collection,
     CollectionUploadOptions,
     Data,
-    FeedManifestResult,
     FeedReader,
     FeedType,
     FeedWriter,
     FileData,
     FileUploadOptions,
+    Index,
+    IndexBytes,
     JsonFeedOptions,
-    MakeFeedReader,
     Pin,
     PssMessageHandler,
     PssSubscription,
@@ -118,7 +119,7 @@ class Bee:
         if options and "signer" in options:
             self.signer = sign(options["signer"])
 
-        self.request_options = BeeRequestOptions.parse_obj(
+        self.request_options = BeeRequestOptions.model_validate(
             {
                 "baseURL": self.url,
                 "timeout": options.get("timeout", False),
@@ -145,7 +146,7 @@ class Bee:
         else:
             return self.request_options
 
-    def _make_feed_reader(
+    def __make_feed_reader(
         self,
         feed_type: FeedType,
         topic: Union[bytes, str],
@@ -162,7 +163,7 @@ class Bee:
             options: Options that affect the request behavior
 
         Returns:
-            A new `MakeFeedReader` instance
+            A new `FeedReader` instance
 
         See also: [Bee docs - Feeds](https://docs.ethswarm.org/docs/dapps-on-swarm/feeds)
         """
@@ -171,9 +172,44 @@ class Bee:
         canonical_topic = make_topic(topic)
         canonical_owner = make_hex_eth_address(owner)
 
-        return make_feed_reader(
+        return _make_feed_reader(
             self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_owner
         )
+
+    def ___resolve_signer(self, signer: Optional[Union[Signer, bytes, str]] = None) -> Signer:
+        """
+        Resolves the signer to be used.
+
+        Args:
+            signer: An optional signer. Either an instance of `bee.Signer` or a hex string or a
+            string containing the hex representation of a private key.
+
+        Returns:
+            The resolved signer object.
+
+        Raises:
+            BeeError: If either no signer was passed or no default signer was specified for the instance
+        """
+        if signer:
+            msg = "You have to pass Signer as property to either the method call or constructor! Non found."
+            raise ValueError(msg)
+        if self.signer:
+            return self.signer
+
+    def make_feed_topic(self, topic: str) -> Topic:
+        """
+        Make a new feed topic from a string
+
+        Because the topic has to be 32 bytes long this function hashes the input string to create a topic string of
+        arbitrary length.
+
+        Args:
+            topic The input string
+        Returns:
+            hashed topic data
+        """
+
+        return make_topic_from_string(topic)
 
     def upload_data(
         self,
@@ -791,7 +827,7 @@ class Bee:
         # If no index is passed, try downloading the feed and return true if successful
         if not index:
             try:
-                self._make_feed_reader(type, canonical_topic, canonical_owner).download(options)
+                self.__make_feed_reader(type, canonical_topic, canonical_owner).download(options)
                 return True
             except BeeError as e:
                 raise e
@@ -991,7 +1027,7 @@ class Bee:
         postage_batch_id: Union[str, BatchId],
         feed_type: FeedType,
         topic: Union[Topic, str, bytes],
-        owner: Union[str, bytes],
+        owner: Union[str, bytes, AddressType],
         options: Optional[BeeRequestOptions] = None,
     ) -> str:
         """
@@ -1030,3 +1066,259 @@ class Bee:
         )
 
         return add_cid_conversion_function(UploadResult(reference=reference), ReferenceType.Feed)
+
+    def make_feed_reader(
+        self,
+        feed_type: FeedType,
+        topic: Union[Topic, bytes, str],
+        signer: Union[Signer, bytes, str],
+        options: Optional[BeeRequestOptions] = None,
+    ) -> FeedReader:
+        """
+        Creates a new feed reader for downloading feed updates.
+
+        Args:
+            postage_batch_id: The postage batch ID to be used for the feed reader.
+            type: The type of the feed, either `epoch` or `sequence`.
+            topic: The topic of the feed, either as a hex string, bytes object, or a
+            string containing the hex representation of the bytes.
+            owner: The Ethereum address of the feed owner, either as a hex string,
+            bytes object, or a string containing the hex representation of the bytes.
+            options: Optional BeeRequestOptions object to configure the request behavior.
+
+        Returns:
+            A FeedReader object for downloading feed updates.
+
+        References:
+            [Bee docs - Feeds](https://docs.ethswarm.org/docs/dapps-on-swarm/feeds)
+        """
+
+        assert_feed_type(feed_type)
+        assert_request_options(options)
+
+        canonical_topic = make_topic(topic)
+        canonical_singer = self.resolve_signer(signer)
+
+        return _make_feed_reader(
+            self.__get_request_options_for_call(options), type, canonical_topic, canonical_singer, canonical_singer
+        )
+
+    def make_feed_writer(
+        self,
+        feed_type: FeedType,
+        topic: Union[Topic, bytes, str],
+        signer: Union[Signer, bytes, str],
+        options: Optional[BeeRequestOptions] = None,
+    ) -> FeedWriter:
+        """
+        Creates a new feed writer for updating feeds.
+
+        Args:
+            postage_batch_id: The postage batch ID to be used for the feed writer.
+            type: The type of the feed, either `epoch` or `sequence`.
+            topic: The topic of the feed, either as a hex string, bytes object, or a string
+            containing the hex representation of the bytes.
+            signer: An optional signer for signing feed updates.
+            options: Optional BeeRequestOptions object to configure the request behavior.
+
+        Returns:
+            A FeedWriter object for updating feed.
+
+        References:
+            [Bee docs - Feeds](https://docs.ethswarm.org/docs/dapps-on-swarm/feeds)
+        """
+        assert_request_options(options)
+        assert_feed_type(feed_type)
+
+        canonical_topic = make_topic(topic)
+        canonical_singer = self.resolve_signer(signer)
+
+        return _make_feed_writer(self.__get_request_options_for_call(options), type, canonical_topic, canonical_singer)
+
+    def set_json_feed(
+        self,
+        postage_batch_id: Union[str, BatchId],
+        topic: Union[Topic, bytes, str],
+        data: dict,
+        options: Optional[JsonFeedOptions] = None,
+        request_options: Optional[BeeRequestOptions] = None,
+    ) -> Reference:
+        """
+        Sets JSON data to a feed. JSON-like data types are supported.
+
+        Args:
+            bee: The Bee instance
+            writer: The feed writer to be used
+            postage_batch_id: The postage batch ID to be used
+            data: JSON compatible data
+            options:
+                signer: Custom instance of Signer or string with private key.
+                type: Type of Feed
+
+        Returns:
+            A Promise that resolves to the reference of the uploaded feed data.
+
+        References:
+            [Bee docs - Feeds](https://docs.ethswarm.org/docs/dapps-on-swarm/feeds)
+        """
+        assert_request_options(options, "JsonFeedOptions")
+
+        hashed_topic = self.make_feed_topic(topic)
+
+        if options.type:
+            feed_type = options.type
+        else:
+            feed_type = DEFAULT_FEED_TYPE
+
+        writer = self.make_feed_writer(feed_type, hashed_topic, options.signer, request_options)
+
+        return json_api.set_json_data(self, writer, postage_batch_id, data, options, request_options)
+
+    def get_json_feed(
+        self,
+        topic: Union[Topic, bytes, str],
+        options: Optional[JsonFeedOptions] = None,
+    ):
+        """
+        High-level function that allows you to easily get data from feed.
+        Returned data are parsed using json.loads().
+
+        This method also supports specification of `signer` object passed to constructor. The order of evaluation is:
+        - `options.address`
+        - `options.signer`
+        - `self.signer`
+
+        At least one of these has to be specified!
+
+        Args:
+            topic (Union[Topic, bytes, str]): Human readable string, that is internally hashed so
+            there are no constrains there.
+            options (JsonFeedOptions): Options for the feed.
+
+        Returns:
+            dict: The JSON data from the feed.
+
+        Raises:
+            BeeError: If both options "signer" and "address" are specified at one time.
+            BeeError: If neither address, signer or default signer is specified.
+
+        See Also:
+            Bee docs - Feeds: https://docs.ethswarm.org/docs/dapps-on-swarm/feeds
+        """
+
+        assert_request_options(options, "JsonFeedOptions")
+
+        hashed_topic = self.make_feed_topic(topic)
+
+        if options.type:
+            feed_type = options.type
+        else:
+            feed_type = DEFAULT_FEED_TYPE
+
+        if options.singer and options.address:
+            msg = 'Both options "signer" and "address" can not be specified at one time!'
+            raise BeeError(msg)
+
+        address: Union[AddressType, bytes]
+
+        if options.address:
+            address = make_eth_address(options.address)
+        else:
+            try:
+                address = self.___resolve_signer(options.signer).address
+            except BeeError as e:
+                msg = "Either address, signer or default signer has to be specified!"
+                raise BeeError(msg) from e
+
+        reader = self.make_feed_reader(feed_type, hashed_topic, address, options)
+
+        return json_api.get_json_data(self, reader)
+
+    def make_soc_reader(
+        self, owner_address: [AddressType, str, bytes], options: Optional[BeeRequestOptions] = None
+    ) -> SOCReader:
+        """
+        Returns an object for reading single owner chunks
+
+        Args:
+            owner_address: The ethereum address of the owner
+            options: Options that affects the request behavior
+
+        Returns:
+            An SOCReader object that allows you to download single owner chunks.
+
+        References:
+            [Bee docs - Chunk Types](https://docs.ethswarm.org/docs/dapps-on-swarm/chunk-types#single-owner-chunks)
+        """
+
+        assert_request_options(options)
+        canonical_owner = make_eth_address(owner_address)
+
+        def downalod():
+            return download_single_owner_chunk(self.__get_request_options_for_call(options), canonical_owner, None)
+
+        return SOCReader(owner=make_hex_eth_address(canonical_owner), downalod=downalod)
+
+    def make_soc_writer(
+        self, signer: Optional[Union[Signer, bytes, str]], options: Optional[BeeRequestOptions] = None
+    ) -> SOCWriter:
+        """
+        Returns an object for reading and writing single owner chunks.
+
+        Args:
+            signer (str): The signer's private key or a Signer instance that can sign data.
+            options (dict): Options that affects the request behavior.
+
+        Returns:
+            SOCWriter: An object for reading and writing single owner chunks.
+
+        See Also:
+            Bee docs - Chunk Types: https://docs.ethswarm.org/docs/dapps-on-swarm/chunk-types#single-owner-chunks
+        """
+        assert_request_options(options)
+
+        canonical_signer = self.___resolve_signer(signer)
+
+        reader = self.make_soc_reader(canonical_signer.address, options)
+
+        def upload():
+            return upload_single_owner_chunk_data(self.__get_request_options_for_call(options), canonical_signer)
+
+        # TODO: Look into it
+        return SOCWriter(owner=reader.owner, downalod=reader.downalod, upload=upload)
+
+    def check_connection(self, options: Optional[BeeRequestOptions] = None) -> bool:
+        """
+        Pings the Bee node to see if there's a live Bee node on the URL provided.
+
+        Args:
+            bee: Bee instance
+            options: Options that affects the request behavior
+
+        Returns:
+            A Promise that resolves to `True` if the connection was successful, and `False` if it wasn't
+
+        Raises:
+            If connection was not successful throw error
+        """
+        assert_request_options(options)
+
+        return status_api.check_connection(self.__get_request_options_for_call(options))
+
+    def is_connected(self, options: Optional[BeeRequestOptions] = None) -> bool:
+        """
+        Checks the connection to the Bee node to see if it's alive.
+
+        Args:
+            bee: Bee instance
+            options: Options that affects the request behavior
+
+        Returns:
+            A boolean indicating the connection status: `True` if connected, `False` if not
+        """
+        assert_request_options(options, "PostageBatchOptions")
+
+        try:
+            status_api.check_connection(self.__get_request_options_for_call(options))
+        except HTTPError as e:
+            raise HTTPError() from e

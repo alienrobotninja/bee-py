@@ -1,8 +1,10 @@
+# from __future__ import annotations
+
 import codecs
 import json
 from typing import Optional, Union
 
-from bee_py.bee import Bee
+# from bee_py.bee import Bee
 # from bee_py.feed.type import FeedType
 from bee_py.types.type import (  # Reference,
     BatchId,
@@ -10,6 +12,7 @@ from bee_py.types.type import (  # Reference,
     FeedReader,
     FeedWriter,
     JsonFeedOptions,
+    Reference,
     UploadOptions,
 )
 
@@ -32,7 +35,7 @@ def serialize_json(data: dict) -> bytes:
         raise
 
 
-def get_json_data(bee: Bee, reader: FeedReader):
+def get_json_data(bee, reader: FeedReader):
     """
     Get JSON data from a feed.
 
@@ -47,13 +50,13 @@ def get_json_data(bee: Bee, reader: FeedReader):
 
 
 def set_json_data(
-    bee: Bee,
+    bee,
     writer: FeedWriter,
     postage_batch_id: BatchId,
     data,
     options: Optional[Union[JsonFeedOptions, UploadOptions]] = None,
     request_options: Optional[BeeRequestOptions] = None,
-):
+) -> Reference:
     """
     Set JSON data to a feed.
 

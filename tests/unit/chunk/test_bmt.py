@@ -1,4 +1,4 @@
-from hexbytes import HexBytes
+from eth_pydantic_types import HexBytes
 
 from bee_py.chunk.bmt import bmt_hash, bmt_root_hash
 

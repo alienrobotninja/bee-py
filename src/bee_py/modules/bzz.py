@@ -26,7 +26,7 @@ BZZ_ENDPOINT = "bzz"
 def extract_file_upload_headers(postage_batch_id: BatchId, options: Optional[FileUploadOptions] = None) -> dict:
     headers = extract_upload_headers(postage_batch_id, options)
 
-    options = FileUploadOptions.parse_obj(options)
+    options = FileUploadOptions.model_validate(options)
 
     if options and options.size:
         headers["content-length"] = str(options.size)
@@ -60,7 +60,7 @@ def upload_file(
 
     if options:
         if isinstance(options, dict):
-            options = FileUploadOptions.parse_obj(options)
+            options = FileUploadOptions.model_validate(options)
             options.content_type = "application/octet-stream"
     else:
         options = FileUploadOptions()
@@ -113,7 +113,7 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    file_headers = FileHeaders.parse_obj(read_file_headers(response.headers))
+    file_headers = FileHeaders.model_validate(read_file_headers(response.headers))
     file_data = wrap_bytes_with_helpers(response.content)
 
     return FileData(headers=file_headers, data=file_data.data)
@@ -164,7 +164,7 @@ def extract_collection_upload_headers(
     headers = extract_upload_headers(postage_batch_id, options)
 
     if isinstance(options, dict):
-        options = CollectionUploadOptions.parse_obj(options)
+        options = CollectionUploadOptions.model_validate(options)
 
     if options and options.index_document:
         headers["swarm-index-document"] = options.index_document

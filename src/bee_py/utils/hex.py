@@ -1,8 +1,8 @@
 from struct import pack
 from typing import Optional, Union
 
+from eth_pydantic_types import HexBytes
 from eth_utils import is_0x_prefixed, is_hex, to_bytes, to_hex
-from hexbytes import HexBytes
 
 
 def bytes_to_hex(inp: Union[bytes, str], length: Optional[int] = None) -> str:

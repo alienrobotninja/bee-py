@@ -1,5 +1,5 @@
 import pytest
-from hexbytes import HexBytes
+from eth_pydantic_types import HexBytes
 
 from bee_py.utils.hex import bytes_to_hex, hex_to_bytes, int_to_hex, is_hex_string, make_hex_string
 

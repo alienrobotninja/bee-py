@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:610db2a529c0c1d0931a491f396a83db4c16a8e5161076d6929d11c433167b76"
+content_hash = "sha256:dbe6d4b02b00c101aa019f9a598f543072f3631576505768aa8673515546df3b"
 
 [[package]]
 name = "aiohttp"
@@ -825,7 +825,7 @@ files = [
 
 [[package]]
 name = "eth-ape"
-version = "0.6.26"
+version = "0.6.27"
 requires_python = ">=3.8,<4"
 summary = "Ape Ethereum Framework"
 dependencies = [
@@ -861,8 +861,8 @@ dependencies = [
     "web3[tester]<7,>=6.7.0",
 ]
 files = [
-    {file = "eth-ape-0.6.26.tar.gz", hash = "sha256:f30d596b5c3fbe214b37eda53ae9fe24d04be2f3ad31b1ca41b142a6a2ac6894"},
-    {file = "eth_ape-0.6.26-py3-none-any.whl", hash = "sha256:b3ab04820126353ba5e8eb51f1653c72097d9aac9a5f0b40345724a084c9a3a0"},
+    {file = "eth-ape-0.6.27.tar.gz", hash = "sha256:8975d5726d4d070955573e9604e2de12af833b61318e7210424b41e0b401b24f"},
+    {file = "eth_ape-0.6.27-py3-none-any.whl", hash = "sha256:fb3eb387a2e073f3ec2ebf3b86ae764e2cdfb8af1d316a82c010884c55b84dde"},
 ]
 
 [[package]]
@@ -943,6 +943,24 @@ dependencies = [
 files = [
     {file = "eth-keys-0.4.0.tar.gz", hash = "sha256:7d18887483bc9b8a3fdd8e32ddcb30044b9f08fcb24a380d93b6eee3a5bb3216"},
     {file = "eth_keys-0.4.0-py3-none-any.whl", hash = "sha256:e07915ffb91277803a28a379418bdd1fad1f390c38ad9353a0f189789a440d5d"},
+]
+
+[[package]]
+name = "eth-pydantic-types"
+version = "0.1.0a3"
+requires_python = ">=3.8,<4"
+summary = "eth-pydantic-types: Pydantic Types for Ethereum"
+dependencies = [
+    "eth-hash[pycryptodome]<1,>=0.5.2",
+    "eth-typing<4,>=3.5.0",
+    "eth-utils<3,>=2.2.0",
+    "hexbytes<1,>=0.3.0",
+    "pydantic<3,>=2.4.2",
+    "typing-extensions<5,>=4.8.0",
+]
+files = [
+    {file = "eth-pydantic-types-0.1.0a3.tar.gz", hash = "sha256:b5f14d62846600aa50786af5f93cafce96b71c9e632258159563a66b5e14e42a"},
+    {file = "eth_pydantic_types-0.1.0a3-py3-none-any.whl", hash = "sha256:2e4e3bce2ec692893ee3b987f0aa3e163eee2965bde3f89a08bb44b19159b569"},
 ]
 
 [[package]]

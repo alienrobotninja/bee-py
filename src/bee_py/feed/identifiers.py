@@ -1,8 +1,7 @@
 from typing import Any
 
 from bee_py.chunk.soc import Identifier
-from bee_py.feed.feed import Index, IndexBytes
-from bee_py.types.type import FEED_INDEX_HEX_LENGTH, Topic
+from bee_py.types.type import FEED_INDEX_HEX_LENGTH, Index, IndexBytes, Topic
 from bee_py.utils.hash import keccak256_hash
 from bee_py.utils.hex import hex_to_bytes, make_hex_string, to_big_endian
 

@@ -8,7 +8,7 @@ import pytest
 from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
 from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
-from bee_py.types.type import BatchId
+from bee_py.types.type import BatchId, FetchFeedUpdateResponse, Reference
 from bee_py.utils.hex import bytes_to_hex
 
 PROJECT_PATH = Path(__file__).parent
@@ -259,3 +259,23 @@ def create_fake_file(tmp_path_factory):
     temp_file.write_bytes(b"a" * 32)
 
     return temp_file
+
+
+@pytest.fixture
+def test_chunk_hash() -> Reference:
+    return Reference(value="ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338")
+
+
+@pytest.fixture
+def feed_reference_hash() -> Reference:
+    return Reference(value="ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a1111")
+
+
+@pytest.fixture
+def feed_reference(feed_reference_hash) -> dict:
+    return {"reference": feed_reference_hash}
+
+
+@pytest.fixture
+def test_address():
+    return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"

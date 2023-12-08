@@ -1,6 +1,6 @@
 from typing import Union
 
-from hexbytes import HexBytes
+from eth_pydantic_types import HexBytes
 from pydantic import BaseModel, Field
 
 from bee_py.chunk.bmt import bmt_hash

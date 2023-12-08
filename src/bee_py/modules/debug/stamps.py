@@ -1,6 +1,12 @@
 from typing import Optional, Union
 
-from bee_py.types.type import BatchId, BeeRequestOptions, PostageBatch, PostageBatchBuckets, PostageBatchOptions
+from bee_py.types.type import (
+    BatchId,
+    BeeRequestOptions,
+    PostageBatch,
+    PostageBatchBuckets,
+    PostageBatchOptions,
+)
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 
@@ -27,7 +33,7 @@ def get_all_postage_batches(request_options: BeeRequestOptions) -> PostageBatch:
             logger.error(response.raise_for_status())
 
     postage_batches = response.json()
-    return PostageBatch.parse_obj(postage_batches)
+    return PostageBatch.model_validate(postage_batches)
 
 
 def get_postage_batch(
@@ -54,7 +60,7 @@ def get_postage_batch(
             logger.error(response.raise_for_status())
 
     postage_batch = response.json()
-    return PostageBatch.parse_obj(postage_batch)
+    return PostageBatch.model_validate(postage_batch)
 
 
 def get_postage_batch_buckets(
@@ -81,7 +87,7 @@ def get_postage_batch_buckets(
             logger.error(response.raise_for_status())
 
     postage_batch_buckets = response.json()
-    return PostageBatchBuckets.parse_obj(postage_batch_buckets)
+    return PostageBatchBuckets.model_validate(postage_batch_buckets)
 
 
 def create_postage_batch(

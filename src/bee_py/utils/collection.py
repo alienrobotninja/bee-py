@@ -57,7 +57,7 @@ def make_collection_from_file_list(file_list: list[Union[os.PathLike, str]]) -> 
             file_data = open(file_path, "rb").read()
 
             collection.append(
-                CollectionEntry.parse_object(
+                CollectionEntry.model_validateect(
                     {
                         "path": filename,
                         "data": bytearray(file_data),

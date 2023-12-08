@@ -40,7 +40,7 @@ def get_debug_status(request_options: BeeRequestOptions) -> DebugStatus:
             logger.error(response.raise_for_status())
 
     debug_status_response = response.json()
-    return DebugStatus.parse_obj(debug_status_response)
+    return DebugStatus.model_validate(debug_status_response)
 
 
 def get_health(request_options: BeeRequestOptions) -> Health:
@@ -63,7 +63,7 @@ def get_health(request_options: BeeRequestOptions) -> Health:
             logger.error(response.raise_for_status())
 
     health_response = response.json()
-    return Health.parse_obj(health_response)
+    return Health.model_validate(health_response)
 
 
 def get_readiness(request_options: BeeRequestOptions) -> bool:
@@ -106,7 +106,7 @@ def get_node_info(request_options: BeeRequestOptions) -> NodeInfo:
             logger.error(response.raise_for_status())
 
     node_info_response = response.json()
-    return NodeInfo.parse_obj(node_info_response)
+    return NodeInfo.model_validate(node_info_response)
 
 
 def is_supported_exact_version(request_options: BeeRequestOptions) -> bool:

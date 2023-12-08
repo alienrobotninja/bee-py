@@ -4,8 +4,8 @@ from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
 from eth_typing import ChecksumAddress as AddressType
-from pydantic import BaseModel
 
+# from pydantic import BaseModel
 from bee_py.chunk.serialize import serialize_bytes
 from bee_py.chunk.soc import make_single_owner_chunk_from_data, upload_single_owner_chunk_data
 from bee_py.feed.identifiers import make_feed_identifier
@@ -18,9 +18,11 @@ from bee_py.types.type import (  # Reference,; FeedType,
     BatchId,
     BeeRequestOptions,
     FeedReader,
+    FeedUpdate,
     FeedUpdateOptions,
     FeedWriter,
     FetchFeedUpdateResponse,
+    Index,
     Reference,
     Topic,
 )
@@ -33,47 +35,6 @@ from bee_py.utils.reference import make_bytes_reference
 TIMESTAMP_PAYLOAD_OFFSET = 0
 TIMESTAMP_PAYLOAD_SIZE = 8
 REFERENCE_PAYLOAD_OFFSET = TIMESTAMP_PAYLOAD_SIZE
-
-
-IndexBytes = NewType("IndexBytes", bytes)
-
-
-class Epoch(BaseModel):
-    """
-    Epoch model.
-
-    :param time: The time of the epoch.
-    :type time: int
-    :param level: The level of the epoch.
-    :type level: int
-    """
-
-    time: int
-    level: int
-
-
-class Index(BaseModel):
-    """
-    Index model.
-
-    :param index: The index can be a number, an epoch, index bytes or a string.
-    :type index: Union[int, Epoch, bytes, str]
-    """
-
-    index: Union[int, Epoch, bytes, str]
-
-
-class FeedUpdate(BaseModel):
-    """
-    Represents a feed update.
-
-    Attributes:
-        timestamp: The timestamp of the update.
-        reference: The reference of the update.
-    """
-
-    timestamp: int
-    reference: bytes
 
 
 def find_next_index(

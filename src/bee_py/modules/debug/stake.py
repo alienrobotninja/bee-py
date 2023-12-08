@@ -93,4 +93,4 @@ def get_redistribution_state(request_options: BeeRequestOptions) -> Redistributi
 
     redistribution_state = response.json()
 
-    return RedistributionState.parse_obj(redistribution_state)
+    return RedistributionState.model_validate(redistribution_state)

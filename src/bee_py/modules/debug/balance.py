@@ -26,7 +26,7 @@ def get_all_balances(request_options: BeeRequestOptions) -> BalanceResponse:
             logger.error(response.raise_for_status())
 
     balances_response = response.json()
-    return BalanceResponse.parse_obj(balances_response)
+    return BalanceResponse.model_validate(balances_response)
 
 
 def get_peer_balance(request_options: BeeRequestOptions, address: AddressType) -> PeerBalance:
@@ -49,7 +49,7 @@ def get_peer_balance(request_options: BeeRequestOptions, address: AddressType) -
             logger.error(response.raise_for_status())
     balances_response = response.json()
 
-    return PeerBalance.parse_obj(balances_response)
+    return PeerBalance.model_validate(balances_response)
 
 
 def get_past_due_consumption_balances(request_options: BeeRequestOptions) -> BalanceResponse:
@@ -70,7 +70,7 @@ def get_past_due_consumption_balances(request_options: BeeRequestOptions) -> Bal
             logger.error(response.raise_for_status())
 
     balances_response = response.json()
-    return BalanceResponse.parse_obj(balances_response)
+    return BalanceResponse.model_validate(balances_response)
 
 
 def get_past_due_consumption_peer_balance(request_options: BeeRequestOptions, address: AddressType) -> PeerBalance:
@@ -92,4 +92,4 @@ def get_past_due_consumption_peer_balance(request_options: BeeRequestOptions, ad
             logger.error(response.raise_for_status())
 
     balances_response = response.json()
-    return PeerBalance.parse_obj(balances_response)
+    return PeerBalance.model_validate(balances_response)

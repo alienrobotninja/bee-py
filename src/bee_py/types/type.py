@@ -1,11 +1,16 @@
 import json
+
 # from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
+
+# from ethpm_types import HexBytes
+from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
+
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
@@ -59,6 +64,20 @@ TOPIC_HEX_LENGTH = 64
 # Type aliases
 BatchId: TypeAlias = str
 AddressPrefix: TypeAlias = str
+
+
+# class HexBytes(BaseHexBytes):
+#     """
+#     A class representing bytes as a hex-str.
+#     """
+
+#     @classmethod
+#     def __get_validators__(cls):
+#         yield cls._validate
+
+#     @classmethod
+#     def _validate(cls, v):
+#         return HexBytes(v)
 
 
 class BeeRequest(BaseModel):
@@ -405,12 +424,10 @@ class Topic(BaseModel):
 
     value: str
 
-    TOPIC_HEX_LENGTH = 32  # define the length of the topic hex string
-
     @validator("value")
     def validate_value(cls, v):  # noqa: N805
-        if len(v) != cls.TOPIC_HEX_LENGTH or not all(c in "0123456789abcdefABCDEF" for c in v):
-            msg = f"Topic must be a hex string of length {cls.TOPIC_HEX_LENGTH}"
+        if len(v) != TOPIC_HEX_LENGTH or not all(c in "0123456789abcdefABCDEF" for c in v):
+            msg = f"Topic must be a hex string of length {TOPIC_HEX_LENGTH}"
             raise ValueError(msg)
         return v
 
@@ -951,3 +968,44 @@ ReferenceOrENS = Union[Reference, str]
 # * Type that represents either Swarm's reference in hex string,
 # * ESN domain (something.eth) or CID using one of the Swarm's codecs.
 ReferenceCidOrENS = Union[ReferenceOrENS, str]
+
+
+class Epoch(BaseModel):
+    """
+    Epoch model.
+
+    :param time: The time of the epoch.
+    :type time: int
+    :param level: The level of the epoch.
+    :type level: int
+    """
+
+    time: int
+    level: int
+
+
+IndexBytes = NewType("IndexBytes", bytes)
+
+
+class Index(BaseModel):
+    """
+    Index model.
+
+    :param index: The index can be a number, an epoch, index bytes or a string.
+    :type index: Union[int, Epoch, bytes, str]
+    """
+
+    index: Union[int, Epoch, bytes, str]
+
+
+class FeedUpdate(BaseModel):
+    """
+    Represents a feed update.
+
+    Attributes:
+        timestamp: The timestamp of the update.
+        reference: The reference of the update.
+    """
+
+    timestamp: int
+    reference: bytes

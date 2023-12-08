@@ -92,7 +92,7 @@ def extract_upload_headers(
     # * if not None
     if options:
         if isinstance(options, dict):
-            options = UploadOptions.parse_obj(options)
+            options = UploadOptions.model_validate(options)
         if options.pin:
             headers["swarm-pin"] = str(options.pin)
         if options.encrypt:

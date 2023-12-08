@@ -32,7 +32,7 @@ def create_tag(request_options: BeeRequestOptions, address: Optional[str] = None
             logger.error(response.raise_for_status())
 
     tag_response = response.json()
-    return Tag.parse_obj(tag_response)
+    return Tag.model_validate(tag_response)
 
 
 def retrieve_tag(request_options: BeeRequestOptions, uid: int) -> Tag:
@@ -58,7 +58,7 @@ def retrieve_tag(request_options: BeeRequestOptions, uid: int) -> Tag:
             logger.error(response.raise_for_status())
 
     tag_response = response.json()
-    return Tag.parse_obj(tag_response)
+    return Tag.model_validate(tag_response)
 
 
 def get_all_tags(request_options: BeeRequestOptions, offset: int = 0, limit: int = 10) -> list[Tag]:
@@ -97,7 +97,7 @@ def get_all_tags(request_options: BeeRequestOptions, offset: int = 0, limit: int
 
     tag_response = response.json()["tags"]
 
-    return [Tag.parse_obj(tag) for tag in tag_response]
+    return [Tag.model_validate(tag) for tag in tag_response]
 
 
 def delete_tag(request_options: BeeRequestOptions, uid: int) -> None:

@@ -6,7 +6,7 @@ from ape.types import AddressType
 from ape.types.signatures import MessageSignature, recover_signer
 from eth_account.messages import SignableMessage, encode_defunct
 from eth_keys import keys
-from hexbytes import HexBytes
+from eth_pydantic_types import HexBytes
 
 # bee_py imports
 from bee_py.utils.hash import keccak256_hash
