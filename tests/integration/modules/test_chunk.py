@@ -17,9 +17,9 @@ def test_store_retreive_data(bee_ky_options, get_debug_postage):
 
     assert str(response) == reference
 
-    downaloded_data = download(bee_ky_options, response)
+    downloaded_data = download(bee_ky_options, response)
 
-    assert downaloded_data.hex() == data.hex()
+    assert downloaded_data.hex() == data.hex()
 
 
 def test_fail_downalding_data(bee_debug_ky_options):

@@ -18,7 +18,7 @@ from bee_py.chunk.signer import recover_address, sign
 from bee_py.chunk.span import SPAN_SIZE
 from bee_py.modules.chunk import download
 from bee_py.modules.soc import upload
-from bee_py.types.type import BatchId, BeeRequestOptions, Reference, UploadOptions, assert_address
+from bee_py.types.type import BatchId, BeeRequestOptions, Reference, Signer, UploadOptions, assert_address
 from bee_py.utils.bytes import bytes_at_offset, bytes_equal, flex_bytes_at_offset
 from bee_py.utils.error import BeeError
 from bee_py.utils.hash import keccak256_hash
@@ -222,7 +222,7 @@ def upload_single_owner_chunk(
 
 def upload_single_owner_chunk_data(
     request_options: BeeRequestOptions,
-    signer: dict,
+    signer: Signer,
     postage_batch_id: BatchId,
     identifier: Identifier,
     data: bytes,

@@ -1,12 +1,6 @@
 from typing import Optional, Union
 
-from bee_py.types.type import (
-    BatchId,
-    BeeRequestOptions,
-    PostageBatch,
-    PostageBatchBuckets,
-    PostageBatchOptions,
-)
+from bee_py.types.type import BatchId, BeeRequestOptions, PostageBatch, PostageBatchBuckets, PostageBatchOptions
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 

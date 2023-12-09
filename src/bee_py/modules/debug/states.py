@@ -2,13 +2,7 @@ from typing import Union
 
 from pydantic import ValidationError
 
-from bee_py.types.type import (
-    BeeRequestOptions,
-    ChainState,
-    ReserveState,
-    WalletBalance,
-    WalletBalanceOLD,
-)
+from bee_py.types.type import BeeRequestOptions, ChainState, ReserveState, WalletBalance, WalletBalanceOLD
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 

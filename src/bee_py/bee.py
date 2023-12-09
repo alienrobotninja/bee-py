@@ -131,7 +131,7 @@ class Bee:
     def __get_request_options_for_call(
         self,
         options: Optional[BeeRequestOptions] = None,
-    ) -> dict:
+    ) -> BeeRequestOptions:
         """
         Returns the request options for a call, merging the default options with the provided options.
 
@@ -266,7 +266,7 @@ class Bee:
         assert_request_options(options)
         assert_reference(reference)
 
-        return bytes_api.downalod(self.__get_request_options_for_call(options), reference)
+        return bytes_api.download(self.__get_request_options_for_call(options), reference)
 
     def download_readable_data(self, reference: ReferenceOrENS, options: Optional[BeeRequestOptions] = None) -> bytes:
         """
@@ -1254,10 +1254,10 @@ class Bee:
         assert_request_options(options)
         canonical_owner = make_eth_address(owner_address)
 
-        def downalod():
+        def download():
             return download_single_owner_chunk(self.__get_request_options_for_call(options), canonical_owner, None)
 
-        return SOCReader(owner=make_hex_eth_address(canonical_owner), downalod=downalod)
+        return SOCReader(owner=make_hex_eth_address(canonical_owner), download=download)
 
     def make_soc_writer(
         self, signer: Optional[Union[Signer, bytes, str]], options: Optional[BeeRequestOptions] = None
@@ -1285,7 +1285,7 @@ class Bee:
             return upload_single_owner_chunk_data(self.__get_request_options_for_call(options), canonical_signer)
 
         # TODO: Look into it
-        return SOCWriter(owner=reader.owner, downalod=reader.downalod, upload=upload)
+        return SOCWriter(owner=reader.owner, download=reader.download, upload=upload)
 
     def check_connection(self, options: Optional[BeeRequestOptions] = None) -> bool:
         """

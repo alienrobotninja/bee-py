@@ -1,11 +1,4 @@
-from bee_py.types.type import (
-    BeeRequestOptions,
-    NodeAddresses,
-    Peers,
-    PingResponse,
-    RemovePeerResponse,
-    Topology,
-)
+from bee_py.types.type import BeeRequestOptions, NodeAddresses, Peers, PingResponse, RemovePeerResponse, Topology
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 

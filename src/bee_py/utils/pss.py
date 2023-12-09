@@ -1,4 +1,4 @@
-from bee_py.types.type import PSS_TARGET_HEX_LENGTH_MAX, AddressPrefix 
+from bee_py.types.type import PSS_TARGET_HEX_LENGTH_MAX, AddressPrefix
 
 
 def make_max_target(target: str) -> AddressPrefix:

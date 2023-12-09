@@ -191,7 +191,7 @@ def make_feed_reader(
         owner=owner,
         topic=topic,
         options=options,
-        downalod=download_partial,
+        download=download_partial,
     )
 
 
