@@ -1,7 +1,7 @@
 from typing import Any, Union
 
 from ens.utils import is_valid_ens_name
-from swarm_cid import ReferenceType, decodeCid, encodeReference
+from swarm_cid import ReferenceType, decode_cid, encode_reference
 
 from bee_py.types.type import (
     ENCRYPTED_REFERENCE_HEX_LENGTH,
@@ -112,7 +112,7 @@ def make_reference_or_ens(value: Any, expected_cid_type: ReferenceType) -> Refer
         raise TypeError(msg)
 
     try:
-        result = decodeCid(value)
+        result = decode_cid(value)
 
         if result.type != expected_cid_type:
             msg = f'CID was expected to be of type {expected_cid_type}, but got instead {result.type if result.type else "non-Swarm CID"}'  # noqa: E501
@@ -140,7 +140,7 @@ def add_cid_conversion_function(result: UploadResult, cid_type: str) -> UploadRe
     """
 
     def cid():
-        return encodeReference(str(result.reference), cid_type)
+        return encode_reference(str(result.reference), cid_type)
 
     return UploadResultWithCid(cid=cid)
 

@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:dbe6d4b02b00c101aa019f9a598f543072f3631576505768aa8673515546df3b"
+content_hash = "sha256:91925bab6a0e2df9b1e8f1901990a8ba5ce9b045f39805c9e39b94bd10eed138"
 
 [[package]]
 name = "aiohttp"
@@ -947,7 +947,7 @@ files = [
 
 [[package]]
 name = "eth-pydantic-types"
-version = "0.1.0a3"
+version = "0.1.0a4"
 requires_python = ">=3.8,<4"
 summary = "eth-pydantic-types: Pydantic Types for Ethereum"
 dependencies = [
@@ -959,8 +959,8 @@ dependencies = [
     "typing-extensions<5,>=4.8.0",
 ]
 files = [
-    {file = "eth-pydantic-types-0.1.0a3.tar.gz", hash = "sha256:b5f14d62846600aa50786af5f93cafce96b71c9e632258159563a66b5e14e42a"},
-    {file = "eth_pydantic_types-0.1.0a3-py3-none-any.whl", hash = "sha256:2e4e3bce2ec692893ee3b987f0aa3e163eee2965bde3f89a08bb44b19159b569"},
+    {file = "eth-pydantic-types-0.1.0a4.tar.gz", hash = "sha256:f1b3e5375750df282781baa6cb4eb628a979a452ea1821da0ac605fb7ffd1158"},
+    {file = "eth_pydantic_types-0.1.0a4-py3-none-any.whl", hash = "sha256:5455f3f9291e719f135c3196f1564f3927c848eb578e7cf134d1ffa6259188ad"},
 ]
 
 [[package]]
@@ -1046,7 +1046,7 @@ files = [
 name = "ethpm-types"
 version = "0.5.11"
 requires_python = ">=3.8,<4"
-summary = "ethpm_types: Implementation of EIP-2678"
+summary = "eth_pydantic_types: Implementation of EIP-2678"
 dependencies = [
     "eth-utils<3,>=2.1.0",
     "hexbytes<1,>=0.3.0",
@@ -1056,7 +1056,7 @@ dependencies = [
 ]
 files = [
     {file = "ethpm-types-0.5.11.tar.gz", hash = "sha256:df6b0f06ab6ced834ec1c2858c30817095846739747313b41a681b0eb20b9251"},
-    {file = "ethpm_types-0.5.11-py3-none-any.whl", hash = "sha256:2a3b39cbf46bc8248f1c98bb56584c65496b63d1200a30f8d5daa74c4e4c7fd8"},
+    {file = "eth_pydantic_types-0.5.11-py3-none-any.whl", hash = "sha256:2a3b39cbf46bc8248f1c98bb56584c65496b63d1200a30f8d5daa74c4e4c7fd8"},
 ]
 
 [[package]]
@@ -2533,14 +2533,6 @@ files = [
 ]
 
 [[package]]
-name = "pysha3"
-version = "1.0.2"
-summary = "SHA-3 (Keccak) for Python 2.7 - 3.5"
-files = [
-    {file = "pysha3-1.0.2.tar.gz", hash = "sha256:fe988e73f2ce6d947220624f04d467faf05f1bbdbc64b0a201296bb3af92739e"},
-]
-
-[[package]]
 name = "pytest"
 version = "7.4.3"
 requires_python = ">=3.7"
@@ -3167,17 +3159,17 @@ files = [
 
 [[package]]
 name = "swarm-cid-py"
-version = "0.1.0"
+version = "0.1.2"
 requires_python = ">=3.9,<4.0"
 summary = "Utility library written in Python to convert Swarm hex references into Swarm CIDs"
 dependencies = [
     "multiformats-fix<0.3.0,>=0.2.2",
     "py-multiformats-cid<0.5.0,>=0.4.4",
-    "pysha3<2.0.0,>=1.0.2",
+    "safe-pysha3<2.0.0,>=1.0.4",
 ]
 files = [
-    {file = "swarm_cid_py-0.1.0-py3-none-any.whl", hash = "sha256:d51e6ebd1f09ff87203d5ae96f0772f3ccad08f7b9ccaf7b790254f86ce2c172"},
-    {file = "swarm_cid_py-0.1.0.tar.gz", hash = "sha256:7f1be35a4debe157fca99eeea158ff5bff81d6bcd171f3b3c5f7007b769a10f9"},
+    {file = "swarm_cid_py-0.1.2-py3-none-any.whl", hash = "sha256:aed2b5b8e41dd9727c3f52c5c3736b05d0e0da8a386c4a4b4e54d0b0cd17a01a"},
+    {file = "swarm_cid_py-0.1.2.tar.gz", hash = "sha256:73da0cfaf93153ef11f9e1d6c79dde5eac0f55d8f85a648491426d358d177714"},
 ]
 
 [[package]]

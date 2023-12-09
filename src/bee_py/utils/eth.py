@@ -5,6 +5,7 @@ from typing import Any, Optional, Union
 from ape import accounts
 from ape.managers.accounts import AccountAPI
 from eth_account.messages import encode_defunct
+from eth_pydantic_types import HexBytes
 from eth_typing import ChecksumAddress as AddressType
 from eth_utils import (
     ValidationError,
@@ -14,7 +15,6 @@ from eth_utils import (
     to_checksum_address,
     to_normalized_address,
 )
-from ethpm_types import HexBytes
 
 from bee_py.Exceptions import AccountNotFoundError
 from bee_py.utils.hex import bytes_to_hex, hex_to_bytes, str_to_hex

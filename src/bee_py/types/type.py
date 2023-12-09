@@ -7,7 +7,7 @@ from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 
-# from ethpm_types import HexBytes
+# from eth_pydantic_types import HexBytes
 from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
 
@@ -796,30 +796,6 @@ class FetchFeedUpdateResponse(ReferenceResponse, FeedUpdateHeaders):
     pass
 
 
-class FeedReader(BaseModel):
-    Type: FeedType
-    owner: str
-    topic: str
-    request_options: Optional[BeeRequestOptions] = None
-
-    download: Callable
-    upload: Callable
-
-
-class FeedWriter(FeedReader):
-    """
-    Represents a feed writer.
-
-    Attributes:
-        type: The type of the feed.
-        owner: The owner of the feed.
-        topic: The topic of the feed.
-        upload: The upload function.
-    """
-
-    signer: Signer
-
-
 class FeedUploadOptions(BaseModel):
     """
     Options for uploading a feed.
@@ -837,6 +813,31 @@ class FeedUploadOptions(BaseModel):
         arbitrary_types_allowed = True
 
 
+class FeedReader(BaseModel):
+    Type: FeedType
+    owner: str
+    topic: str
+    request_options: Optional[BeeRequestOptions] = None
+
+    download: Callable
+    # * Callable[[Union[str, BatchId], Union[bytes, Reference], Optional[FeedUploadOptions], Reference]]
+    upload: Callable
+
+
+class FeedWriter(FeedReader):
+    """
+    Represents a feed writer.
+
+    Attributes:
+        type: The type of the feed.
+        owner: The owner of the feed.
+        topic: The topic of the feed.
+        upload: The upload function.
+    """
+
+    signer: Signer
+
+
 class JsonFeedOptions(BaseModel):
     address: Optional[AddressType] = None
     signer: Optional[Union[AccountAPI, str]] = None
@@ -845,7 +846,7 @@ class JsonFeedOptions(BaseModel):
 
 class UploadResult(BaseModel):
     reference: Reference
-    tag_uid: Optional[int] = None
+    tag_uid: Optional[int] = Field(None, alias="tagUid")
 
     class Config:
         arbitrary_types_allowed = True

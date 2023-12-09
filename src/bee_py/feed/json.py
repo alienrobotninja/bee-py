@@ -35,7 +35,7 @@ def serialize_json(data: dict) -> bytes:
         raise
 
 
-def get_json_data(bee, reader: FeedReader):
+def get_json_data(bee, reader: FeedReader) -> str:
     """
     Get JSON data from a feed.
 
@@ -44,9 +44,9 @@ def get_json_data(bee, reader: FeedReader):
     @return: JSON data
     """
     feed_update = reader.download()
-    retrieved_data = bee.download_data(feed_update.reference)
+    retrieved_data = bee.download_data(str(feed_update))
     #! Update this Bee class
-    return json.loads(retrieved_data.text)
+    return json.loads(retrieved_data)
 
 
 def set_json_data(
@@ -70,5 +70,5 @@ def set_json_data(
     """
     serialized_data = json.dumps(data)
     response = bee.upload_data(postage_batch_id, serialized_data, options, request_options)
-    reference = response["reference"]
+    reference = response.reference
     return writer.upload(postage_batch_id, reference)

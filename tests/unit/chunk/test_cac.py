@@ -8,7 +8,7 @@ from bee_py.utils.hex import assert_bytes, hex_to_bytes
 
 def test_make_content_addressed_chunk(payload):
     chunk = make_content_addressed_chunk(payload)
-    address = chunk.address()
+    address = chunk.address
 
     assert address.hex() == "0xca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
 

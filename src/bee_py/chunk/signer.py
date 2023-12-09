@@ -36,13 +36,15 @@ def hash_with_ethereum_prefix(data: Union[bytes, bytearray]) -> bytes:
 
 # TODO: Update the implementation when this PR is merged https://github.com/ApeWorX/ape/pull/1734
 def sign(
-    data: Union[str, bytes, bytearray], account: AccountAPI, auto_sign: Optional[bool] = False  # noqa: FBT002
+    data: Union[str, bytes, bytearray, SignableMessage],
+    account: AccountAPI,
+    auto_sign: Optional[bool] = False,  # noqa: FBT002
 ) -> MessageSignature:
     """
     Calculates the signature of the provided data using the given private key.
 
     Args:
-        data(str, bytes, bytearray): The data to be signed.
+        data(str, bytes, bytearray, SignableMessage): The data to be signed.
         account: ape account
         auto_sign(Optional[bool]): Whether to enable auto-signing for the account
 
@@ -54,8 +56,11 @@ def sign(
     passing the public key while calling this function.
     """
 
-    if isinstance(data, str):
-        data = encode_defunct(text=data)
+    if not isinstance(data, SignableMessage):
+        if isinstance(data, str):
+            data = encode_defunct(text=data)
+        else:
+            data = encode_defunct(data)
 
     # you have to set password as env variable
     # more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure # noqa: E501

@@ -263,12 +263,13 @@ def create_fake_file(tmp_path_factory):
 
 @pytest.fixture
 def test_chunk_hash() -> Reference:
-    return Reference(value="ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338")
+    return Reference.model_validate({"value": "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"})
 
 
 @pytest.fixture
-def feed_reference_hash() -> Reference:
-    return Reference(value="ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a1111")
+def feed_reference_hash() -> str:
+    # return Reference(value="ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a1111")
+    return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a1111"
 
 
 @pytest.fixture

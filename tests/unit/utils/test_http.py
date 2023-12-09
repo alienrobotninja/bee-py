@@ -20,6 +20,7 @@ def test_handle_non_json_response_for_404(requests_mock, ky_options):
     HTML_RESPONSE = "<html><body><h1>Some error!</h1></body></html>"  # noqa: N806
     requests_mock.get("http://localhost:12345/endpoint", text=HTML_RESPONSE, status_code=404)
 
-    config = {"url": "/endpoint", "method": "get"}
-    with pytest.raises(TypeError):
-        http(ky_options, config)
+    config = {"url": BEE_API_URL + "endpoint", "method": "get"}
+    response = http(ky_options, config)
+
+    assert response.status_code == 404

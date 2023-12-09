@@ -9,8 +9,7 @@ dependencies = [
     "structlog>=23.2.0",
     "semver>=3.0.2",
     "websocket-client>=1.6.4",
-    "pytest-asyncio>=0.21.1",
-    "swarm-cid-py>=0.1.0",
+    "swarm-cid-py>=0.1.2",
     "eth-pydantic-types>=0.1.0a3",
 ]
 requires-python = ">=3.9"
@@ -51,6 +50,7 @@ test = [
     "requests-mock>=1.11.0",
     "pytest-print>=1.0.0",
     "pytest-mock>=3.12.0",
+    "pytest-asyncio>=0.21.1",
 ]
 lint = [
     "black>=23.11.0",              # Auto-formatter and linter
@@ -68,7 +68,6 @@ lint = [
     "mdformat-frontmatter>=2.0.8", # Needed for frontmatters-style
     "mdformat-pyproject>=0.0.1",   # Allows configuring in pyproject.toml
     "Flake8-pyproject>=1.2.3",
-    
 ]
 
 

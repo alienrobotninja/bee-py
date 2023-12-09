@@ -14,6 +14,8 @@ def test_upload_single_owner_chunk(
 ):
     cac = make_content_addressed_chunk(payload)
 
+    # * import the account first by doing
+    # * ape accounts import 634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd
     signer = accounts.load("bee")
     signer.set_autosign(True, passphrase="a")
 
