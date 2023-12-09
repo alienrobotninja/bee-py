@@ -1,15 +1,7 @@
 import struct
 from typing import Optional, Union
 
-from bee_py.types.type import (
-    BatchId,
-    BeeRequestOptions,
-    Data,
-    Reference,
-    ReferenceOrENS,
-    UploadOptions,
-    UploadResult,
-)
+from bee_py.types.type import BatchId, BeeRequestOptions, Data, Reference, ReferenceOrENS, UploadOptions, UploadResult
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
@@ -52,7 +44,7 @@ def upload(
             logger.error(response.raise_for_status())
 
     upload_response = response.json()
-    reference = Reference(upload_response["reference"])
+    reference = Reference(value=upload_response["reference"])
     tag_uid = None
 
     if "swarm-tag" in response.headers:

@@ -60,4 +60,4 @@ def delete_chunk_from_local_storage(
         msg = f"Failed to delete chunk: {status_code}"
         raise ValueError(msg)
 
-    return BeeGenericResponse(json.loads(response.text), status_code)
+    return BeeGenericResponse.model_validate_json(response.text)

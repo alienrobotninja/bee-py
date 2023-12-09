@@ -137,7 +137,7 @@ def get_debug_postage(printer, bee_debug_ky_options) -> BatchId:
     stamp: BatchId
 
     printer("[*]Getting Debug Postage....")
-    # return "0717e834668a3da917dacacacab61ca5a3ea1e5411e1e3d2de5f96a9fb8a0a0d"
+    return "75971c97ba6bbf7ecf429ffab1955c8ed5d2d8622c238cfa52b55451ecef4516"
 
     # if read_local_bee_stamp:
     #     printer(read_local_bee_stamp)
@@ -164,7 +164,7 @@ def get_peer_debug_postage(printer, bee_peer_debug_ky_options) -> BatchId:
 
     # if read_local_bee_peer_stamp:
     #     return read_local_bee_peer_stamp
-    # return "6be2b2aacd687180a109d960cb9b1da0b446f4fca3966c6b7fdd84e6d9fdad52"
+    return "9d453ebb73b2fedaaf44ceddcf7a0aa37f3e3d6453fea5841c31f0ea6d61dc85"
 
     printer("[*]Getting Debug Postage....")
     stamp = create_postage_batch(bee_peer_debug_ky_options, 100, 20)
