@@ -2,7 +2,7 @@ from bee_py.modules.bzz import upload_collection, upload_file
 from bee_py.modules.stewardship import reupload
 
 
-async def test_reupload_directory(bee_ky_options, get_debug_postage):
+def test_reupload_directory(bee_ky_options, get_debug_postage):
     directory_structure = [
         {
             "path": "0",

@@ -67,7 +67,7 @@ def bee_peer_debug_url():
         with open(ENV_FILE) as f:
             data = json.loads(f.read())
         if data["BEE_DEBUG_PEER_API_URL"]:
-            BEE_DEBUG_PEER_API_URL = data["BEE_DEBUG_API_URL"]  # noqa: N806
+            BEE_DEBUG_PEER_API_URL = data["BEE_DEBUG_PEER_API_URL"]  # noqa: N806
     else:
         BEE_DEBUG_PEER_API_URL = "http://localhost:11635"  # noqa: N806
 
@@ -110,7 +110,12 @@ def bee_peer_ky_options(bee_peer_url) -> dict:
 
 
 @pytest.fixture
-def bee_debug_ky_options(bee_peer_debug_url) -> dict:
+def bee_debug_ky_options(bee_debug_url) -> dict:
+    return {"baseURL": bee_debug_url, "timeout": 300, "onRequest": True}
+
+
+@pytest.fixture
+def bee_debug_peer_ky_options(bee_peer_debug_url) -> dict:
     return {"baseURL": bee_peer_debug_url, "timeout": 300, "onRequest": True}
 
 
@@ -221,9 +226,8 @@ def bee_peer_debug_ky_options(bee_peer_debug_url):
 
 
 @pytest.fixture
-def peer_overlay(bee_peer_debug_ky_options) -> str:
-    node_addresses = get_node_addresses(bee_peer_debug_ky_options)
-
+def peer_overlay(bee_debug_peer_ky_options) -> str:
+    node_addresses = get_node_addresses(bee_debug_peer_ky_options)
     return node_addresses.overlay
 
 

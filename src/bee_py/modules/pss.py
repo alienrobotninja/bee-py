@@ -46,7 +46,7 @@ def send(
     }
     response = http(request_options, config)
 
-    if response.status_code != 200:  # noqa: PLR2004
+    if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())

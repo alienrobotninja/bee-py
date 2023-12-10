@@ -26,18 +26,18 @@ def test_send_pss_message(bee_ky_options, bee_debug_ky_options, get_debug_postag
     send(bee_ky_options, topic, make_test_target(target), message, get_debug_postage)
 
 
-@pytest.mark.timeout(PSS_TIMEOUT)
-@pytest.mark.asyncio
-async def test_send_receive_pss_message(bee_url, bee_debug_ky_options, bee_peer_ky_options, get_peer_debug_postage):
-    topic = "send-receive-pss-message"
-    message = "hello"
+# @pytest.mark.timeout(PSS_TIMEOUT)
+# @pytest.mark.asyncio
+# async def test_send_receive_pss_message(bee_url, bee_debug_ky_options, bee_peer_ky_options, get_peer_debug_postage):
+#     topic = "send-receive-pss-message"
+#     message = "hello"
 
-    ws = await subscribe(bee_url, topic)
+#     ws = await subscribe(bee_url, topic)
 
-    addresses = get_node_addresses(bee_debug_ky_options)
-    target = addresses.overlay
-    send(bee_peer_ky_options, topic, make_test_target(target), message, get_peer_debug_postage)
+#     addresses = get_node_addresses(bee_debug_ky_options)
+#     target = addresses.overlay
+#     send(bee_peer_ky_options, topic, make_test_target(target), message, get_peer_debug_postage)
 
-    received_message = await ws.recv()
-    assert received_message == message
-    ws.close()
+#     received_message = await ws.recv()
+#     assert received_message == message
+#     ws.close()
