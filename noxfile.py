@@ -9,7 +9,7 @@
 # import nox
 
 # package = "bee_py"
-# python_versions = ["3.11", "3.10", "3.9"]
+# python_versions = ["3.12","3.11", "3.10", "3.9"]
 # nox.needs_version = ">= 2023.4.22"
 # nox.options.sessions = (
 #     "pre-commit",

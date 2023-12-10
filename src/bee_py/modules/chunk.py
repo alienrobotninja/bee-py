@@ -41,7 +41,7 @@ def upload(
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    return Reference(response.json()["reference"])
+    return Reference(value=response.json()["reference"])
 
 
 def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:

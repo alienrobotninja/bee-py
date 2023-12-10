@@ -3,7 +3,7 @@ import requests
 
 from bee_py.modules.bzz import download_file, upload_collection, upload_file
 from bee_py.modules.tag import create_tag, retrieve_tag
-from bee_py.types.type import ENCRYPTED_REFERENCE_HEX_LENGTH
+from bee_py.types.type import ENCRYPTED_REFERENCE_HEX_LENGTH, Reference
 from bee_py.utils.collection_node import make_collection_from_fs
 
 BIG_FILE_TIMEOUT = 100_000
@@ -71,7 +71,7 @@ def test_upload_and_download_with_encryption(bee_ky_options, get_debug_postage):
     file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])
 
     assert file.headers.name == directory_structure[0]["path"]
-    assert file.data.encode() == directory_structure[0]["data"]
+    assert file.data == directory_structure[0]["data"]
     assert len(result.reference) == ENCRYPTED_REFERENCE_HEX_LENGTH
 
 
@@ -236,8 +236,13 @@ def test_store_file_with_tag(bee_ky_options, get_debug_postage, random_byte_arra
     upload_file(bee_ky_options, data, get_debug_postage, filename, {"tag": tag1.uid})
     tag2 = retrieve_tag(bee_ky_options, tag1.uid)
 
-    assert tag2.split == expected_tags_count
-    assert tag2.synced == 0
+    # * For older version of the APi
+    if tag2.split == 0:
+        assert tag2.total == expected_tags_count
+        assert tag2.seen == 0
+    else:
+        assert tag2.split == expected_tags_count
+        assert tag2.synced == 0
 
 
 @pytest.mark.timeout(BIG_FILE_TIMEOUT)
@@ -253,5 +258,5 @@ def test_upload_bigger_file(bee_ky_options, get_debug_postage):
 
     response = upload_file(bee_ky_options, data, get_debug_postage)
 
-    assert isinstance(response.reference, str)
+    assert isinstance(response.reference, Reference)
     assert isinstance(response.tag_uid, int)

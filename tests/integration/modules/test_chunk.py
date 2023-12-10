@@ -9,8 +9,6 @@ def test_store_retreive_data(bee_ky_options, get_debug_postage):
     span = bytes([len(payload), 0, 0, 0, 0, 0, 0, 0])
     data = bytes([*span, *payload])
 
-    # get_debug_postage = "17b325d7ad88098eb2065ebfd505134fb61ee6b4fb2b44f9a44d97067f8c741d"
-
     reference = "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
     # the hash is hardcoded because we would need the bmt hasher otherwise
     response = upload(bee_ky_options, data, get_debug_postage)

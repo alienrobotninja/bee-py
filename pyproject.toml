@@ -2,8 +2,10 @@
 [project]
 name = "bee-py"
 version = "0.1.0"
-description = "Python client library for connecting to Bee decentralised storage"
-authors = [{ name = "SAIKAT KARMAKAR", email = "saikickkarma@protonmail.com" }]
+description = ""
+authors = [
+    { name = "SAIKAT KARMAKAR", email = "saikickkarma@protonmail.com" },
+]
 dependencies = [
     "eth-ape>=0.6.27",
     "structlog>=23.2.0",
@@ -35,7 +37,6 @@ Changelog = "https://github.com/alienrobotninja/bee-py/releases"
 [build-system]
 requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
-
 
 # pdm dependencies
 [tool.pdm.dev-dependencies]

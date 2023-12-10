@@ -1,13 +1,16 @@
 import json
+
 # from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
+
 # from eth_pydantic_types import HexBytes
 from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
+
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
@@ -107,16 +110,16 @@ class BeeResponse(BaseModel):
 
     headers: dict[str, str]
     status: int
-    status_text: Optional[str] = Field(None, alias="statusText")
+    status_text: Optional[str] = Field(default="", alias="statusText")
     request: BeeRequest
 
 
 class BeeRequestOptions(BaseModel):
-    base_url: Optional[str] = Field(None, alias="baseURL")
+    base_url: Optional[str] = Field(default="", alias="baseURL")
     timeout: Optional[int] = None
     retry: Union[int, bool] = None
     headers: dict = {}
-    on_request: bool = Field(None, alias="onRequest")
+    on_request: bool = Field(..., alias="onRequest")
 
 
 class PssSubscription(BaseModel):
@@ -477,8 +480,8 @@ class NodeAddresses(BaseModel):
     overlay: str
     underlay: list[str]
     ethereum: str
-    public_key: str = Field(..., alias="publicKey")
-    pss_public_key: str = Field(..., alias="pssPublicKey")
+    public_key: str = Field(default=None, alias="publicKey")
+    pss_public_key: str = Field(default=None, alias="pssPublicKey")
 
 
 class Peer(BaseModel):
@@ -516,19 +519,19 @@ class RemovePeerResponse(BaseModel):
 class Bin(BaseModel):
     population: int
     connected: int
-    disconnected_peers: Optional[list[Peer]] = Field(None, alias="disconnectedPeers")
-    connected_peers: Optional[list[Peer]] = Field(None, alias="connectedPeers")
+    disconnected_peers: Optional[list[Peer]] = Field(default=[], alias="disconnectedPeers")
+    connected_peers: Optional[list[Peer]] = Field(default=[], alias="connectedPeers")
 
 
 class Topology(BaseModel):
-    base_address: str = Field(..., alias="baseAddr")
+    base_address: str = Field(default="", alias="baseAddr")
     population: int
     connected: int
     timestamp: str
-    nn_low_watermark: int = Field(..., alias="nnLowWatermark")
+    nn_low_watermark: int = Field(default=None, alias="nnLowWatermark")
     depth: int
     reachability: str
-    network_availability: str = Field(..., alias="networkAvailability")
+    network_availability: str = Field(default="", alias="networkAvailability")
     bins: dict[str, Bin]
 
 
@@ -597,8 +600,8 @@ class CashoutResult(BaseModel):
 class LastCashoutActionResponse(BaseModel):
     peer: str
     uncashed_amount: str = Field(..., alias="uncashedAmount")
-    transaction_hash: Optional[str] = Field(..., alias="transactionHash")
-    last_cashed_cheque: Optional[Cheque] = Field(..., alias="lastCashedCheque")
+    transaction_hash: Optional[str] = Field(default="", alias="transactionHash")
+    last_cashed_cheque: Optional[Cheque] = Field(default="", alias="lastCashedCheque")
     result: Optional[CashoutResult]
 
 
@@ -638,23 +641,23 @@ class PostageBatch(BaseModel):
 
 
 class BatchBucket(BaseModel):
-    bucket_id: int = Field(..., alias="bucketID")
+    bucket_id: int = Field(default=None, alias="bucketID")
     collisions: int
 
 
 class PostageBatchBuckets(BaseModel):
     depth: int
-    bucket_depth: int = Field(..., alias="bucketDepth")
-    bucket_upper_bound: int = Field(..., alias="bucketUpperBound")
+    bucket_depth: int = Field(default=None, alias="bucketDepth")
+    bucket_upper_bound: int = Field(default=None, alias="bucketUpperBound")
     buckets: Optional[list[BatchBucket]]
 
 
 class PostageBatchOptions(BaseModel):
     label: Optional[str]
-    gas_price: Optional[str] = Field(None, alias="gasPrice")
+    gas_price: Optional[str] = Field(default="", alias="gasPrice")
     immutable_flag: Optional[bool]
-    wait_for_usable: Optional[bool] = Field(True, alias="waitForUsable")
-    wait_for_usable_timeout: Optional[int] = Field(120, alias="waitForUsableTimeout")
+    wait_for_usable: Optional[bool] = Field(default=True, alias="waitForUsable")
+    wait_for_usable_timeout: Optional[int] = Field(default=120, alias="waitForUsableTimeout")
 
 
 class StampResponse(BaseModel):
@@ -694,7 +697,7 @@ class WalletBalance(BaseModel):
     # deprecated
     bzz: Optional[str] = None
     xDai: Optional[str] = None  # noqa: N815
-    contract_address: Optional[str] = Field(None, alias="contractAddress")
+    contract_address: Optional[str] = Field(default="", alias="contractAddress")
 
 
 class ExtendedTag(BaseModel):
@@ -735,7 +738,7 @@ class TransactionInfo(BaseModel):
 
 
 class PendingTransactionsResponse(BaseModel):
-    pending_transactions: list[TransactionInfo] = Field(..., alias="pendingTransactions")
+    pending_transactions: list[TransactionInfo] = Field(default=[], alias="pendingTransactions")
 
 
 class FeedType(Enum):
@@ -843,7 +846,7 @@ class JsonFeedOptions(BaseModel):
 
 class UploadResult(BaseModel):
     reference: Reference
-    tag_uid: Optional[int] = Field(None, alias="tagUid")
+    tag_uid: Optional[int] = Field(default=None, alias="tagUid")
 
     class Config:
         arbitrary_types_allowed = True
@@ -882,11 +885,11 @@ class Collection(BaseModel):
 
 
 class CollectionUploadOptions(UploadOptions):
-    index_document: Optional[str] = Field(None, alias="indexDocument")
-    error_document: Optional[str] = Field(None, alias="errorDocument")
+    index_document: Optional[str] = Field(default="", alias="indexDocument")
+    error_document: Optional[str] = Field(default="", alias="errorDocument")
 
 
-class FileData(FileHeaders, BaseModel):
+class FileData(BaseModel):
     headers: FileHeaders
     data: bytes
 

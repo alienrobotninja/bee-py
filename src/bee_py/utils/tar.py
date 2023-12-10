@@ -45,7 +45,7 @@ def make_tar(data: Union[Collection, list[dict]]) -> bytes:
     with tarfile.open(mode="w", fileobj=tar_buffer) as tar:
         for entry in data.entries:
             entry_path = entry.path
-            entry_data = entry.data.encode()
+            entry_data = entry.data
 
             info = tarfile.TarInfo(name=entry_path)
             info.size = len(entry_data)

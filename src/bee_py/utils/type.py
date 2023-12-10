@@ -53,7 +53,7 @@ def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
         TypeError: If the tag UID is not a non-negative integer.
     """
     if not tag_uid:
-        msg = "TagUid was expected but got null instead!"
+        msg = "TagUid was expected but got None instead!"
         raise TypeError(msg)
 
     if isinstance(tag_uid, Tag):
@@ -68,9 +68,9 @@ def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
                 msg = f"TagUid was expected to be positive non-negative integer! Got {int_value}"
                 raise TypeError(msg)
             return int_value
-        except ValueError:
+        except ValueError as e:
             msg = "Passed tagUid string is not valid integer!"
-            raise TypeError(msg)  # noqa: B904
+            raise TypeError(msg) from e
     msg = "tagUid has to be either Tag or a number (UID)!"
     raise TypeError(msg)
 

@@ -1,12 +1,11 @@
 from typing import Optional, Union
 
-from bee_py.types.type import (  # Reference,; UploadHeaders,; Data,; CollectionEntry,; CollectionUploadHeaders,; FileUploadHeaders,  # noqa: E501
+from bee_py.types.type import (  # Reference,; UploadHeaders,; Data,; CollectionEntry,; CollectionUploadHeaders,; FileUploadHeaders,  # noqa: E501; FileHeaders,
     BatchId,
     BeeRequestOptions,
     Collection,
     CollectionUploadOptions,
     FileData,
-    FileHeaders,
     FileUploadOptions,
     Reference,
     ReferenceOrENS,
@@ -29,10 +28,10 @@ def extract_file_upload_headers(postage_batch_id: BatchId, options: Optional[Fil
     options = FileUploadOptions.model_validate(options)
 
     if options and options.size:
-        headers["content-length"] = str(options.size)
+        headers["Content-Length"] = str(options.size)
 
     if options and options.content_type:
-        headers["content-type"] = options.content_type
+        headers["Content-Type"] = options.content_type
 
     return headers
 
@@ -83,13 +82,13 @@ def upload_file(
             logger.error(response.raise_for_status())
 
     upload_response = response.json()
-    reference = Reference(upload_response["reference"])
+    reference = Reference(value=upload_response["reference"])
     tag_uid = None
 
-    if "swarm-tag" in response.headers:
-        tag_uid = make_tag_uid(response.headers["swarm-tag"])
+    if "Swarm-Tag" in response.headers:
+        tag_uid = make_tag_uid(response.headers["Swarm-Tag"])
 
-    return UploadResult(reference=reference, tag_uid=tag_uid)
+    return UploadResult(reference=reference, tagUid=tag_uid)
 
 
 def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, path: str = "") -> FileData:
@@ -105,6 +104,9 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
         FileData: Downloaded file data.
     """
 
+    if isinstance(_hash, Reference):
+        _hash = str(_hash)
+
     config = {"url": f"{BZZ_ENDPOINT}/{_hash}/{path}", "method": "GET"}
     response = http(request_options, config)
 
@@ -113,7 +115,7 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    file_headers = FileHeaders.model_validate(read_file_headers(response.headers))
+    file_headers = read_file_headers(response.headers)
     file_data = wrap_bytes_with_helpers(response.content)
 
     return FileData(headers=file_headers, data=file_data.data)
@@ -219,10 +221,10 @@ def upload_collection(
             logger.error(response.raise_for_status())
 
     upload_response = response.json()
-    reference = Reference(upload_response["reference"])
+    reference = Reference(value=upload_response["reference"])
     tag_uid = None
 
-    if "swarm-tag" in response.headers:
-        tag_uid = make_tag_uid(response.headers["swarm-tag"])
+    if "Swarm-Tag" in response.headers:
+        tag_uid = make_tag_uid(response.headers["Swarm-Tag"])
 
-    return UploadResult(reference=reference, tag_uid=tag_uid)
+    return UploadResult(reference=reference, tagUid=tag_uid)

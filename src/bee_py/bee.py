@@ -580,7 +580,7 @@ class Bee:
         Returns:
             list[Tag]
         See Also:
-            * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/access-the-swarm/syncing)
+            * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/develop/access-the-swarm/syncing)
             * [Bee API reference - `GET /tags`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags/get)
         """
         assert_all_tags_options(options)
@@ -607,7 +607,7 @@ class Bee:
         Returns:
             None
         See Also:
-            * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/access-the-swarm/syncing)
+            * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/develop/access-the-swarm/syncing)
             * [Bee API reference - `DELETE /tags/{uid}`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags~1{uid}/delete)
             */
         """
@@ -639,7 +639,7 @@ class Bee:
         Returns:
             None
         See also:
-            * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/access-the-swarm/syncing)
+            * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/develop/access-the-swarm/syncing)
             * [Bee API reference - `PATCH /tags/{uid}`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags~1{uid}/patch)
         """
         assert_reference(reference)
@@ -667,7 +667,7 @@ class Bee:
         Returns:
             None
         See also:
-            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/access-the-swarm/pinning)
+            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/develop/access-the-swarm/pinning)
         """
         assert_reference(reference)
         assert_request_options(request_options)
@@ -691,7 +691,7 @@ class Bee:
             HTTPXError: If an HTTP error occurs during the request.
 
         See also:
-            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/access-the-swarm/pinning)
+            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/develop/access-the-swarm/pinning)
         """
         assert_reference(reference)
         assert_request_options(request_options)
@@ -711,7 +711,7 @@ class Bee:
             HTTPXError: If an HTTP error occurs during the request.
 
         See also:
-            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/access-the-swarm/pinning)
+            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/develop/access-the-swarm/pinning)
         """
         assert_request_options(request_options)
 
@@ -735,7 +735,7 @@ class Bee:
             HTTPXError: If an HTTP error occurs during the request.
 
         See also:
-            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/access-the-swarm/pinning)
+            * [Bee docs - Pinning](https://docs.ethswarm.org/docs/develop/access-the-swarm/pinning)
         """
         assert_reference(reference)
         assert_request_options(request_options)
