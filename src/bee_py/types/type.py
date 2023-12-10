@@ -1,16 +1,13 @@
 import json
-
 # from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
-
 # from eth_pydantic_types import HexBytes
 from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
-
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
