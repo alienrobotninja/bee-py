@@ -332,3 +332,8 @@ def test_chunk_encrypted_reference_cid() -> str:
 @pytest.fixture
 def test_batch_id() -> str:
     return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
+
+
+@pytest.fixture
+def test_chunk_hash_str() -> str:
+    return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"

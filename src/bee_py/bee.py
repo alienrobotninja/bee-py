@@ -153,6 +153,11 @@ class Bee:
             dict: The merged request options.
         """
         if options:
+            if isinstance(options, BeeRequestOptions):
+                print("---------***", type(options))
+                print(type(self.request_options))
+                options = options.model_dump()
+                self.request_options = self.request_options.model_dump()
             return {**self.request_options, **options}
         else:
             return self.request_options
@@ -275,7 +280,7 @@ class Bee:
         """
 
         assert_request_options(options)
-        assert_reference(reference)
+        assert_reference_or_ens(reference)
 
         return bytes_api.download(self.__get_request_options_for_call(options), reference)
 

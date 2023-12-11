@@ -91,7 +91,6 @@ def assert_reference_or_ens(value: Any) -> None:
 
     if is_hex_string(value):
         assert_reference(value)
-        return
 
     if not is_valid_ens_name(value):
         msg = "ReferenceOrEns is not valid Reference, but also not valid ENS domain."
@@ -167,26 +166,24 @@ def assert_request_options(options: Any, name: str = "RequestOptions") -> None:
             msg = f"Options must be an instance of BeeRequestOptions or dictionary. Got: {type(options)}"
             raise TypeError(msg)
 
-    if isinstance(options, BeeRequestOptions):
-        options = options.model_dump()
+    if isinstance(options, dict):
+        options = BeeRequestOptions.model_validate(options)
 
-    if options.get("retry", None):
+    if options.retry:
         if (
             not isinstance(
-                options.get(
-                    "retry",
-                ),
+                options.retry,
                 int,
             )
-            or options.get("retry", None) < 0
+            or options.retry < 0
         ):
             msg = f"{name}.retry has to be a non-negative integer!"
-            raise BeeArgumentError(msg, options.get("retry"))
+            raise BeeArgumentError(msg, options.retry)
 
-    if options.get("timeout", None):
-        if not isinstance(options.get("timeout"), int) or options.get("timeout", None) < 0:
+    if options.timeout:
+        if not isinstance(options.timeout, int) or options.timeout < 0:
             msg = f"{name}.timeout has to be a non-negative integer!"
-            raise BeeArgumentError(msg, options.get("timeout"))
+            raise BeeArgumentError(msg, options.timeout)
 
 
 def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:

@@ -41,7 +41,7 @@ batch_id_assertion_data = [
     ("0x634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
 ]
 
-request_options_assertion_data = [
+request_options_assertions = [
     (1, TypeError),
     (True, TypeError),
     ([], TypeError),
@@ -52,14 +52,33 @@ request_options_assertion_data = [
     ({"timeout": {}}, pydantic.ValidationError),
     ({"timeout": []}, pydantic.ValidationError),
     ({"timeout": -1}, BeeArgumentError),
-    ({"retry": "plur"}, BeeArgumentError),
+    ({"retry": "plur"}, pydantic.ValidationError),
     ({"retry": True}, TypeError),
-    ({"retry": {}}, TypeError),
-    ({"retry": []}, TypeError),
+    ({"retry": {}}, pydantic.ValidationError),
+    ({"retry": []}, pydantic.ValidationError),
     ({"retry": -1}, BeeArgumentError),
 ]
 
 data_assertions = [(1, TypeError), (True, TypeError), (None, TypeError), (lambda: {}, TypeError), ({}, TypeError)]
+
+
+reference_or_ens_test_data = [
+    (1, TypeError),
+    (True, TypeError),
+    ({}, TypeError),
+    (None, TypeError),
+    ([], TypeError),
+    # Not an valid hexstring (ZZZ)
+    ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    # Prefixed hexstring is not accepted
+    ("0x634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    # Length mismatch
+    ("4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    # ENS with invalid characters
+    ("", TypeError),
+    ("some space.eth", TypeError),
+    ("http://example.eth", TypeError),
+]
 
 
 upload_options_assertions = [
@@ -147,7 +166,7 @@ def test_cid_encrypted_references(
 
     assert reference.tag_uid == int(test_tag_id)
 
-    assert reference.cid() == test_chunk_encrypted_reference_cid
+    assert str(reference.cid()) == test_chunk_encrypted_reference_cid
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
@@ -157,7 +176,7 @@ def test_upload_data_batch_id_assertion(input_value, expected_error_type):
         bee.upload_data(input_value, "")
 
 
-@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertion_data)
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
 def test_upload_data_request_options_assertions_with_test_data(input_value, expected_error_type, test_batch_id):
     with pytest.raises(expected_error_type):
         bee = Bee(MOCK_SERVER_URL, input_value)
@@ -176,3 +195,17 @@ def test_upload_options_assertions(input_value, expected_error_type, test_batch_
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.upload_data(test_batch_id, "", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
+def test_download_data_reference_or_ens_assertions(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_data(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_download_data_request_options_assertions(input_value, expected_error_type, test_chunk_hash_str):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_data(test_chunk_hash_str, input_value)

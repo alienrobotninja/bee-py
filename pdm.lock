@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:91925bab6a0e2df9b1e8f1901990a8ba5ce9b045f39805c9e39b94bd10eed138"
+content_hash = "sha256:5fdc48401b766ec54932a7161c05a68887209f4c468391a31322dca1ae6686aa"
 
 [[package]]
 name = "aiohttp"
@@ -3383,7 +3383,7 @@ files = [
 
 [[package]]
 name = "web3"
-version = "6.11.4"
+version = "6.12.0"
 requires_python = ">=3.7.2"
 summary = "web3.py"
 dependencies = [
@@ -3404,24 +3404,24 @@ dependencies = [
     "websockets>=10.0.0",
 ]
 files = [
-    {file = "web3-6.11.4-py3-none-any.whl", hash = "sha256:b63d461c6d48e9ec12ed22c293c1d22ef83d1ec650c570e70fc24a6432b1b4a3"},
-    {file = "web3-6.11.4.tar.gz", hash = "sha256:5bf785e63868c271ebee05a9ab257858630a0b105d34872cfe6a6049a887fec6"},
+    {file = "web3-6.12.0-py3-none-any.whl", hash = "sha256:dab4ae262b6421296aa4b0f4a7f8d377727ff4c0fbaffbe7fe0fdcd221343ec1"},
+    {file = "web3-6.12.0.tar.gz", hash = "sha256:81a68519ff4416eee7f16d4dbc498e70deb90908c7c1d7bebc950e5f3d1f29d5"},
 ]
 
 [[package]]
 name = "web3"
-version = "6.11.4"
+version = "6.12.0"
 extras = ["tester"]
 requires_python = ">=3.7.2"
 summary = "web3.py"
 dependencies = [
     "eth-tester[py-evm]==v0.9.1-b.1",
     "py-geth>=3.11.0",
-    "web3==6.11.4",
+    "web3==6.12.0",
 ]
 files = [
-    {file = "web3-6.11.4-py3-none-any.whl", hash = "sha256:b63d461c6d48e9ec12ed22c293c1d22ef83d1ec650c570e70fc24a6432b1b4a3"},
-    {file = "web3-6.11.4.tar.gz", hash = "sha256:5bf785e63868c271ebee05a9ab257858630a0b105d34872cfe6a6049a887fec6"},
+    {file = "web3-6.12.0-py3-none-any.whl", hash = "sha256:dab4ae262b6421296aa4b0f4a7f8d377727ff4c0fbaffbe7fe0fdcd221343ec1"},
+    {file = "web3-6.12.0.tar.gz", hash = "sha256:81a68519ff4416eee7f16d4dbc498e70deb90908c7c1d7bebc950e5f3d1f29d5"},
 ]
 
 [[package]]

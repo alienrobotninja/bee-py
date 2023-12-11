@@ -38,7 +38,7 @@ def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Resp
             **options,
         }
         request_config = maybe_run_on_request_hook(options, request_config)
-        if "http" not in request_config:
+        if "http" not in request_config["url"]:
             msg = f"Invalid URL: {request_config['url']}"
             raise TypeError(msg)
         response = requests.request(**request_config)
