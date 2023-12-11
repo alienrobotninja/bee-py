@@ -329,11 +329,11 @@ class Bee:
 
         if len(data) < SPAN_SIZE:
             msg = f"Chunk must have a minimum size of {SPAN_SIZE} bytes. Received chunk size: {len(data)}"
-            raise BeeArgumentError(msg)
+            raise BeeArgumentError(msg, data)
 
         if len(data) > CHUNK_SIZE + SPAN_SIZE:
             msg = f"Chunk must have a maximum size of {CHUNK_SIZE} bytes. Received chunk size: {len(data)}"
-            raise BeeArgumentError(msg)
+            raise BeeArgumentError(msg, data)
 
         if options is not None:
             assert_upload_options(options)

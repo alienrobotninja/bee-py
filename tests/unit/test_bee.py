@@ -209,3 +209,63 @@ def test_download_data_request_options_assertions(input_value, expected_error_ty
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.download_data(test_chunk_hash_str, input_value)
+
+
+@patch("bee_py.bee.Bee")
+def test_accept_valid_ens_domain(mock_bee, requests_mock):
+    test_json_ens = "example.eth"
+    test_json_string_payload = "testing.eth"
+
+    requests_mock.get("http://localhost:12345/bytes/example.eth", text=test_json_string_payload, status_code=200)
+
+    bee_instance = mock_bee.return_value
+    bee_instance.download_data.return_value.text.return_value = test_json_string_payload
+
+    bee = Bee(MOCK_SERVER_URL)
+    result = bee.download_data(test_json_ens)
+
+    assert result.text() == test_json_string_payload
+
+
+@patch("bee_py.bee.Bee")
+def test_accept_valid_ens_sub_domain(mock_bee, requests_mock):
+    test_json_ens = "subdomain.example.eth"
+    test_json_string_payload = "testing.eth"
+
+    requests_mock.get(
+        "http://localhost:12345/bytes/subdomain.example.eth", text=test_json_string_payload, status_code=200
+    )
+
+    bee_instance = mock_bee.return_value
+    bee_instance.download_data.return_value.text.return_value = test_json_string_payload
+
+    bee = Bee(MOCK_SERVER_URL)
+    result = bee.download_data(test_json_ens)
+
+    assert result.text() == test_json_string_payload
+
+
+def test_fail_for_small_data(test_batch_id):
+    content = bytes([1, 2, 3, 4, 5, 6, 7])
+
+    bee = Bee(MOCK_SERVER_URL)
+
+    with pytest.raises(BeeArgumentError):
+        bee.upload_chunk(test_batch_id, content)
+
+
+def test_fail_chunk_big_data(test_batch_id):
+    chunk_size = 4096
+    span_size = 512
+
+    bee = Bee(MOCK_SERVER_URL)
+
+    with pytest.raises(BeeArgumentError):
+        bee.upload_chunk(test_batch_id, bytes(chunk_size + span_size + 1))
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
+def test_ddownload_readable_data_reference_or_ens_assertions(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_readable_data(input_value)
