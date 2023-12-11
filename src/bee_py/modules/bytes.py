@@ -6,7 +6,7 @@ from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.headers import extract_upload_headers
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
-from bee_py.utils.type import make_tag_uid
+from bee_py.utils.type import assert_request_options, make_tag_uid
 
 BYTES_ENDPOINT = "bytes"
 
@@ -29,6 +29,7 @@ def upload(
     Returns:
         UploadResult: The result of the upload operation.
     """
+    assert_request_options(request_options)
 
     headers = {
         "Content-Type": "application/octet-stream",

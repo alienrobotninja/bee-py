@@ -1,17 +1,14 @@
 import json
-
 # from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
-
 # from eth_pydantic_types import HexBytes
 # from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
 from swarm_cid.swarm_cid import CIDv1
-
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
@@ -65,20 +62,6 @@ TOPIC_HEX_LENGTH = 64
 # Type aliases
 BatchId: TypeAlias = str
 AddressPrefix: TypeAlias = str
-
-
-# class HexBytes(BaseHexBytes):
-#     """
-#     A class representing bytes as a hex-str.
-#     """
-
-#     @classmethod
-#     def __get_validators__(cls):
-#         yield cls._validate
-
-#     @classmethod
-#     def _validate(cls, v):
-#         return HexBytes(v)
 
 
 class BeeRequest(BaseModel):
@@ -344,25 +327,11 @@ def is_object(value: Any) -> bool:
     return value is not None and isinstance(value, dict)
 
 
-class UploadOptions:
-    """Represents the options for uploading a file to Bee."""
-
-    pin: Optional[bool]
-    encrypt: Optional[bool]
-    tag: Optional[int]
-    deferred: Optional[bool]
-
-    def __init__(
-        self,
-        pin: Optional[bool] = None,
-        encrypt: Optional[bool] = None,
-        tag: Optional[int] = None,
-        deferred: Optional[bool] = True,  # noqa: FBT002
-    ):
-        self.pin = pin
-        self.encrypt = encrypt
-        self.tag = tag
-        self.deferred = deferred
+class UploadOptions(BaseModel):
+    pin: Optional[bool] = False
+    encrypt: Optional[bool] = False
+    tag: Optional[int] = None
+    deferred: Optional[bool] = True
 
 
 class FileHeaders(BaseModel):
@@ -862,13 +831,6 @@ class UploadResultWithCid(UploadResult):
     """
 
     cid: Callable[[], CIDv1]
-
-
-class UploadOptions(BaseModel):
-    pin: Optional[bool] = False
-    encrypt: Optional[bool] = False
-    tag: Optional[int] = None
-    deferred: Optional[bool] = True
 
 
 class FileUploadOptions(UploadOptions):

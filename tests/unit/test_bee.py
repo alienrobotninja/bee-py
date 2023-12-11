@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pydantic
 import pytest
 
 from bee_py.bee import Bee
@@ -27,6 +28,59 @@ BZZ_ENDPOINT = "/bzz"
 BYTES_ENDPOINT = "/bytes"
 POSTAGE_ENDPOINT = "/stamps"
 CHEQUEBOOK_ENDPOINT = "/chequebook"
+
+
+batch_id_assertion_data = [
+    (1, TypeError),
+    (True, TypeError),
+    ({}, BeeError),
+    (None, BeeError),
+    ([], BeeError),
+    ("", BeeError),
+    ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    ("0x634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+]
+
+request_options_assertion_data = [
+    (1, TypeError),
+    (True, TypeError),
+    ([], TypeError),
+    (lambda: {}, TypeError),
+    ("string", TypeError),
+    ({"timeout": "plur"}, pydantic.ValidationError),
+    ({"timeout": True}, TypeError),
+    ({"timeout": {}}, pydantic.ValidationError),
+    ({"timeout": []}, pydantic.ValidationError),
+    ({"timeout": -1}, BeeArgumentError),
+    ({"retry": "plur"}, BeeArgumentError),
+    ({"retry": True}, TypeError),
+    ({"retry": {}}, TypeError),
+    ({"retry": []}, TypeError),
+    ({"retry": -1}, BeeArgumentError),
+]
+
+data_assertions = [(1, TypeError), (True, TypeError), (None, TypeError), (lambda: {}, TypeError), ({}, TypeError)]
+
+
+upload_options_assertions = [
+    (1, TypeError),
+    (True, TypeError),
+    ([], TypeError),
+    ("string", TypeError),
+    ({"pin": "plur"}, pydantic.ValidationError),
+    ({"pin": 1}, TypeError),
+    ({"pin": {}}, pydantic.ValidationError),
+    ({"pin": []}, pydantic.ValidationError),
+    ({"encrypt": "plur"}, pydantic.ValidationError),
+    ({"encrypt": 1}, TypeError),
+    ({"encrypt": {}}, pydantic.ValidationError),
+    ({"encrypt": []}, pydantic.ValidationError),
+    ({"tag": "plur"}, pydantic.ValidationError),
+    ({"tag": True}, TypeError),
+    ({"tag": {}}, pydantic.ValidationError),
+    ({"tag": []}, pydantic.ValidationError),
+    ({"tag": -1}, BeeArgumentError),
+]
 
 
 @pytest.mark.parametrize(
@@ -96,30 +150,29 @@ def test_cid_encrypted_references(
     assert reference.cid() == test_chunk_encrypted_reference_cid
 
 
-def batch_id_assertion(executor):
-    @pytest.mark.parametrize(
-        "input_value, expected_error_type",
-        [
-            (1, TypeError),
-            (True, TypeError),
-            ({}, BeeError),
-            (None, BeeError),
-            ([], BeeError),
-            ("", BeeError),
-            ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
-            ("0x634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
-        ],
-    )
-    def test_function(input_value, expected_error_type):
-        with pytest.raises(expected_error_type):
-            executor(input_value)
-
-    return test_function
+@pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
+def test_upload_data_batch_id_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_data(input_value, "")
 
 
-def test_upload_data():
-    def executor(input_value):
-        bee = Bee(MOCK_SERVER_URL)
-        return bee.upload_data(input_value, "")
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertion_data)
+def test_upload_data_request_options_assertions_with_test_data(input_value, expected_error_type, test_batch_id):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.upload_data(test_batch_id, "", None, input_value)
 
-    batch_id_assertion(executor)
+
+@pytest.mark.parametrize("input_value, expected_error_type", data_assertions)
+def test_upload_data_data_assertsions(input_value, expected_error_type, test_batch_id):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_data(test_batch_id, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", upload_options_assertions)
+def test_upload_options_assertions(input_value, expected_error_type, test_batch_id):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_data(test_batch_id, "", input_value)

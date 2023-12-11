@@ -9,13 +9,15 @@ from bee_py.types.type import (
     PUBKEY_HEX_LENGTH,
     REFERENCE_HEX_LENGTH,
     AllTagsOptions,
+    BeeRequestOptions,
     FeedType,
     ReferenceOrENS,
     Tag,
+    UploadOptions,
     UploadResult,
     UploadResultWithCid,
 )
-from bee_py.utils.error import BeeError
+from bee_py.utils.error import BeeArgumentError, BeeError
 from bee_py.utils.hex import assert_hex_string, is_hex_string, is_prefixed_hex_string
 
 
@@ -160,15 +162,31 @@ def assert_request_options(options: Any, name: str = "RequestOptions") -> None:
     if options is None:
         return
 
-    if options.retry:
-        if not isinstance(options.retry, int) or options.retry < 0:
-            msg = f"{name}.retry has to be a non-negative integer!"
-            raise ValueError(msg)
+    if not isinstance(options, BeeRequestOptions):
+        if not isinstance(options, dict):
+            msg = f"Options must be an instance of BeeRequestOptions or dictionary. Got: {type(options)}"
+            raise TypeError(msg)
 
-    if options.timeout:
-        if not isinstance(options.timeout, int) or options.timeout < 0:
+    if isinstance(options, BeeRequestOptions):
+        options = options.model_dump()
+
+    if options.get("retry", None):
+        if (
+            not isinstance(
+                options.get(
+                    "retry",
+                ),
+                int,
+            )
+            or options.get("retry", None) < 0
+        ):
+            msg = f"{name}.retry has to be a non-negative integer!"
+            raise BeeArgumentError(msg, options.get("retry"))
+
+    if options.get("timeout", None):
+        if not isinstance(options.get("timeout"), int) or options.get("timeout", None) < 0:
             msg = f"{name}.timeout has to be a non-negative integer!"
-            raise ValueError(msg)
+            raise BeeArgumentError(msg, options.get("timeout"))
 
 
 def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:
@@ -185,19 +203,26 @@ def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:
     """
     assert_request_options(value, name)
 
+    if not isinstance(value, UploadOptions):
+        value = UploadOptions.model_validate(value)
+
     options = value
 
     if options.pin and not isinstance(options.pin, bool):
-        msg = f"options.pin property in {name} has to be boolean or undefined!"
+        msg = f"options.pin property in {name} has to be boolean or None!"
         raise TypeError(msg)
 
     if options.encrypt and not isinstance(options.encrypt, bool):
-        msg = f"options.encrypt property in {name} has to be boolean or undefined!"
+        msg = f"options.encrypt property in {name} has to be boolean or None!"
         raise TypeError(msg)
 
-    if options.tag and (not isinstance(options.tag, int) and options.tag >= 0):
-        msg = f"options.tag property in {name} has to be number or undefined!"
-        raise TypeError(msg)
+    if options.tag:
+        if not isinstance(options.tag, int):
+            msg = f"options.tag property in {name} has to be number or None!"
+            raise TypeError(msg)
+        if options.tag <= 0:
+            msg = f"options.tag property in {name} has to be non-negative"
+            raise BeeArgumentError(msg, options.tag)
 
 
 def assert_file_upload_options(value: Any, name: str = "FileUploadOptions") -> None:
@@ -218,7 +243,7 @@ def assert_file_upload_options(value: Any, name: str = "FileUploadOptions") -> N
     options = value
 
     if options.size and not isinstance(options.size, int):
-        msg = "size property in FileUploadOptions has to be number or undefined!"
+        msg = "size property in FileUploadOptions has to be number or None!"
         raise TypeError(msg)
 
     if options.size and options.size < 0:
@@ -226,7 +251,7 @@ def assert_file_upload_options(value: Any, name: str = "FileUploadOptions") -> N
         raise ValueError(msg)
 
     if options.content_type and not isinstance(options.content_type, str):
-        msg = "contentType property in FileUploadOptions has to be string or undefined!"
+        msg = "contentType property in FileUploadOptions has to be string or None!"
         raise TypeError(msg)
 
 
@@ -249,12 +274,12 @@ def assert_collection_upload_options(value: Any, name: str = "CollectionUploadOp
 
     if options.index_document:
         if not isinstance(options.index_document, str):
-            msg = "indexDocument property in CollectionUploadOptions has to be string or undefined!"
+            msg = "indexDocument property in CollectionUploadOptions has to be string or None!"
             raise TypeError(msg)
 
     if options.error_document:
         if not isinstance(options.error_document, str):
-            msg = "errorDocument property in CollectionUploadOptions has to be string or undefined!"
+            msg = "errorDocument property in CollectionUploadOptions has to be string or None!"
             raise TypeError(msg)
 
 

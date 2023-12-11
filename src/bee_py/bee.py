@@ -101,7 +101,7 @@ class Bee:
     # Ky instance that defines connection to Bee node
     request_options: BeeRequestOptions
 
-    def __init__(self, url: str, options: Optional[BeeOptions] = None):
+    def __init__(self, url: str, options: Optional[Union[BeeOptions, dict]] = None):
         """
         Constructs a new Bee instance.
 
@@ -115,6 +115,11 @@ class Bee:
         # which could lead to double slash in URL to which Bee responds with
         # unnecessary redirects.
         self.url = strip_last_slash(url)
+        if options:
+            if not isinstance(options, BeeOptions):
+                if not isinstance(options, dict):
+                    msg = f"Expected: Options must be of type dict or BeeOptions. Got: {type(options)}"
+                    raise TypeError(msg)
 
         if options and "signer" in options:
             self.signer = sign(options["signer"])
@@ -124,7 +129,7 @@ class Bee:
                 "baseURL": self.url,
                 **(
                     {
-                        "timeout": int(options.get("timeout", 300)),
+                        "timeout": options.get("timeout", 300),
                         "headers": options.get("headers", {}),
                         "onRequest": options.get("onRequest", True),
                     }

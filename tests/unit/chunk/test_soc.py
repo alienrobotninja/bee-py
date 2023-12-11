@@ -20,6 +20,5 @@ def test_single_owner_chunk_creation():
     soc_address = bytes_to_hex(soc.address)
     owner = soc.owner
 
-    # * Remove the 0x
-    assert soc_address[2:] == soc_hash
+    assert soc_address == soc_hash
     assert owner == signer.address
