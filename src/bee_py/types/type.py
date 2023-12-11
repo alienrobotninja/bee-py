@@ -1,13 +1,17 @@
 import json
+
 # from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
+
 # from eth_pydantic_types import HexBytes
-from eth_pydantic_types import HexBytes as BaseHexBytes
+# from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
+from swarm_cid.swarm_cid import CIDv1
+
 # from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
@@ -113,10 +117,10 @@ class BeeResponse(BaseModel):
 
 class BeeRequestOptions(BaseModel):
     base_url: Optional[str] = Field(default="", alias="baseURL")
-    timeout: Optional[int] = None
-    retry: Union[int, bool] = None
+    timeout: Optional[int] = 300
+    retry: Union[int, bool] = False
     headers: dict = {}
-    on_request: bool = Field(..., alias="onRequest")
+    on_request: bool = Field(default=True, alias="onRequest")
 
 
 class PssSubscription(BaseModel):
@@ -857,7 +861,7 @@ class UploadResultWithCid(UploadResult):
     @see https://github.com/aviksaikat/swarm-cid-py
     """
 
-    cid: Callable[[], str]
+    cid: Callable[[], CIDv1]
 
 
 class UploadOptions(BaseModel):

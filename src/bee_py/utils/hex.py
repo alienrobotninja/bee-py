@@ -24,6 +24,9 @@ def bytes_to_hex(inp: Union[bytes, str], length: Optional[int] = None) -> str:
     elif isinstance(inp, str):
         hex_string = to_hex(inp.encode())
 
+    if hex_string.startswith("0x"):
+        hex_string = hex_string[2:]
+
     if length is not None and len(hex_string) != length:
         msg = f"Length mismatch for valid hex string. Expected length {length}: {hex_string}"
         raise ValueError(msg)

@@ -85,8 +85,10 @@ def upload_file(
     reference = Reference(value=upload_response["reference"])
     tag_uid = None
 
-    if "Swarm-Tag" in response.headers:
-        tag_uid = make_tag_uid(response.headers["Swarm-Tag"])
+    tag_header = next((header for header in response.headers if header.lower() == "swarm-tag"), None)
+
+    if tag_header:
+        tag_uid = make_tag_uid(response.headers[tag_header])
 
     return UploadResult(reference=reference, tagUid=tag_uid)
 

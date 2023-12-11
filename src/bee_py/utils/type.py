@@ -142,7 +142,7 @@ def add_cid_conversion_function(result: UploadResult, cid_type: str) -> UploadRe
     def cid():
         return encode_reference(str(result.reference), cid_type)
 
-    return UploadResultWithCid(cid=cid)
+    return UploadResultWithCid(cid=cid, reference=result.reference, tagUid=result.tag_uid)
 
 
 def assert_request_options(options: Any, name: str = "RequestOptions") -> None:

@@ -24,4 +24,4 @@ def make_topic_from_string(s: str) -> Topic:
         msg = "Topic must be a string!"
         raise TypeError(msg)
 
-    return bytes_to_hex(keccak(s), TOPIC_HEX_LENGTH)
+    return Topic(value=bytes_to_hex(keccak(text=s), TOPIC_HEX_LENGTH))

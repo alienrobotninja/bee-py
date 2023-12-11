@@ -122,9 +122,15 @@ class Bee:
         self.request_options = BeeRequestOptions.model_validate(
             {
                 "baseURL": self.url,
-                "timeout": options.get("timeout", False),
-                "headers": options.get("headers", {}),
-                "onRequest": options.get("onRequest", None),
+                **(
+                    {
+                        "timeout": int(options.get("timeout", 300)),
+                        "headers": options.get("headers", {}),
+                        "onRequest": options.get("onRequest", True),
+                    }
+                    if options
+                    else {}
+                ),
             }
         )
 
@@ -343,7 +349,7 @@ class Bee:
         assert_request_options(options)
         assert_reference_or_ens(reference)
 
-        return chunk_api.download(self.__get_request_options_for_callback(options), reference)
+        return chunk_api.download(self.__get_request_options_for_call(options), reference)
 
     def upload_file(
         self,
@@ -375,13 +381,13 @@ class Bee:
         if options:
             assert_upload_options(options)
 
-        if name and isinstance(name, str):
+        if name and not isinstance(name, str):
             msg = "name must be a string or None"
             raise ValueError(msg)
 
         return add_cid_conversion_function(
             bzz_api.upload_file(
-                self.__get_request_options_for_callback(request_options), data, postage_batch_id, name, options
+                self.__get_request_options_for_call(request_options), data, postage_batch_id, name, options
             ),
             ReferenceType.MANIFEST,
         )
@@ -412,7 +418,7 @@ class Bee:
         assert_reference_or_ens(reference)
         reference = make_reference_or_ens(reference, ReferenceType.MANIFEST)
 
-        return bzz_api.download_file(self.__get_request_options_for_callback(options), reference, path)
+        return bzz_api.download_file(self.__get_request_options_for_call(options), reference, path)
 
     def download_readable_file(
         self,
@@ -440,7 +446,7 @@ class Bee:
         assert_reference_or_ens(reference)
         reference = make_reference_or_ens(reference, ReferenceType.MANIFEST)
 
-        return bzz_api.download_file_readable(self.__get_request_options_for_callback(options), reference, path)
+        return bzz_api.download_file_readable(self.__get_request_options_for_call(options), reference, path)
 
     def upload_files(
         self,
@@ -470,7 +476,7 @@ class Bee:
         data = make_collection_from_file_list(file_list)
 
         upload_result = bzz_api.upload_collection(
-            self.__get_request_options_for_callback(request_options), data, postage_batch_id, options
+            self.__get_request_options_for_call(request_options), data, postage_batch_id, options
         )
         return add_cid_conversion_function(upload_result, ReferenceType.MANIFEST)
 
@@ -561,7 +567,7 @@ class Bee:
         """
         assert_request_options(options)
 
-        return tag_api.create_tag(self.__get_request_options_for_callback(options))
+        return tag_api.create_tag(self.__get_request_options_for_call(options))
 
     def get_all_tags(self, options: Optional[AllTagsOptions] = None) -> list[Tag]:
         """
@@ -585,7 +591,7 @@ class Bee:
         """
         assert_all_tags_options(options)
 
-        return tag_api.get_all_tags(self.__get_request_options_for_callback(options), options.offset, options.limit)
+        return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset, options.limit)
 
     def delete_tag(
         self,
@@ -613,7 +619,7 @@ class Bee:
         """
         tag_uid = make_tag_uid(uid)
 
-        return tag_api.delete_tag(self.__get_request_options_for_callback(options), tag_uid)
+        return tag_api.delete_tag(self.__get_request_options_for_call(options), tag_uid)
 
     def update_tag(
         self,
@@ -647,7 +653,7 @@ class Bee:
 
         tag_uid = make_tag_uid(uid)
 
-        return tag_api.update_tag(self.__get_request_options_for_callback(request_options), tag_uid)
+        return tag_api.update_tag(self.__get_request_options_for_call(request_options), tag_uid)
 
     def pin(self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None) -> None:
         """
@@ -672,7 +678,7 @@ class Bee:
         assert_reference(reference)
         assert_request_options(request_options)
 
-        return pinning_api.pin(self.__get_request_options_for_callback(request_options), reference)
+        return pinning_api.pin(self.__get_request_options_for_call(request_options), reference)
 
     def unpin(self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None) -> None:
         """
@@ -696,7 +702,7 @@ class Bee:
         assert_reference(reference)
         assert_request_options(request_options)
 
-        return pinning_api.unpin(self.__get_request_options_for_callback(request_options), reference)
+        return pinning_api.unpin(self.__get_request_options_for_call(request_options), reference)
 
     def get_all_pins(self, request_options: Optional[BeeRequestOptions] = None) -> Reference:
         """
@@ -715,7 +721,7 @@ class Bee:
         """
         assert_request_options(request_options)
 
-        return pinning_api.get_all_pins(self.__get_request_options_for_callback(request_options))
+        return pinning_api.get_all_pins(self.__get_request_options_for_call(request_options))
 
     def get_pin(self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None) -> Pin:
         """
@@ -740,7 +746,7 @@ class Bee:
         assert_reference(reference)
         assert_request_options(request_options)
 
-        return pinning_api.get_pin(self.__get_request_options_for_callback(request_options), reference)
+        return pinning_api.get_pin(self.__get_request_options_for_call(request_options), reference)
 
     def reupload_pinned_data(
         self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None
@@ -768,7 +774,7 @@ class Bee:
         assert_reference(reference)
         assert_request_options(request_options)
 
-        return stewardship_api.reupload(self.__get_request_options_for_callback(request_options), reference)
+        return stewardship_api.reupload(self.__get_request_options_for_call(request_options), reference)
 
     def is_reference_retrievable(
         self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None
@@ -794,7 +800,7 @@ class Bee:
         assert_reference(reference)
         assert_request_options(request_options)
 
-        return stewardship_api.is_retrievable(self.__get_request_options_for_callback(request_options), reference)
+        return stewardship_api.is_retrievable(self.__get_request_options_for_call(request_options), reference)
 
     def is_feed_retrievable(
         self,
@@ -888,10 +894,10 @@ class Bee:
         if recipient:
             assert_public_key(recipient)
             return pss_api.send(
-                self.__get_request_options_for_callback(options), topic, target, data, postage_batch_id, recipient
+                self.__get_request_options_for_call(options), topic, target, data, postage_batch_id, recipient
             )
         else:
-            return pss_api.send(self.__get_request_options_for_callback(options), topic, target, data, postage_batch_id)
+            return pss_api.send(self.__get_request_options_for_call(options), topic, target, data, postage_batch_id)
 
     # ! Not yet implemented properly
     async def pss_subscribe(

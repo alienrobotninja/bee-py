@@ -1,5 +1,3 @@
-import pytest
-
 from bee_py.utils.http import http
 
 BEE_API_URL = "http://localhost:12345/"

@@ -1,3 +1,4 @@
+from typing import Union
 from urllib.parse import urljoin
 
 import requests
@@ -11,7 +12,7 @@ DEFAULT_HTTP_CONFIG = {
 }
 
 
-def http(options: BeeRequestOptions, config: dict) -> requests.Response:
+def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Response:
     """Makes an HTTP request.
 
     Args:
@@ -22,6 +23,14 @@ def http(options: BeeRequestOptions, config: dict) -> requests.Response:
       A requests.Response object.
     """
 
+    # * convert the bee request options to a dictionary
+    if isinstance(options, BeeRequestOptions):
+        tmp_options = options.model_dump()
+        # * Dictionary to map old keys to new keys
+        key_mapping = {"base_url": "baseURL", "on_request": "onRequest"}
+
+        # * Replace keys
+        options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
     try:
         request_config = {
             "headers": DEFAULT_HTTP_CONFIG["headers"].copy(),
@@ -60,7 +69,7 @@ def maybe_run_on_request_hook(options: dict, request_config: dict) -> dict:
             # Remove baseURL from the final result
             new_request_config.pop("baseURL", None)
             new_request_config.pop("onRequest", None)
-
+            new_request_config.pop("retry", None)
         return new_request_config
 
     return request_config

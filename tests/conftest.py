@@ -2,13 +2,15 @@ import json
 import os
 import random
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
+from bee_py.bee import Bee
 from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
 from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
-from bee_py.types.type import BatchId, FetchFeedUpdateResponse, Reference
+from bee_py.types.type import BatchId, Reference
 from bee_py.utils.hex import bytes_to_hex
 
 PROJECT_PATH = Path(__file__).parent
@@ -307,3 +309,49 @@ def feed_reference(feed_reference_hash) -> dict:
 @pytest.fixture
 def test_address():
     return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
+
+
+@pytest.fixture
+def mock_bee():
+    return MagicMock(spec=Bee)
+
+    # with patch("bee_py.bee.Bee") as mock_bee:
+    #     yield mock_bee
+
+
+@pytest.fixture
+def test_chunk_encrypted_reference() -> str:
+    return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"  # noqa: E501
+
+
+@pytest.fixture
+def test_chunk_encrypted_reference_cid() -> str:
+    return "bah5acgzazjrvpieogf6rl3cwb7xtjzgel6hrt4a4g4vkody5u4v7u7y2im4muy2xuchdc7iv5rla73zu4tcf7dyz6aodokvhb4o2ok72p4negoa"  # noqa: E501
+
+
+def batch_id_assertion(executor):
+    with pytest.raises(TypeError):
+        executor(1)
+
+    with pytest.raises(TypeError):
+        executor(True)
+
+    with pytest.raises(TypeError):
+        executor({})
+
+    with pytest.raises(TypeError):
+        executor(None)
+
+    with pytest.raises(TypeError):
+        executor([])
+
+    with pytest.raises(TypeError):
+        executor("")
+
+    # Not a valid hexstring (ZZZ)
+    with pytest.raises(TypeError):
+        executor("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd")
+
+    # Prefixed hexstring is not accepted
+    with pytest.raises(TypeError):
+        executor("0x634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd")
