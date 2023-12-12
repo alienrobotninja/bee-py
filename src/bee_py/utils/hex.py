@@ -234,7 +234,8 @@ def assert_hex_string(value: bytes, length: Optional[int] = None) -> Optional[bo
         raise TypeError(msg)
 
     if len(value) != length:
-        return False
+        msg = f"Length of '{value}' is not equal to length of '{length}"
+        raise TypeError(msg)
 
     if not is_hex_string(value):
         msg = f"{value} is not a valid hex string"

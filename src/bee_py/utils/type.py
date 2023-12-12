@@ -14,6 +14,7 @@ from bee_py.types.type import (
     CollectionUploadOptions,
     FeedType,
     FileUploadOptions,
+    Reference,
     ReferenceOrENS,
     Tag,
     UploadOptions,
@@ -44,12 +45,12 @@ def assert_non_negative_integer(value: Union[int, str], name: str = "Value"):
         raise ValueError(msg)
 
 
-def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
+def make_tag_uid(tag_uid: Union[int, dict, str, Tag, None]) -> int:
     """
     Utility function that returns Tag UID
 
     Args:
-        tag_uid (Union[int, str, None]): The tag UID to check.
+        tag_uid (Union[int, dict, str, Tag, None]): The tag UID to check.
 
     Returns:
         int: The tag UID as an integer.
@@ -60,6 +61,13 @@ def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
     if not tag_uid:
         msg = "TagUid was expected but got None instead!"
         raise TypeError(msg)
+
+    if isinstance(tag_uid, bool):
+        msg = "TagUid must be int or Tag object"
+        raise TypeError(msg)
+
+    if isinstance(tag_uid, dict):
+        tag_uid = Tag.model_validate(tag_uid)
 
     if isinstance(tag_uid, Tag):
         return tag_uid.uid
@@ -81,6 +89,8 @@ def make_tag_uid(tag_uid: Union[int, str, None]) -> int:
 
 
 def assert_reference(value: Any) -> None:
+    if isinstance(value, Reference):
+        value = value.value
     try:
         assert_hex_string(value, REFERENCE_HEX_LENGTH)
     except TypeError:
@@ -161,8 +171,17 @@ def assert_request_options(options: Any, name: str = "RequestOptions") -> None:
        TypeError: If the value is not an object.
        ValueError: If the `retry` or `timeout` options are not non-negative integers.
     """
-    if options is None:
+    # ? In python '[]' is equivalent to 'None' when used in a conditional statement
+    if isinstance(options, list):
+        msg = f"Options must be an instance of BeeRequestOptions or dictionary. Got: {type(options)}"
+        raise TypeError(msg)
+
+    if not options:
         return
+
+    if not isinstance(options, (dict, BeeRequestOptions)):
+        msg = f"Options must be an instance of BeeRequestOptions or dictionary. Got: {type(options)}"
+        raise TypeError(msg)
 
     if not isinstance(options, BeeRequestOptions):
         if not isinstance(options, dict):
@@ -404,8 +423,14 @@ def assert_cashout_options(value: Any, name: str = "CashoutOptions"):
 
 
 def assert_all_tags_options(value: Any, name: str = "AllTagsOptions"):
-    if not isinstance(value, AllTagsOptions):
-        msg = f"Not a valid {name} data"
+    assert_request_options(value, "AllTagsOptions")
+
+    if value:
+        if isinstance(value, dict):
+            options = AllTagsOptions.model_validate(value)
+            return options
+    else:
+        msg = f"{name} has to be an AllTagsOptions or None! Got: {value}"
         raise TypeError(msg)
 
 
@@ -485,4 +510,23 @@ def assert_file_data(value: Union[str, bytes, IO]) -> None:
     """
     if not isinstance(value, (str, bytes, IO)):
         msg = "Data must be either str, bytes, IO, or File!"
+        raise TypeError(msg)
+
+
+def assert_directory(directory: Any) -> None:
+    """
+    Check whether the given directory is a valid or not
+
+    Args:
+        directory (Any): The directory to check
+
+    Raises:
+        TypeError: If the directory is not a valid.
+    """
+
+    if not isinstance(directory, str):
+        msg = f"directory has to be string:! Got{type(directory)}"
+        raise TypeError(msg)
+    if directory == "":
+        msg = "directory must not be empty string!"
         raise TypeError(msg)

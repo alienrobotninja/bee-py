@@ -1,4 +1,3 @@
-import asyncio
 import os
 from typing import Optional, Union
 
@@ -13,9 +12,9 @@ from bee_py.chunk.soc import download_single_owner_chunk, upload_single_owner_ch
 from bee_py.feed import json as json_api  # get_json_data, set_json_data
 from bee_py.feed.feed import make_feed_reader as _make_feed_reader
 from bee_py.feed.feed import make_feed_writer as _make_feed_writer
-from bee_py.feed.retrievable import are_all_sequential_feeds_update_retrievable, get_all_sequence_update_references
+from bee_py.feed.retrievable import are_all_sequential_feeds_update_retrievable
 from bee_py.feed.topic import make_topic, make_topic_from_string
-from bee_py.feed.type import DEFAULT_FEED_TYPE, is_feed_type
+from bee_py.feed.type import DEFAULT_FEED_TYPE
 from bee_py.modules import bytes as bytes_api
 from bee_py.modules import bzz as bzz_api
 from bee_py.modules import chunk as chunk_api
@@ -61,7 +60,7 @@ from bee_py.types.type import (  # Reference,
 )
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.collection import assert_collection, make_collection_from_file_list
-from bee_py.utils.collection_node import make_collection_from_fs
+# from bee_py.utils.collection_node import make_collection_from_fs
 from bee_py.utils.data import prepare_websocket_data
 from bee_py.utils.error import BeeArgumentError, BeeError
 from bee_py.utils.eth import make_eth_address, make_hex_eth_address
@@ -70,6 +69,7 @@ from bee_py.utils.type import (
     assert_all_tags_options,
     assert_batch_id,
     assert_collection_upload_options,
+    assert_directory,
     assert_feed_type,
     assert_file_data,
     assert_file_upload_options,
@@ -469,8 +469,8 @@ class Bee:
         self,
         postage_batch_id: Union[BatchId, str],
         file_list: list[Union[os.PathLike, str]],
-        options: CollectionUploadOptions = None,
-        request_options: BeeRequestOptions = None,
+        options: Optional[CollectionUploadOptions] = None,
+        request_options: Optional[BeeRequestOptions] = None,
     ) -> UploadResultWithCid:
         """
         Uploads a collection of files to a Bee node.
@@ -495,6 +495,7 @@ class Bee:
 
         if options:
             assert_collection_upload_options(options)
+            assert_file_upload_options(options)
 
         data = make_collection_from_file_list(file_list)
 
@@ -562,8 +563,16 @@ class Bee:
             * [Bee API reference - `POST /bzz`](https://docs.ethswarm.org/api/#tag/Collection/paths/~1bzz/post)
         """
 
+        assert_batch_id(postage_batch_id)
+
+        if request_options:
+            assert_request_options(request_options)
+
         if options:
             assert_collection_upload_options(options)
+
+        assert_directory(directory)
+
         data = make_collection_from_file_list([directory])
 
         upload_result = bzz_api.upload_collection(
@@ -612,9 +621,43 @@ class Bee:
             * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/develop/access-the-swarm/syncing)
             * [Bee API reference - `GET /tags`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags/get)
         """
-        assert_all_tags_options(options)
 
-        return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset, options.limit)
+        assert_all_tags_options(options)
+        assert_request_options(options)
+
+        if options.offset and options.limit:
+            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset, options.limit)
+        elif options.offset:
+            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset)
+        elif options.limit:
+            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.limit)
+        return tag_api.get_all_tags(self.__get_request_options_for_call(options))
+
+    def retrieve_tag(self, tag_uid: Union[int, Tag], options: Optional[BeeRequestOptions] = None):
+        """
+        Retrieve tag information from Bee node
+
+        Args:
+            tag_uid (int|Tag): UID or tag object to be retrieved
+            options (BeeRequestOptions, optional): Options that affects the request behavior. Defaults to None
+
+        Returns:
+            Promise[Tag]: Tag object containing the retrieved tag information
+
+        Raises:
+            TypeError: If tagUid is in not correct format
+
+        See:
+            [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/access-the-swarm/syncing)
+            [Bee API reference - `GET /tags/{uid}`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags~1{uid}/get)
+
+        """
+
+        assert_request_options(options)
+
+        tag_uid = make_tag_uid(tag_uid)
+
+        return tag_api.retrieve_tag(self.__get_request_options_for_call(options), tag_uid)
 
     def delete_tag(
         self,
@@ -640,6 +683,7 @@ class Bee:
             * [Bee API reference - `DELETE /tags/{uid}`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags~1{uid}/delete)
             */
         """
+        assert_request_options(options)
         tag_uid = make_tag_uid(uid)
 
         return tag_api.delete_tag(self.__get_request_options_for_call(options), tag_uid)
@@ -699,6 +743,7 @@ class Bee:
             * [Bee docs - Pinning](https://docs.ethswarm.org/docs/develop/access-the-swarm/pinning)
         """
         assert_reference(reference)
+
         assert_request_options(request_options)
 
         return pinning_api.pin(self.__get_request_options_for_call(request_options), reference)

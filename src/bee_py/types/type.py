@@ -910,8 +910,15 @@ class SOCWriter(SOCReader):
 
 
 class AllTagsOptions(BaseModel):
-    limit: Optional[int] = None
-    offest: Optional[int] = None
+    limit: int = Field(default=None, gt=TAGS_LIMIT_MIN, lt=TAGS_LIMIT_MAX)
+    offset: int = Field(default=0, ge=0)
+
+    @validator("limit", "offset")
+    def must_be_defined(cls, v):  # noqa: N805
+        if not v:
+            msg = "AllTagsOptions.limit and offset have to be defined!"
+            raise TypeError(msg)
+        return v
 
 
 class FeedManifestResult(BaseModel):
