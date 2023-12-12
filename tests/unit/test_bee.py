@@ -102,6 +102,30 @@ upload_options_assertions = [
 ]
 
 
+file_data_assertions = [
+    (1, TypeError),
+    (True, TypeError),
+    (None, TypeError),
+    ([], TypeError),
+    ({}, TypeError),
+    ({"name": "some file"}, TypeError),
+    ({"pipe": lambda: None}, TypeError),
+]
+
+
+file_upload_option_assertions = [
+    ({"content_type": True}, pydantic.ValidationError),
+    ({"content_type": 1}, pydantic.ValidationError),
+    ({"content_type": {}}, pydantic.ValidationError),
+    ({"content_type": []}, pydantic.ValidationError),
+    ({"size": "plur"}, TypeError),
+    ({"size": True}, TypeError),
+    ({"size": {}}, pydantic.ValidationError),
+    ({"size": []}, pydantic.ValidationError),
+    ({"size": -1}, ValueError),
+]
+
+
 @pytest.mark.parametrize(
     "url", ["", None, "some-invalid-url", "invalid:protocol", "javascript:console.log()", "ws://localhost:1633"]
 )
@@ -265,7 +289,50 @@ def test_fail_chunk_big_data(test_batch_id):
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
-def test_ddownload_readable_data_reference_or_ens_assertions(input_value, expected_error_type):
+def test_download_readable_data_reference_or_ens_assertions(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.download_readable_data(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_download_readable_data_request_options_assertion(input_value, expected_error_type, test_chunk_hash):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.download_readable_data(test_chunk_hash, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
+def test_upload_file_batch_id_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_file(input_value, "")
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_upload_file_request_option_assertion(input_value, expected_error_type, test_batch_id):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.upload_file(test_batch_id, "", None, None, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", file_data_assertions)
+def test_upload_file_file_data_assertion(input_value, expected_error_type, test_batch_id):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_file(test_batch_id, input_value)
+
+
+# TODO: Check this one out later
+# @pytest.mark.parametrize("input_value, expected_error_type", upload_options_assertions)
+# def test_upload_file_upload_options_assertion(input_value, expected_error_type, test_batch_id):
+#     bee = Bee(MOCK_SERVER_URL)
+#     with pytest.raises(expected_error_type):
+#         bee.upload_file(test_batch_id, "", None, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", file_upload_option_assertions)
+def test_upload_file_file_upload_options_assertion(input_value, expected_error_type, test_batch_id):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_file(test_batch_id, "", None, input_value)

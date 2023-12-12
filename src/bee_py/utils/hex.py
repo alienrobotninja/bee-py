@@ -229,8 +229,13 @@ def remove_0x_prefix(input_string: str) -> str:
 
 
 def assert_hex_string(value: bytes, length: Optional[int] = None) -> Optional[bool]:
+    if is_0x_prefixed(value):
+        msg = f"{value} is not a valid hex string. '0x' prefix is not allowed"
+        raise TypeError(msg)
+
     if len(value) != length:
         return False
+
     if not is_hex_string(value):
         msg = f"{value} is not a valid hex string"
         raise TypeError(msg)

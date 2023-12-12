@@ -68,8 +68,11 @@ from bee_py.utils.eth import make_eth_address, make_hex_eth_address
 from bee_py.utils.type import (
     add_cid_conversion_function,
     assert_all_tags_options,
+    assert_batch_id,
     assert_collection_upload_options,
     assert_feed_type,
+    assert_file_data,
+    assert_file_upload_options,
     assert_public_key,
     assert_reference,
     assert_reference_or_ens,
@@ -154,9 +157,8 @@ class Bee:
         """
         if options:
             if isinstance(options, BeeRequestOptions):
-                print("---------***", type(options))
-                print(type(self.request_options))
                 options = options.model_dump()
+            if isinstance(self.request_options, BeeRequestOptions):
                 self.request_options = self.request_options.model_dump()
             return {**self.request_options, **options}
         else:
@@ -388,12 +390,17 @@ class Bee:
             UploadResultWithCid
         """
 
+        assert_batch_id(postage_batch_id)
+        assert_file_data(data)
+        if request_options:
+            assert_request_options(request_options)
+
         if options:
-            assert_upload_options(options)
+            assert_file_upload_options(options)
 
         if name and not isinstance(name, str):
             msg = "name must be a string or None"
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         return add_cid_conversion_function(
             bzz_api.upload_file(

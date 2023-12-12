@@ -1,9 +1,10 @@
-from typing import Any, Union
+from typing import IO, Any, Union
 
 from ens.utils import is_valid_ens_name
 from swarm_cid import ReferenceType, decode_cid, encode_reference
 
 from bee_py.types.type import (
+    BATCH_ID_HEX_LENGTH,
     ENCRYPTED_REFERENCE_HEX_LENGTH,
     PSS_TARGET_HEX_LENGTH_MAX,
     PUBKEY_HEX_LENGTH,
@@ -11,6 +12,7 @@ from bee_py.types.type import (
     AllTagsOptions,
     BeeRequestOptions,
     FeedType,
+    FileUploadOptions,
     ReferenceOrENS,
     Tag,
     UploadOptions,
@@ -236,16 +238,23 @@ def assert_file_upload_options(value: Any, name: str = "FileUploadOptions") -> N
     """
 
     assert_upload_options(value, name)
+    if isinstance(value, dict):
+        if value.get("size", None) and isinstance(value.get("size"), int):
+            msg = "size property in FileUploadOptions has to be number or None!"
+            raise TypeError(msg)
+
+    if not isinstance(value, FileUploadOptions):
+        value = FileUploadOptions.model_validate(value)
 
     options = value
 
-    if options.size and not isinstance(options.size, int):
-        msg = "size property in FileUploadOptions has to be number or None!"
-        raise TypeError(msg)
-
-    if options.size and options.size < 0:
-        msg = "size property in FileUploadOptions has to be a non-negative integer"
-        raise ValueError(msg)
+    if options.size:
+        if not isinstance(options.size, int):
+            msg = "size property in FileUploadOptions has to be number or None!"
+            raise TypeError(msg)
+        elif options.size < 0:
+            msg = "size property in FileUploadOptions has to be a non-negative integer"
+            raise ValueError(msg)
 
     if options.content_type and not isinstance(options.content_type, str):
         msg = "contentType property in FileUploadOptions has to be string or None!"
@@ -449,4 +458,27 @@ def assert_feed_type(_type: Union[FeedType, str]) -> None:
     """
     if not is_feed_type(_type):
         msg = "Invalid feed type"
+        raise TypeError(msg)
+
+
+def assert_batch_id(value: Any) -> None:
+    if not value:
+        msg = f"{value} is not a valid value for postage batch id"
+        raise BeeError(msg)
+    assert_hex_string(value, BATCH_ID_HEX_LENGTH)
+
+
+def assert_file_data(value: Union[str, bytes, IO]) -> None:
+    """
+    Check whether the given parameter is a correct file representation for file upload.
+    Raises TypeError if not valid.
+
+    Args:
+        value (Union[str, ByteString, IO, File]): The value to check.
+
+    Raises:
+        TypeError: If the value is not a valid file representation.
+    """
+    if not isinstance(value, (str, bytes, IO)):
+        msg = "Data must be either str, bytes, IO, or File!"
         raise TypeError(msg)
