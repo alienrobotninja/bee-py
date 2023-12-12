@@ -2,7 +2,8 @@ import json
 import os
 import random
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from typing import Union
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -77,7 +78,7 @@ def bee_peer_debug_url():
 
 
 @pytest.fixture
-def get_data_folder() -> str:
+def get_data_folder() -> Path:
     return DATA_FOLDER
 
 
@@ -122,7 +123,7 @@ def bee_debug_peer_ky_options(bee_peer_debug_url) -> dict:
 
 
 @pytest.fixture
-def read_local_bee_stamp() -> str:
+def read_local_bee_stamp() -> Union[str, bool]:
     with open(BEE_DATA_FILE) as f:
         stamp = json.loads(f.read())
     if stamp["BEE_POSTAGE"]:
@@ -131,7 +132,7 @@ def read_local_bee_stamp() -> str:
 
 
 @pytest.fixture
-def read_local_bee_peer_stamp() -> str:
+def read_local_bee_peer_stamp() -> Union[str, bool]:
     with open(BEE_DATA_FILE) as f:
         stamp = json.loads(f.read())
     if stamp["BEE_PEER_POSTAGE"]:
@@ -246,7 +247,7 @@ def invalid_reference() -> str:
 
 
 @pytest.fixture
-def test_collection() -> dict:
+def test_collection() -> list[dict]:
     return [
         {
             "path": "0",
@@ -271,7 +272,7 @@ def try_delete_chunk_from_local_storage(bee_debug_ky_options):
             return response
         except ValueError as e:
             try:
-                response.status_code == 400  # noqa: B015
+                response.code == 400  # noqa: B015
                 return response
             except:  # noqa: E722
                 raise e  # noqa: B904
@@ -337,3 +338,14 @@ def test_batch_id() -> str:
 @pytest.fixture
 def test_chunk_hash_str() -> str:
     return "ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
+
+
+@pytest.fixture(scope="session")
+def create_blank_temp_files(tmp_path_factory):
+    # Create a temporary directory
+    temp_dir = tmp_path_factory.mktemp("temp")
+
+    # Create 2-3 temporary files in the temporary directory
+    temp_files = [temp_dir / f"temp_file_{i}.txt" for i in range(2, 5)]
+
+    return temp_files

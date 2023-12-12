@@ -19,19 +19,18 @@ def assert_collection(data: Any):
         raise ValueError(msg)
 
 
-def _make_filepath(file: Union[os.PathLike, str]) -> str:
+def _make_filepath(file: Union[os.PathLike, str, Path]) -> str:
     """
     Extracts the filename from the provided file path.
 
     Args:
-        file (Union[os.PathLike, str]): The file path.
+        file (Union[os.PathLike, str, Path]): The file path.
 
     Returns:
         str: The extracted filename.
     """
     if isinstance(file, str):
         file = Path(file)
-
     if file.is_file():
         return file.name
 
@@ -57,7 +56,7 @@ def make_collection_from_file_list(file_list: list[Union[os.PathLike, str]]) -> 
             file_data = open(file_path, "rb").read()
 
             collection.append(
-                CollectionEntry.model_validateect(
+                CollectionEntry.model_validate(
                     {
                         "path": filename,
                         "data": bytearray(file_data),

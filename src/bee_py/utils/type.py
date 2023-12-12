@@ -1,6 +1,6 @@
 from typing import IO, Any, Union
 
-from ens.utils import is_valid_ens_name
+from ens.utils import is_valid_ens_name  # type: ignore
 from swarm_cid import ReferenceType, decode_cid, encode_reference
 
 from bee_py.types.type import (
@@ -11,6 +11,7 @@ from bee_py.types.type import (
     REFERENCE_HEX_LENGTH,
     AllTagsOptions,
     BeeRequestOptions,
+    CollectionUploadOptions,
     FeedType,
     FileUploadOptions,
     ReferenceOrENS,
@@ -239,7 +240,7 @@ def assert_file_upload_options(value: Any, name: str = "FileUploadOptions") -> N
 
     assert_upload_options(value, name)
     if isinstance(value, dict):
-        if value.get("size", None) and isinstance(value.get("size"), int):
+        if value.get("size", None) and isinstance(value.get("size"), bool):
             msg = "size property in FileUploadOptions has to be number or None!"
             raise TypeError(msg)
 
@@ -275,6 +276,9 @@ def assert_collection_upload_options(value: Any, name: str = "CollectionUploadOp
     """
 
     assert_upload_options(value, name)
+
+    if isinstance(value, dict):
+        value = CollectionUploadOptions.model_validate(value)
 
     options = value
 

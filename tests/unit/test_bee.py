@@ -5,7 +5,8 @@ import pytest
 
 from bee_py.bee import Bee
 from bee_py.feed.topic import make_topic_from_string
-from bee_py.feed.type import FeedType
+
+# from bee_py.feed.type import FeedType
 from bee_py.types.type import (
     CHUNK_SIZE,
     SPAN_SIZE,
@@ -59,7 +60,13 @@ request_options_assertions = [
     ({"retry": -1}, BeeArgumentError),
 ]
 
-data_assertions = [(1, TypeError), (True, TypeError), (None, TypeError), (lambda: {}, TypeError), ({}, TypeError)]
+data_assertions: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    (None, TypeError),
+    (lambda: {}, TypeError),
+    ({}, TypeError),
+]
 
 
 reference_or_ens_test_data = [
@@ -81,7 +88,7 @@ reference_or_ens_test_data = [
 ]
 
 
-upload_options_assertions = [
+upload_options_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
     ([], TypeError),
@@ -102,7 +109,7 @@ upload_options_assertions = [
 ]
 
 
-file_data_assertions = [
+file_data_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
     (None, TypeError),
@@ -113,12 +120,12 @@ file_data_assertions = [
 ]
 
 
-file_upload_option_assertions = [
+file_upload_option_assertions: list[tuple] = [
     ({"content_type": True}, pydantic.ValidationError),
     ({"content_type": 1}, pydantic.ValidationError),
     ({"content_type": {}}, pydantic.ValidationError),
     ({"content_type": []}, pydantic.ValidationError),
-    ({"size": "plur"}, TypeError),
+    ({"size": "plur"}, pydantic.ValidationError),
     ({"size": True}, TypeError),
     ({"size": {}}, pydantic.ValidationError),
     ({"size": []}, pydantic.ValidationError),
@@ -302,6 +309,7 @@ def test_download_readable_data_request_options_assertion(input_value, expected_
         bee.download_readable_data(test_chunk_hash, input_value)
 
 
+# * upload_file
 @pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
 def test_upload_file_batch_id_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
@@ -336,3 +344,49 @@ def test_upload_file_file_upload_options_assertion(input_value, expected_error_t
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.upload_file(test_batch_id, "", None, input_value)
+
+
+# * download_file
+@pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
+def test_downalod_file_reference_or_ens_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_file(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_downalod_file_request_options_assertion(input_value, expected_error_type, test_chunk_hash_str):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_file(test_chunk_hash_str, "", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
+def test_downalod_redable_data_file_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_readable_file(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
+def test_downalod_redable_data_file_request_options_assertion(input_value, expected_error_type, test_chunk_hash):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.download_readable_file(test_chunk_hash, "", input_value)
+
+
+# * upload_files
+@pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
+def test_upload_files_batch_id_assertion(input_value, expected_error_type, create_fake_file):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.upload_files(input_value, [create_fake_file])
+
+
+# TODO:
+# @pytest.mark.parametrize("input_value, expected_error_type", file_upload_option_assertions)
+# def test_upload_files_upload_options_assertion(input_value, expected_error_type, create_fake_file, test_batch_id):
+#     bee = Bee(MOCK_SERVER_URL)
+#     with pytest.raises(expected_error_type):
+#         bee.upload_files(test_batch_id, [create_fake_file], input_value)
+

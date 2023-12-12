@@ -259,9 +259,7 @@ class Bee:
             assert_upload_options(options)
         return bytes_api.upload(request_options, data, postage_batch_id, options)
 
-    def download_data(
-        self, reference: Union[ReferenceOrENS, str], options: Optional[BeeRequestOptions] = None
-    ) -> bytes:
+    def download_data(self, reference: Union[ReferenceOrENS, str], options: Optional[BeeRequestOptions] = None) -> Data:
         """
         Download data as a byte array.
 
@@ -431,6 +429,8 @@ class Bee:
         Returns:
             FileData
         """
+        if options:
+            assert_request_options(options)
 
         assert_reference_or_ens(reference)
         reference = make_reference_or_ens(reference, ReferenceType.MANIFEST)
@@ -477,7 +477,7 @@ class Bee:
 
         Args:
             postage_batch_id (str): The Postage Batch ID to use for uploading the data.
-            file_list (FileList | File[]): A FileList or a list of File objects to be uploaded.
+            file_list (os.PathLike | str): A FileList or a list of File objects to be uploaded.
             options (CollectionUploadOptions): Additional options for the upload,
             such as tag, encryption, pinning, and request options.
             request_options (BeeRequestOptions): Options that affect the request behavior.
@@ -487,6 +487,12 @@ class Bee:
         Returns:
             UploadResultWithCid
         """
+
+        assert_batch_id(postage_batch_id)
+
+        if request_options:
+            assert_request_options(request_options)
+
         if options:
             assert_collection_upload_options(options)
 
