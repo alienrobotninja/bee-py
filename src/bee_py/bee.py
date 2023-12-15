@@ -66,9 +66,11 @@ from bee_py.utils.error import BeeArgumentError, BeeError
 from bee_py.utils.eth import make_eth_address, make_hex_eth_address
 from bee_py.utils.type import (
     add_cid_conversion_function,
+    assert_address_prefix,
     assert_all_tags_options,
     assert_batch_id,
     assert_collection_upload_options,
+    assert_data,
     assert_directory,
     assert_feed_type,
     assert_file_data,
@@ -625,6 +627,9 @@ class Bee:
         assert_all_tags_options(options)
         assert_request_options(options)
 
+        if isinstance(options, dict):
+            options = AllTagsOptions.model_validate(options)
+
         if options.offset and options.limit:
             return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset, options.limit)
         elif options.offset:
@@ -954,6 +959,9 @@ class Bee:
         """
 
         assert_request_options(options)
+        assert_data(data)
+        assert_batch_id(postage_batch_id)
+        assert_address_prefix(target)
 
         if not isinstance(topic, Topic) or not isinstance(topic, str):
             msg = "topic has to be an string or Topic type!"

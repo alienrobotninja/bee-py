@@ -102,6 +102,7 @@ docstring-convention = "google"
 [tool.mypy]
 exclude = ["build/", "dist/", "docs/", "funky_experiments/*", "noxfile.py"]
 check_untyped_defs = true
+plugins = ["pydantic.mypy"]
 
 [tool.mypy-pytest]
 ignore_missing_imports = true

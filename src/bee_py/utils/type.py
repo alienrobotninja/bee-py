@@ -530,3 +530,9 @@ def assert_directory(directory: Any) -> None:
     if directory == "":
         msg = "directory must not be empty string!"
         raise TypeError(msg)
+
+
+def assert_data(value: Any) -> None:
+    if not isinstance(value, str) and not isinstance(value, bytes):
+        msg = "Data must be either string or bytes"
+        raise TypeError(msg)
