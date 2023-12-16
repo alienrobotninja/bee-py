@@ -96,12 +96,12 @@ number = true
 [tool.flake8]
 max-line-length= 120
 ignore = ["E203", "W503"]
-exclude = ["__pycache__", ".venv/*", "funky_experiments/*"]
+exclude = ["__pycache__", ".venv/*", "funky_experiments/*", "tests/*"]
 docstring-convention = "google"
 
 # mypy
 [tool.mypy]
-exclude = ["build/", "dist/", "docs/", "funky_experiments/*", "noxfile.py"]
+exclude = ["build/", "dist/", "docs/", "funky_experiments/*", "noxfile.py", "tests/*"]
 check_untyped_defs = true
 plugins = ["pydantic.mypy"]
 

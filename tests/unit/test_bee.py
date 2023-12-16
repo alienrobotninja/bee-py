@@ -5,6 +5,7 @@ import pytest
 
 from bee_py.bee import Bee
 from bee_py.feed.topic import make_topic_from_string
+
 # from bee_py.feed.type import FeedType
 from bee_py.types.type import (
     CHUNK_SIZE,
@@ -955,7 +956,7 @@ def test_download_data_mock(mock_bee, requests_mock, test_json_payload, test_ide
     # ! make fetchFeedUpdateMock fetch first
     # print(HASHED_TOPIC)
     requests_mock.get(
-        "http://localhost:12345/feeeds/8d3766440f0d7b949a5e32995d09619a7f86e632/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",
+        "http://localhost:12345/feeeds/8d3766440f0d7b949a5e32995d09619a7f86e632/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",  # type: ignore # noqa: 501
         json={"reference": test_json_hash},
     )
 

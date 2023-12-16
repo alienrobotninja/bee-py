@@ -173,21 +173,21 @@ def make_feed_reader(
         FeedReader: The feed reader object.
     """
 
-    #! Fix this
     def __download(
         options: Optional[Union[FeedUpdateOptions, dict]] = None,
     ) -> FetchFeedUpdateResponse:
-        print(options)
-        if options:
-            if isinstance(options, dict):
-                options = FeedUpdateOptions.model_validate(options)
-            if not options.index:
-                update = download_feed_update(request_options, bytes.fromhex(owner[2:]), topic, options.index)
-                return FetchFeedUpdateResponse(
-                    reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
-                )
-        else:
+        if isinstance(options, dict):
+            options = FeedUpdateOptions.model_validate(options)
+
+        if not options or not options.index:
+            options = options.model_dump()
             return fetch_latest_feed_update(request_options, owner, topic, {**options, "type": _type})
+
+        update = download_feed_update(request_options, bytes.fromhex(owner[2:]), topic, options.index)
+
+        return FetchFeedUpdateResponse(
+            reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
+        )
 
     download_partial = partial(__download, request_options)
 
