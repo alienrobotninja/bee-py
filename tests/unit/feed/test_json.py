@@ -1,14 +1,12 @@
-from unittest.mock import MagicMock, create_autospec
+from unittest.mock import MagicMock
 
 import pytest
 
 from bee_py.bee import Bee
 from bee_py.feed.json import get_json_data, set_json_data
-from bee_py.modules.feed import fetch_latest_feed_update
-from bee_py.types.type import FeedWriter, Reference, UploadResult
-from bee_py.utils.bytes import wrap_bytes_with_helpers
+from bee_py.types.type import FeedWriter, UploadResult
 
-test_data = [
+test_data: list[tuple] = [
     ("", bytes([34, 34])),
     ("hello world", bytes([34, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 34])),
     (None, bytes([110, 117, 108, 108])),

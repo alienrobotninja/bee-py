@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import ape
 import pytest
 
 # from bee_py.types.type import BatchId
@@ -60,19 +59,19 @@ ACCOUNT_FILE = DATA_FOLDER / "test_account.json"
 #     return get_postage_batch("bee_peer_debug_url")
 
 
-@pytest.fixture(scope="session")
-def accounts():
-    return ape.accounts
+# @pytest.fixture(scope="session")
+# def accounts():
+#     return ape.accounts
 
 
-@pytest.fixture(scope="session")
-def test_accounts(accounts):
-    return accounts.test_accounts
+# @pytest.fixture(scope="session")
+# def test_accounts(accounts):
+#     return accounts.test_accounts
 
 
-@pytest.fixture(scope="session")
-def signer(test_accounts):
-    return test_accounts[0]
+# @pytest.fixture(scope="session")
+# def signer(test_accounts):
+#     return test_accounts[0]
 
 
 @pytest.fixture

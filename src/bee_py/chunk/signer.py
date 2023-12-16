@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-import eth_keys
+import eth_keys  # type: ignore
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from ape.types.signatures import MessageSignature, recover_signer

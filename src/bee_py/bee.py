@@ -125,9 +125,10 @@ class Bee:
                 if not isinstance(options, dict):
                     msg = f"Expected: Options must be of type dict or BeeOptions. Got: {type(options)}"
                     raise TypeError(msg)
-
+        if isinstance(options, BeeOptions):
+            options = BeeOptions.model_dump(options)
         if options and "signer" in options:
-            self.signer = sign(options["signer"])
+            self.signer = options["signer"]
 
         self.request_options = BeeRequestOptions.model_validate(
             {
@@ -146,21 +147,21 @@ class Bee:
 
     def __get_request_options_for_call(
         self,
-        options: Optional[BeeRequestOptions] = None,
+        options: Optional[Union[BeeRequestOptions, JsonFeedOptions]] = None,
     ) -> BeeRequestOptions:
         """
         Returns the request options for a call, merging the default options with the provided options.
 
         Args:
-            options (dictHTTP error): Additional options that affect the request behavior. Defaults to None.
+            options (dict): Additional options that affect the request behavior. Defaults to None.
 
         Returns:
             dict: The merged request options.
         """
         if options:
-            if isinstance(options, BeeRequestOptions):
+            if isinstance(options, (JsonFeedOptions, BeeRequestOptions)):
                 options = options.model_dump()
-            if isinstance(self.request_options, BeeRequestOptions):
+            if isinstance(self.request_options, (JsonFeedOptions, BeeRequestOptions)):
                 self.request_options = self.request_options.model_dump()
             return {**self.request_options, **options}
         else:
@@ -168,7 +169,7 @@ class Bee:
 
     def __make_feed_reader(
         self,
-        feed_type: FeedType,
+        feed_type: Union[FeedType, str],
         topic: Union[bytes, str],
         owner: Union[AddressType, str],
         options: Optional[BeeRequestOptions] = None,
@@ -196,7 +197,7 @@ class Bee:
             self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_owner
         )
 
-    def ___resolve_signer(self, signer: Optional[Union[Signer, bytes, str]] = None) -> Signer:
+    def __resolve_signer(self, signer: Optional[Union[Signer, bytes, str]] = None) -> Signer:
         """
         Resolves the signer to be used.
 
@@ -210,11 +211,14 @@ class Bee:
         Raises:
             BeeError: If either no signer was passed or no default signer was specified for the instance
         """
-        if signer:
-            msg = "You have to pass Signer as property to either the method call or constructor! Non found."
+        if not self.signer:
+            msg = "You have to pass Signer as property to either in the Bee constructor!"
             raise ValueError(msg)
-        if self.signer:
+        elif self.signer:
             return self.signer
+        else:
+            msg = "Signer Error"
+            raise BeeArgumentError(msg, signer)
 
     def make_feed_topic(self, topic: str) -> Topic:
         """
@@ -877,7 +881,7 @@ class Bee:
 
     def is_feed_retrievable(
         self,
-        feed_type: FeedType,
+        feed_type: Union[FeedType, str],
         owner: AddressType,
         topic: Union[Topic, str],
         index: Optional[Union[Index, IndexBytes]] = None,
@@ -1107,7 +1111,7 @@ class Bee:
     def create_feed_manifest(
         self,
         postage_batch_id: Union[str, BatchId],
-        feed_type: FeedType,
+        feed_type: Union[FeedType, str],
         topic: Union[Topic, str, bytes],
         owner: Union[str, bytes, AddressType],
         options: Optional[BeeRequestOptions] = None,
@@ -1136,6 +1140,8 @@ class Bee:
 
         assert_request_options(options)
         assert_feed_type(feed_type)
+        assert_batch_id(postage_batch_id)
+
         canonical_topic = make_topic(topic)
         canonical_owner = make_hex_eth_address(owner)
 
@@ -1151,7 +1157,7 @@ class Bee:
 
     def make_feed_reader(
         self,
-        feed_type: FeedType,
+        feed_type: Union[FeedType, str],
         topic: Union[Topic, bytes, str],
         signer: Union[Signer, bytes, str],
         options: Optional[BeeRequestOptions] = None,
@@ -1178,17 +1184,17 @@ class Bee:
         assert_feed_type(feed_type)
         assert_request_options(options)
 
-        canonical_topic = make_topic(topic)
-        canonical_singer = self.resolve_signer(signer)
+        canonical_topic = make_topic(topic).value
+        canonical_signer = self.__resolve_signer(signer).address
 
         return _make_feed_reader(
-            self.__get_request_options_for_call(options), type, canonical_topic, canonical_singer, canonical_singer
+            self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_signer, canonical_signer
         )
 
     def make_feed_writer(
         self,
-        feed_type: FeedType,
-        topic: Union[Topic, bytes, str],
+        feed_type: Union[FeedType, str],
+        topic: Union[bytes, str],
         signer: Union[Signer, bytes, str],
         options: Optional[BeeRequestOptions] = None,
     ) -> FeedWriter:
@@ -1213,23 +1219,24 @@ class Bee:
         assert_feed_type(feed_type)
 
         canonical_topic = make_topic(topic)
-        canonical_singer = self.resolve_signer(signer)
+        canonical_signer = self.__resolve_signer(signer).address
 
-        return _make_feed_writer(self.__get_request_options_for_call(options), type, canonical_topic, canonical_singer)
+        return _make_feed_writer(
+            self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_signer
+        )
 
     def set_json_feed(
         self,
         postage_batch_id: Union[str, BatchId],
-        topic: Union[Topic, bytes, str],
-        data: dict,
-        options: Optional[JsonFeedOptions] = None,
+        topic: str,
+        data,
+        options: Optional[Union[JsonFeedOptions, dict]] = None,
         request_options: Optional[BeeRequestOptions] = None,
     ) -> Reference:
         """
         Sets JSON data to a feed. JSON-like data types are supported.
 
         Args:
-            bee: The Bee instance
             writer: The feed writer to be used
             postage_batch_id: The postage batch ID to be used
             data: JSON compatible data
@@ -1244,11 +1251,14 @@ class Bee:
             [Bee docs - Feeds](https://docs.ethswarm.org/docs/dapps-on-swarm/feeds)
         """
         assert_request_options(options, "JsonFeedOptions")
+        assert_batch_id(postage_batch_id)
 
         hashed_topic = self.make_feed_topic(topic)
+        if isinstance(options, dict):
+            options = JsonFeedOptions.model_validate(options)
 
-        if options.type:
-            feed_type = options.type
+        if options.Type:
+            feed_type = options.Type
         else:
             feed_type = DEFAULT_FEED_TYPE
 
@@ -1259,7 +1269,7 @@ class Bee:
     def get_json_feed(
         self,
         topic: Union[Topic, bytes, str],
-        options: Optional[JsonFeedOptions] = None,
+        options: Optional[Union[JsonFeedOptions, dict]] = None,
     ):
         """
         High-level function that allows you to easily get data from feed.
@@ -1289,15 +1299,17 @@ class Bee:
         """
 
         assert_request_options(options, "JsonFeedOptions")
+        if isinstance(options, dict):
+            options = JsonFeedOptions.model_validate(options)
 
         hashed_topic = self.make_feed_topic(topic)
 
-        if options.type:
-            feed_type = options.type
+        if options.Type:
+            feed_type = options.Type
         else:
             feed_type = DEFAULT_FEED_TYPE
 
-        if options.singer and options.address:
+        if options.signer and options.address:
             msg = 'Both options "signer" and "address" can not be specified at one time!'
             raise BeeError(msg)
 
@@ -1307,11 +1319,10 @@ class Bee:
             address = make_eth_address(options.address)
         else:
             try:
-                address = self.___resolve_signer(options.signer).address
+                address = self.__resolve_signer(options.signer).address
             except BeeError as e:
                 msg = "Either address, signer or default signer has to be specified!"
                 raise BeeError(msg) from e
-
         reader = self.make_feed_reader(feed_type, hashed_topic, address, options)
 
         return json_api.get_json_data(self, reader)
@@ -1359,7 +1370,7 @@ class Bee:
         """
         assert_request_options(options)
 
-        canonical_signer = self.___resolve_signer(signer)
+        canonical_signer = self.__resolve_signer(signer)
 
         reader = self.make_soc_reader(canonical_signer.address, options)
 
@@ -1374,7 +1385,6 @@ class Bee:
         Pings the Bee node to see if there's a live Bee node on the URL provided.
 
         Args:
-            bee: Bee instance
             options: Options that affects the request behavior
 
         Returns:
@@ -1392,7 +1402,6 @@ class Bee:
         Checks the connection to the Bee node to see if it's alive.
 
         Args:
-            bee: Bee instance
             options: Options that affects the request behavior
 
         Returns:

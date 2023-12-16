@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
 lock_version = "4.4"
-content_hash = "sha256:5fdc48401b766ec54932a7161c05a68887209f4c468391a31322dca1ae6686aa"
+content_hash = "sha256:d74aa8855d5b191334a9f33a7a5d0397f7934926da8bfa92a9b8c3988e235314"
 
 [[package]]
 name = "aiohttp"
@@ -938,7 +938,7 @@ files = [
 
 [[package]]
 name = "eth-pydantic-types"
-version = "0.1.0a4"
+version = "0.1.0a5"
 requires_python = ">=3.8,<4"
 summary = "eth-pydantic-types: Pydantic Types for Ethereum"
 dependencies = [
@@ -950,8 +950,8 @@ dependencies = [
     "typing-extensions<5,>=4.8.0",
 ]
 files = [
-    {file = "eth-pydantic-types-0.1.0a4.tar.gz", hash = "sha256:f1b3e5375750df282781baa6cb4eb628a979a452ea1821da0ac605fb7ffd1158"},
-    {file = "eth_pydantic_types-0.1.0a4-py3-none-any.whl", hash = "sha256:5455f3f9291e719f135c3196f1564f3927c848eb578e7cf134d1ffa6259188ad"},
+    {file = "eth-pydantic-types-0.1.0a5.tar.gz", hash = "sha256:4392ab016b4d3a5831517b17082a122268b4425f45ea2faf25d275a7cf79b927"},
+    {file = "eth_pydantic_types-0.1.0a5-py3-none-any.whl", hash = "sha256:3a2f37a19a13e4660071c9d3f7931aa139d36af94b0a4aaf340d44c44ae9e577"},
 ]
 
 [[package]]

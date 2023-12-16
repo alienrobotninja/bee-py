@@ -45,7 +45,7 @@ def get_json_data(bee, reader: FeedReader) -> str:
     """
     feed_update = reader.download()
     retrieved_data = bee.download_data(str(feed_update))
-    #! Update this Bee class
+    # ! Update this Bee class
     return json.loads(retrieved_data)
 
 

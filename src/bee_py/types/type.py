@@ -791,7 +791,7 @@ class FeedReader(BaseModel):
 
     download: Callable
     # * Callable[[Union[str, BatchId], Union[bytes, Reference], Optional[FeedUploadOptions], Reference]]
-    upload: Callable
+    # upload: Callable
 
 
 class FeedWriter(FeedReader):
@@ -805,12 +805,13 @@ class FeedWriter(FeedReader):
         upload: The upload function.
     """
 
+    upload: Callable
     signer: Signer
 
 
 class JsonFeedOptions(BaseModel):
     address: Optional[AddressType] = None
-    signer: Optional[Union[AccountAPI, str]] = None
+    signer: Optional[str] = None  # Optional[Union[AccountAPI, str]] = None
     Type: Optional[FeedType] = None
 
 

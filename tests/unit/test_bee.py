@@ -1,11 +1,10 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pydantic
 import pytest
 
 from bee_py.bee import Bee
 from bee_py.feed.topic import make_topic_from_string
-
 # from bee_py.feed.type import FeedType
 from bee_py.types.type import (
     CHUNK_SIZE,
@@ -218,6 +217,82 @@ topic_assertions: list[tuple] = [
 ]
 
 
+feed_type_assertions: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    ({}, TypeError),
+    ([], TypeError),
+    ("asd", TypeError),
+    # options
+    ("", TypeError),
+    (None, TypeError),
+]
+
+
+feed_topic_assertions: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    ({}, TypeError),
+    (None, TypeError),
+    ([], TypeError),
+    # Not an valid hexstring (ZZZ)
+    ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", ValueError),
+    # Length mismatch
+    ("4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", ValueError),
+]
+
+eth_address_assertions: list[tuple] = [
+    (1, ValueError),
+    (True, ValueError),
+    ({}, ValueError),
+    ([], ValueError),
+    (None, ValueError),
+    ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", ValueError),
+    ("4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", ValueError),
+    # Bytes length mismatch
+    (b"\x00" * 19, ValueError),
+]
+
+
+make_signer_assertions: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    ({}, TypeError),
+    (None, TypeError),
+    ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    ("4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    (b"\x00" * 31, TypeError),
+    ({"address": b"\x00" * 19}, TypeError),
+    ({"address": ""}, TypeError),
+    ({"address": None}, TypeError),
+    ({"address": []}, TypeError),
+    ({"address": {}}, TypeError),
+    ({"address": b"\x00" * 20}, TypeError),
+    ({"address": b"\x00" * 20}, TypeError),
+    ({"address": b"\x00" * 20}, TypeError),
+    ({"address": b"\x00" * 20}, TypeError),
+    ({"address": b"\x00" * 20}, TypeError),
+]
+
+request_options_json_assertions: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    ([], ValueError),
+    (lambda: {}, TypeError),
+    ("string", TypeError),
+    ({"timeout": "plur"}, pydantic.ValidationError),
+    ({"timeout": True}, ValueError),
+    ({"timeout": {}}, pydantic.ValidationError),
+    ({"timeout": []}, pydantic.ValidationError),
+    ({"timeout": -1}, ValueError),
+    ({"retry": "plur"}, ValueError),
+    ({"retry": True}, ValueError),
+    ({"retry": {}}, ValueError),
+    ({"retry": []}, ValueError),
+    ({"retry": -1}, ValueError),
+]
+
+
 @pytest.mark.parametrize(
     "url", ["", None, "some-invalid-url", "invalid:protocol", "javascript:console.log()", "ws://localhost:1633"]
 )
@@ -317,7 +392,7 @@ def test_upload_options_assertions(input_value, expected_error_type, test_batch_
 def test_download_data_reference_or_ens_assertions(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.download_data(input_value, expected_error_type)
+        bee.download_data(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -384,7 +459,7 @@ def test_fail_chunk_big_data(test_batch_id):
 def test_download_readable_data_reference_or_ens_assertions(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.download_readable_data(input_value, expected_error_type)
+        bee.download_readable_data(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -436,7 +511,7 @@ def test_upload_file_file_upload_options_assertion(input_value, expected_error_t
 def test_downalod_file_reference_or_ens_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.download_file(input_value, expected_error_type)
+        bee.download_file(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -450,7 +525,7 @@ def test_downalod_file_request_options_assertion(input_value, expected_error_typ
 def test_downalod_redable_data_file_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.download_readable_file(input_value, expected_error_type)
+        bee.download_readable_file(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", reference_or_ens_test_data)
@@ -541,7 +616,7 @@ def test_retrieve_tag_invalid_tag(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
 
     with pytest.raises(expected_error_type):
-        bee.retrieve_tag(input_value, expected_error_type)
+        bee.retrieve_tag(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -555,7 +630,7 @@ def test_delete_tag_request_options_assertion(input_value, expected_error_type):
 def test_delete_tag_invalid_tag(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.delete_tag(input_value, expected_error_type)
+        bee.delete_tag(input_value)
 
 
 @pytest.mark.parametrize(
@@ -645,7 +720,7 @@ def test_pin_request_options_assertion(input_value, expected_error_type, test_ch
 def test_pin_reference_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.pin(input_value, expected_error_type)
+        bee.pin(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -659,7 +734,7 @@ def test_unpin_request_options_assertion(input_value, expected_error_type, test_
 def test_unpin_reference_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.unpin(input_value, expected_error_type)
+        bee.unpin(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -673,7 +748,7 @@ def test_get_pin_request_options_assertion(input_value, expected_error_type, tes
 def test_get_pin_reference_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.get_pin(input_value, expected_error_type)
+        bee.get_pin(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -687,7 +762,7 @@ def test_reupload_pinned_data_request_options_assertion(input_value, expected_er
 def test_reupload_pinned_data_reference_or_ens_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
-        bee.reupload_pinned_data(input_value, expected_error_type)
+        bee.reupload_pinned_data(input_value)
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -725,9 +800,166 @@ def test_pss_send_public_key_assertion(input_value, expected_error_type, test_ba
         bee.pss_send(test_batch_id, "topic", "123", "data", input_value)
 
 
-# ! Fix the errors
 @pytest.mark.parametrize("input_value, expected_error_type", topic_assertions)
 def test_pss_send_topic_assertion(input_value, expected_error_type, test_batch_id):
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.pss_send(test_batch_id, input_value, "123", "data")
+
+
+# TODO: pss_subscribe, pss_receive is not implemented yet
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_create_feed_manifest_request_options_assertion(
+    input_value, expected_error_type, test_batch_id, test_chunk_hash, test_identity_address
+):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.create_feed_manifest(test_batch_id, "epoch", test_chunk_hash, test_identity_address, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
+def test_create_feed_manifest_batch_id_assertion(input_value, expected_error_type, test_identity_address):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.create_feed_manifest(input_value, "epoch", "123", test_identity_address)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", feed_type_assertions)
+def test_create_feed_manifest_feed_type_assertion(
+    input_value, expected_error_type, test_identity_address, test_batch_id
+):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.create_feed_manifest(test_batch_id, input_value, "123", test_identity_address)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", feed_topic_assertions)
+def test_create_feed_manifest_feed_topic_assertion(
+    input_value, expected_error_type, test_identity_address, test_batch_id
+):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.create_feed_manifest(test_batch_id, "epoch", input_value, test_identity_address)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", eth_address_assertions)
+def test_create_feed_manifest_eth_address_assertion(input_value, expected_error_type, test_batch_id):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.create_feed_manifest(test_batch_id, "epoch", "123", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_make_feed_reader_request_options_assertion(
+    input_value, expected_error_type, test_chunk_hash, test_identity_address
+):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.make_feed_reader("epoch", test_chunk_hash, test_identity_address, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", feed_type_assertions)
+def test_make_feed_reader_feed_type_assertion(input_value, expected_error_type, test_identity_address):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.make_feed_reader(input_value, "123", test_identity_address)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", feed_topic_assertions)
+def test_make_feed_reader_feed_topic_assertion(input_value, expected_error_type, test_identity_address):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.make_feed_reader("epoch", input_value, test_identity_address)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", eth_address_assertions)
+def test_make_feed_reader_eth_address_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.make_feed_reader("epoch", "123", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_json_assertions)
+def test_set_json_feed_request_options_assertion(
+    input_value, expected_error_type, test_identity_private_key, test_batch_id
+):
+    opts = {"signer": test_identity_private_key}
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.set_json_feed(test_batch_id, "epoch", "123", opts)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
+def test_set_json_feed_batch_id_assertion(input_value, expected_error_type, test_identity_private_key):
+    bee = Bee(MOCK_SERVER_URL)
+    opts = {"signer": test_identity_private_key}
+    with pytest.raises(expected_error_type):
+        bee.set_json_feed(input_value, "epoch", "123", opts)
+
+
+@pytest.mark.parametrize(
+    "input_value, expected_error_type",
+    [
+        (1, ValueError),
+        (True, ValueError),
+        ({}, ValueError),
+        ([], ValueError),
+        ("asd", ValueError),
+        # options
+        ("", ValueError),
+        (None, ValueError),
+    ],
+)
+def test_set_json_feed_feed_type_assertion(input_value, expected_error_type, test_identity_private_key, test_batch_id):
+    bee = Bee(MOCK_SERVER_URL)
+    opts = {"signer": test_identity_private_key}
+
+    with pytest.raises(expected_error_type):
+        bee.set_json_feed(test_batch_id, "123", "data", {"type": input_value, **opts})
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", topic_assertions)
+def test_set_json_feed_topic_assertion(input_value, expected_error_type, test_identity_private_key):
+    bee = Bee(MOCK_SERVER_URL)
+    opts = {"signer": test_identity_private_key}
+    with pytest.raises(expected_error_type):
+        bee.set_json_feed("epoch", input_value, "data", opts)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", make_signer_assertions)
+def test_set_json_feed_make_signer_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    opts = {"signer": input_value}
+    with pytest.raises(expected_error_type):
+        bee.set_json_feed("epoch", "123", "data", opts)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_json_assertions)
+def test_get_json_feed_request_options_assertion(input_value, expected_error_type, test_identity_private_key):
+    opts = {"signer": test_identity_private_key}
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.get_json_feed(TOPIC, opts)
+
+
+def test_download_data_mock(mock_bee, requests_mock, test_json_payload, test_identity_address, signer, test_json_hash):
+    mock_bee.return_value.download_data.return_value = MagicMock(text=test_json_payload)
+
+    requests_mock.get(
+        "http://localhost:12345/bytes/872a858115b8bee4408b1427b49e472883fdc2512d5a8f2d428b97ecc8f7ccfa",
+        json=test_json_payload,
+    )
+
+    # ! make fetchFeedUpdateMock fetch first
+    # print(HASHED_TOPIC)
+    requests_mock.get(
+        "http://localhost:12345/feeeds/8d3766440f0d7b949a5e32995d09619a7f86e632/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",
+        json={"reference": test_json_hash},
+    )
+
+    bee = Bee(MOCK_SERVER_URL, {"signer": signer})
+    json_data = bee.get_json_feed(TOPIC, {"address": test_identity_address})
+
+    assert json_data == test_json_payload

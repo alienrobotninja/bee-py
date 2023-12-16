@@ -1,6 +1,6 @@
 import datetime
 from functools import partial
-from typing import NewType, Optional, Union
+from typing import Optional, Union
 
 from ape.managers.accounts import AccountAPI
 from eth_typing import ChecksumAddress as AddressType
@@ -140,6 +140,7 @@ def download_feed_update(
     :return: The feed update.
     :rtype: FeedUpdate
     """
+    print(owner, topic, index)
     address = get_feed_update_chunk_reference(owner, topic, index)
     address_hex = bytes_to_hex(address)
     data = download(request_options, address_hex)
@@ -172,18 +173,23 @@ def make_feed_reader(
         FeedReader: The feed reader object.
     """
 
+    #! Fix this
     def __download(
-        options: Optional[FeedUpdateOptions] = None,
+        options: Optional[Union[FeedUpdateOptions, dict]] = None,
     ) -> FetchFeedUpdateResponse:
-        if options and options.index:
-            update = download_feed_update(request_options, bytes.fromhex(owner), topic, options.index)
-            return FetchFeedUpdateResponse(
-                reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
-            )
+        print(options)
+        if options:
+            if isinstance(options, dict):
+                options = FeedUpdateOptions.model_validate(options)
+            if not options.index:
+                update = download_feed_update(request_options, bytes.fromhex(owner[2:]), topic, options.index)
+                return FetchFeedUpdateResponse(
+                    reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
+                )
         else:
-            return fetch_latest_feed_update(request_options, owner, topic, options)
+            return fetch_latest_feed_update(request_options, owner, topic, {**options, "type": _type})
 
-    download_partial = partial(__download, request_options, topic, owner, options)
+    download_partial = partial(__download, request_options)
 
     return FeedReader(
         request_options=request_options,

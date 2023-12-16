@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Union
 from unittest.mock import MagicMock
 
+import ape
 import pytest
 
 from bee_py.bee import Bee
@@ -349,3 +350,38 @@ def create_blank_temp_files(tmp_path_factory):
     temp_files = [temp_dir / f"temp_file_{i}.txt" for i in range(2, 5)]
 
     return temp_files
+
+
+@pytest.fixture
+def test_identity_private_key() -> str:
+    return "634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd"
+
+
+@pytest.fixture
+def test_identity_address() -> str:
+    return "8d3766440f0d7b949a5e32995d09619a7f86e632"
+
+
+@pytest.fixture
+def test_json_hash() -> str:
+    return "872a858115b8bee4408b1427b49e472883fdc2512d5a8f2d428b97ecc8f7ccfa"
+
+
+@pytest.fixture
+def test_json_payload() -> dict:
+    return {"test": "data"}
+
+
+@pytest.fixture(scope="session")
+def accounts():
+    return ape.accounts
+
+
+@pytest.fixture(scope="session")
+def test_accounts(accounts):
+    return accounts.test_accounts
+
+
+@pytest.fixture(scope="session")
+def signer(test_accounts):
+    return test_accounts[0]

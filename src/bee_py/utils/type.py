@@ -14,6 +14,7 @@ from bee_py.types.type import (
     CollectionUploadOptions,
     FeedType,
     FileUploadOptions,
+    JsonFeedOptions,
     Reference,
     ReferenceOrENS,
     Tag,
@@ -23,6 +24,7 @@ from bee_py.types.type import (
 )
 from bee_py.utils.error import BeeArgumentError, BeeError
 from bee_py.utils.hex import assert_hex_string, is_hex_string, is_prefixed_hex_string
+from bee_py.utils.logging import logger
 
 
 def assert_non_negative_integer(value: Union[int, str], name: str = "Value"):
@@ -179,33 +181,31 @@ def assert_request_options(options: Any, name: str = "RequestOptions") -> None:
     if not options:
         return
 
-    if not isinstance(options, (dict, BeeRequestOptions)):
+    if not isinstance(options, (dict, BeeRequestOptions, JsonFeedOptions)):
         msg = f"Options must be an instance of BeeRequestOptions or dictionary. Got: {type(options)}"
         raise TypeError(msg)
-
-    if not isinstance(options, BeeRequestOptions):
-        if not isinstance(options, dict):
-            msg = f"Options must be an instance of BeeRequestOptions or dictionary. Got: {type(options)}"
-            raise TypeError(msg)
 
     if isinstance(options, dict):
         options = BeeRequestOptions.model_validate(options)
 
-    if options.retry:
-        if (
-            not isinstance(
-                options.retry,
-                int,
-            )
-            or options.retry < 0
-        ):
-            msg = f"{name}.retry has to be a non-negative integer!"
-            raise BeeArgumentError(msg, options.retry)
+    try:
+        if options.retry:
+            if (
+                not isinstance(
+                    options.retry,
+                    int,
+                )
+                or options.retry < 0
+            ):
+                msg = f"{name}.retry has to be a non-negative integer!"
+                raise BeeArgumentError(msg, options.retry)
 
-    if options.timeout:
-        if not isinstance(options.timeout, int) or options.timeout < 0:
-            msg = f"{name}.timeout has to be a non-negative integer!"
-            raise BeeArgumentError(msg, options.timeout)
+        if options.timeout:
+            if not isinstance(options.timeout, int) or options.timeout < 0:
+                msg = f"{name}.timeout has to be a non-negative integer!"
+                raise BeeArgumentError(msg, options.timeout)
+    except AttributeError:
+        logger.warning(f"Options set is of type {type(options)} not BeeRequestOptions")
 
 
 def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:
@@ -472,6 +472,8 @@ def is_feed_type(_type: Union[FeedType, str]) -> bool:
     Returns:
         bool: True if the value is a valid feed type, False otherwise.
     """
+    if isinstance(_type, FeedType):
+        _type = _type.value
     return isinstance(_type, str) and _type in [member.value for member in FeedType]
 
 

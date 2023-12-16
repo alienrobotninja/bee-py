@@ -6,13 +6,15 @@ from bee_py.types.type import TOPIC_BYTES_LENGTH, TOPIC_HEX_LENGTH, Topic
 from bee_py.utils.hex import assert_bytes, bytes_to_hex, make_hex_string
 
 
-def make_topic(topic: Union[bytes, str]) -> Topic:
+def make_topic(topic: Union[Topic, bytes, str]) -> Topic:
     """Converts a topic representation (string or bytes) into a Topic object."""
     if isinstance(topic, str):
-        return make_hex_string(topic, TOPIC_HEX_LENGTH)
+        return Topic(value=make_hex_string(topic, TOPIC_HEX_LENGTH))
     elif isinstance(topic, bytes):
         assert_bytes(topic, TOPIC_BYTES_LENGTH)
-        return bytes_to_hex(topic, TOPIC_HEX_LENGTH)
+        return Topic(value=bytes_to_hex(topic, TOPIC_HEX_LENGTH))
+    elif isinstance(topic, Topic):
+        return topic
     else:
         msg = "Invalid topic"
         raise TypeError(msg)
