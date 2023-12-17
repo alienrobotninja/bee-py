@@ -1,6 +1,4 @@
 import json
-
-# from abc import abstractmethod
 from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
@@ -11,19 +9,9 @@ from ape.types import AddressType
 # from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
 from swarm_cid.swarm_cid import CIDv1
-
-# from requests import PreparedRequest, Response
 from typing_extensions import TypeAlias
 
-# from bee_py.feed.feed import download_feed_update, update_feed
-# from bee_py.modules.feed import fetch_latest_feed_update
 from bee_py.utils.error import BeeError
-
-# from bee_py.utils.hex import bytes_to_hex
-
-# from bee_py.utils.reference import make_bytes_reference
-
-# Define all the types here
 
 Type = TypeVar("Type")
 Name = TypeVar("Name")
@@ -104,7 +92,7 @@ class BeeResponse(BaseModel):
 class BeeRequestOptions(BaseModel):
     base_url: Optional[str] = Field(default="", alias="baseURL")
     timeout: Optional[int] = 300
-    retry: Union[int, bool] = False
+    retry: int = 0
     headers: dict = {}
     on_request: bool = Field(default=True, alias="onRequest")
 
@@ -317,24 +305,39 @@ class Data(BaseModel):
         return json.loads(json_object)
 
 
-def is_object(value: Any) -> bool:
-    """
-    Checks if a value is an object.
-
-    Args:
-    value: The value to check.
-
-    Returns:
-    True if the value is an object, False otherwise.
-    """
-    return value is not None and isinstance(value, dict)
-
-
 class UploadOptions(BaseModel):
     pin: Optional[bool] = False
     encrypt: Optional[bool] = False
     tag: Optional[int] = None
     deferred: Optional[bool] = True
+
+    @validator("pin", pre=True, always=True)
+    def validate_pin(cls, value):  # noqa: N805
+        if not isinstance(value, bool):
+            msg = "Pin field must be a boolean"
+            raise ValueError(msg)
+        return value
+
+    @validator("encrypt", pre=True, always=True)
+    def validate_encrypt(cls, value):  # noqa: N805
+        if not isinstance(value, bool):
+            msg = "Encrypt field must be a boolean"
+            raise ValueError(msg)
+        return value
+
+    @validator("tag", pre=True, always=True)
+    def validate_tag(cls, value):  # noqa: N805
+        if value is not None and not isinstance(value, int):
+            msg = "Tag field must be an integer or None"
+            raise ValueError(msg)
+        return value
+
+    @validator("deferred", pre=True, always=True)
+    def validate_deferred(cls, value):  # noqa: N805
+        if not isinstance(value, bool):
+            msg = "Deferred field must be a boolean"
+            raise ValueError(msg)
+        return value
 
 
 class FileHeaders(BaseModel):
@@ -345,7 +348,7 @@ class FileHeaders(BaseModel):
     content_type: Optional[str]
 
 
-class OverLayAddress:
+class OverLayAddress(BaseModel):
     value: str
 
 
@@ -384,7 +387,7 @@ class ReferenceResponse(BaseModel):
     reference: str
 
     def __str__(self):
-        return f"ReferenceResponse(reference={self.reference})"
+        return self.reference
 
 
 class Topic(BaseModel):
@@ -722,6 +725,9 @@ class FeedType(Enum):
         SEQUENCE: Sequential feed type.
         EPOCH: Epoch feed type.
     """
+
+    def __str__(self):
+        return self.value
 
     SEQUENCE = "sequence"
     EPOCH = "epoch"

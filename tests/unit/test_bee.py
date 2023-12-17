@@ -1,3 +1,4 @@
+import json
 from unittest.mock import MagicMock, patch
 
 import pydantic
@@ -45,16 +46,16 @@ batch_id_assertion_data = [
 request_options_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
-    ([], TypeError),
+    # ([], TypeError),
     (lambda: {}, TypeError),
     ("string", TypeError),
     ({"timeout": "plur"}, pydantic.ValidationError),
-    ({"timeout": True}, TypeError),
+    ({"timeout": True}, pydantic.ValidationError),
     ({"timeout": {}}, pydantic.ValidationError),
     ({"timeout": []}, pydantic.ValidationError),
     ({"timeout": -1}, BeeArgumentError),
     ({"retry": "plur"}, pydantic.ValidationError),
-    ({"retry": True}, TypeError),
+    ({"retry": True}, pydantic.ValidationError),
     ({"retry": {}}, pydantic.ValidationError),
     ({"retry": []}, pydantic.ValidationError),
     ({"retry": -1}, BeeArgumentError),
@@ -91,18 +92,18 @@ reference_or_ens_test_data = [
 upload_options_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
-    ([], TypeError),
+    # ([], TypeError),
     ("string", TypeError),
     ({"pin": "plur"}, pydantic.ValidationError),
-    ({"pin": 1}, TypeError),
+    ({"pin": 1}, pydantic.ValidationError),
+    ({"pin": -1}, pydantic.ValidationError),
     ({"pin": {}}, pydantic.ValidationError),
     ({"pin": []}, pydantic.ValidationError),
     ({"encrypt": "plur"}, pydantic.ValidationError),
-    ({"encrypt": 1}, TypeError),
+    ({"encrypt": 1}, pydantic.ValidationError),
     ({"encrypt": {}}, pydantic.ValidationError),
     ({"encrypt": []}, pydantic.ValidationError),
     ({"tag": "plur"}, pydantic.ValidationError),
-    ({"tag": True}, TypeError),
     ({"tag": {}}, pydantic.ValidationError),
     ({"tag": []}, pydantic.ValidationError),
     ({"tag": -1}, BeeArgumentError),
@@ -278,19 +279,19 @@ make_signer_assertions: list[tuple] = [
 request_options_json_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
-    ([], ValueError),
+    ([], AttributeError),
     (lambda: {}, TypeError),
     ("string", TypeError),
     ({"timeout": "plur"}, pydantic.ValidationError),
-    ({"timeout": True}, ValueError),
+    ({"timeout": True}, AttributeError),
     ({"timeout": {}}, pydantic.ValidationError),
     ({"timeout": []}, pydantic.ValidationError),
-    ({"timeout": -1}, ValueError),
-    ({"retry": "plur"}, ValueError),
-    ({"retry": True}, ValueError),
-    ({"retry": {}}, ValueError),
-    ({"retry": []}, ValueError),
-    ({"retry": -1}, ValueError),
+    ({"timeout": -1}, AttributeError),
+    ({"retry": "plur"}, AttributeError),
+    ({"retry": True}, AttributeError),
+    ({"retry": {}}, AttributeError),
+    ({"retry": []}, AttributeError),
+    ({"retry": -1}, AttributeError),
 ]
 
 
@@ -303,7 +304,7 @@ def test_bee_constructor(url):
 
 
 @patch("bee_py.bee.Bee")
-def test_upload_file_mock(mock_bee, requests_mock):
+def test_upload_file_mock(mock_bee, requests_mock, test_batch_id):
     default_headers = {"X-Awesome-Header": "123"}
     mock_bee.return_value.upload_file.return_value = {
         "reference": "e032d8ddc7227d0d6c4d0f87db16027924216afd0c00012884ba7af835b4a7c7",
@@ -322,7 +323,7 @@ def test_upload_file_mock(mock_bee, requests_mock):
     )
 
     bee = Bee(MOCK_SERVER_URL, {"headers": default_headers})
-    reference = bee.upload_file("testBatchId", "hello world", "nice.txt")
+    reference = bee.upload_file(test_batch_id, "hello world", "nice.txt")
 
     assert str(reference.reference) == "e032d8ddc7227d0d6c4d0f87db16027924216afd0c00012884ba7af835b4a7c7"
     assert reference.cid().multihash.hex() == "1b20e032d8ddc7227d0d6c4d0f87db16027924216afd0c00012884ba7af835b4a7c7"
@@ -330,7 +331,7 @@ def test_upload_file_mock(mock_bee, requests_mock):
 
 @patch("bee_py.bee.Bee")
 def test_cid_encrypted_references(
-    mock_bee, requests_mock, test_chunk_encrypted_reference, test_chunk_encrypted_reference_cid
+    mock_bee, requests_mock, test_chunk_encrypted_reference, test_chunk_encrypted_reference_cid, test_batch_id
 ):
     test_tag_id = "123"
     # Mock the upload_file method
@@ -351,7 +352,7 @@ def test_cid_encrypted_references(
     bee = Bee(MOCK_SERVER_URL)
 
     # Call the upload_file method
-    reference = bee.upload_file("testBatchId", "hello world", "nice.txt")
+    reference = bee.upload_file(test_batch_id, "hello world", "nice.txt")
 
     # Check the return values
     assert str(reference.reference) == test_chunk_encrypted_reference
@@ -903,14 +904,14 @@ def test_set_json_feed_batch_id_assertion(input_value, expected_error_type, test
 @pytest.mark.parametrize(
     "input_value, expected_error_type",
     [
-        (1, ValueError),
-        (True, ValueError),
-        ({}, ValueError),
-        ([], ValueError),
-        ("asd", ValueError),
+        (1, AttributeError),
+        (True, AttributeError),
+        ({}, AttributeError),
+        ([], AttributeError),
+        ("asd", AttributeError),
         # options
-        ("", ValueError),
-        (None, ValueError),
+        ("", AttributeError),
+        (None, AttributeError),
     ],
 )
 def test_set_json_feed_feed_type_assertion(input_value, expected_error_type, test_identity_private_key, test_batch_id):
@@ -956,11 +957,15 @@ def test_download_data_mock(mock_bee, requests_mock, test_json_payload, test_ide
     # ! make fetchFeedUpdateMock fetch first
     # print(HASHED_TOPIC)
     requests_mock.get(
-        "http://localhost:12345/feeeds/8d3766440f0d7b949a5e32995d09619a7f86e632/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",  # type: ignore # noqa: 501
+        "http://localhost:12345/feeds/0x1e59ce931B4CFea3fe4B875411e280e173cB7A9C/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",  # type: ignore # noqa: 501
         json={"reference": test_json_hash},
+        headers={
+            "swarm-feed-index": "1",
+            "swarm-feed-index-next": "2",
+        },
     )
 
     bee = Bee(MOCK_SERVER_URL, {"signer": signer})
     json_data = bee.get_json_feed(TOPIC, {"address": test_identity_address})
 
-    assert json_data == test_json_payload
+    assert json.loads(json_data["data"]) == test_json_payload

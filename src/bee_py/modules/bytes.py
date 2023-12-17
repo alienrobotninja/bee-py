@@ -64,6 +64,8 @@ def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
     Returns:
         Data: Downloaded data as a byte array.
     """
+    if isinstance(_hash, Reference):
+        _hash = str(_hash)
 
     config = {"url": f"{BYTES_ENDPOINT}/{_hash}", "method": "GET"}
     response = http(request_options, config)

@@ -76,7 +76,7 @@ def read_feed_update_headers(headers: dict[str, str]) -> FeedUpdateHeaders:
         msg = "Response did not contain expected swarm-feed-index-next!"
         raise BeeError(msg)
 
-    return FeedUpdateHeaders(feed_index, feed_index_next)
+    return FeedUpdateHeaders(feed_index=feed_index, feed_index_next=feed_index_next)
 
 
 def fetch_latest_feed_update(
@@ -102,6 +102,7 @@ def fetch_latest_feed_update(
         {
             "url": f"{FEED_ENDPOINT}/{owner}/{topic}",
             "params": options,
+            "method": "GET",
         },
     )
     # * Raise exception for error code 4xx & 5xx

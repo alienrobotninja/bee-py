@@ -140,7 +140,6 @@ def download_feed_update(
     :return: The feed update.
     :rtype: FeedUpdate
     """
-    print(owner, topic, index)
     address = get_feed_update_chunk_reference(owner, topic, index)
     address_hex = bytes_to_hex(address)
     data = download(request_options, address_hex)

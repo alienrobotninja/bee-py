@@ -12,6 +12,32 @@ DEFAULT_HTTP_CONFIG = {
 }
 
 
+def sanitise_config(options: Union[BeeRequestOptions, dict]) -> Union[BeeRequestOptions, dict]:
+    bad_configs = ["address", "signer", "Type", "limit", "offset"]
+    if isinstance(options, BeeRequestOptions):
+        options = options.model_dump()
+
+    query_params = []
+    keys_to_remove = []
+
+    for key, value in options.get("params", {}).items():
+        if key and key not in bad_configs:
+            if key not in [True, False]:
+                if key == "type":
+                    value = str(value.value)  # noqa: PLW2901
+                query_params.append(f"{key}={value}")
+                if key != "type":
+                    keys_to_remove.append(key)
+
+    for key in keys_to_remove:
+        options["params"].pop(key, None)
+
+    for bad_key in bad_configs:
+        options.pop(bad_key, None)
+
+    return options
+
+
 def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Response:
     """Makes an HTTP request.
 
@@ -31,6 +57,11 @@ def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Resp
 
         # * Replace keys
         options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
+    else:
+        tmp_options = options
+        key_mapping = {"base_url": "baseURL", "on_request": "onRequest"}
+        options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
+
     try:
         request_config = {
             "headers": DEFAULT_HTTP_CONFIG["headers"].copy(),
@@ -38,6 +69,8 @@ def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Resp
             **options,
         }
         request_config = maybe_run_on_request_hook(options, request_config)
+        request_config = sanitise_config(request_config)
+
         if "http" not in request_config["url"]:
             msg = f"Invalid URL: {request_config['url']}"
             raise TypeError(msg)

@@ -17,6 +17,7 @@ from bee_py.types.type import (
     JsonFeedOptions,
     Reference,
     ReferenceOrENS,
+    ReferenceResponse,
     Tag,
     UploadOptions,
     UploadResult,
@@ -100,12 +101,17 @@ def assert_reference(value: Any) -> None:
 
 
 def assert_reference_or_ens(value: Any) -> None:
+    if isinstance(value, dict):
+        value = value.get("reference", None)
+    if isinstance(value, ReferenceResponse):
+        value = value.reference
     if not isinstance(value, str):
         msg = "ReferenceOrEns has to be a string!"
         raise TypeError(msg)
 
     if is_hex_string(value):
         assert_reference(value)
+        return
 
     if not is_valid_ens_name(value):
         msg = "ReferenceOrEns is not valid Reference, but also not valid ENS domain."
@@ -186,7 +192,7 @@ def assert_request_options(options: Any, name: str = "RequestOptions") -> None:
         raise TypeError(msg)
 
     if isinstance(options, dict):
-        options = BeeRequestOptions.model_validate(options)
+        options = BeeRequestOptions.model_validate(options, strict=True)
 
     try:
         if options.retry:
@@ -227,13 +233,15 @@ def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:
 
     options = value
 
-    if options.pin and not isinstance(options.pin, bool):
-        msg = f"options.pin property in {name} has to be boolean or None!"
-        raise TypeError(msg)
+    if options.pin:
+        if not isinstance(options.pin, bool):
+            msg = f"options.pin property in {name} has to be boolean or None!"
+            raise TypeError(msg)
 
-    if options.encrypt and not isinstance(options.encrypt, bool):
-        msg = f"options.encrypt property in {name} has to be boolean or None!"
-        raise TypeError(msg)
+    if options.encrypt:
+        if not isinstance(options.encrypt, bool):
+            msg = f"options.encrypt property in {name} has to be boolean or None!"
+            raise TypeError(msg)
 
     if options.tag:
         if not isinstance(options.tag, int):

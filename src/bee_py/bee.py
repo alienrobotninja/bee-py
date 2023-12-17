@@ -24,7 +24,7 @@ from bee_py.modules import status as status_api
 from bee_py.modules import stewardship as stewardship_api
 from bee_py.modules import tag as tag_api
 from bee_py.modules.feed import create_feed_manifest as _create_feed_manifest
-from bee_py.types.type import (  # Reference,
+from bee_py.types.type import (
     CHUNK_SIZE,
     SPAN_SIZE,
     AddressPrefix,
@@ -49,6 +49,7 @@ from bee_py.types.type import (  # Reference,
     Reference,
     ReferenceCidOrENS,
     ReferenceOrENS,
+    ReferenceResponse,
     Signer,
     SOCReader,
     SOCWriter,
@@ -160,9 +161,9 @@ class Bee:
             dict: The merged request options.
         """
         if options:
-            if isinstance(options, (JsonFeedOptions, BeeRequestOptions)):
+            if isinstance(options, (JsonFeedOptions, BeeRequestOptions, AllTagsOptions)):
                 options = options.model_dump()
-            if isinstance(self.request_options, (JsonFeedOptions, BeeRequestOptions)):
+            if isinstance(self.request_options, (JsonFeedOptions, BeeRequestOptions, AllTagsOptions)):
                 self.request_options = self.request_options.model_dump()
             return {**self.request_options, **options}
         else:
@@ -262,11 +263,15 @@ class Bee:
             Bee docs - Upload and download: https://docs.ethswarm.org/docs/develop/access-the-swarm/upload-and-download
             Bee API reference - `POST /bytes`: https://docs.ethswarm.org/api/#tag/Bytes/paths/~1bytes/post
         """
+        assert_batch_id(postage_batch_id)
+        assert_data(data)
         if options:
             assert_upload_options(options)
+        if request_options:
+            assert_request_options(request_options)
         return bytes_api.upload(request_options, data, postage_batch_id, options)
 
-    def download_data(self, reference: Union[ReferenceOrENS, str], options: Optional[BeeRequestOptions] = None) -> Data:
+    def download_data(self, reference: ReferenceOrENS, options: Optional[BeeRequestOptions] = None) -> Data:
         """
         Download data as a byte array.
 
@@ -288,6 +293,10 @@ class Bee:
 
         assert_request_options(options)
         assert_reference_or_ens(reference)
+        if isinstance(reference, dict):
+            reference = reference.get("reference", None)
+        if isinstance(reference, (ReferenceResponse, Reference)):
+            reference = str(reference)
 
         return bytes_api.download(self.__get_request_options_for_call(options), reference)
 
@@ -633,7 +642,7 @@ class Bee:
         assert_request_options(options)
 
         if isinstance(options, dict):
-            options = AllTagsOptions.model_validate(options)
+            options = AllTagsOptions.model_validate(options, strict=True)
 
         if options.offset and options.limit:
             return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset, options.limit)

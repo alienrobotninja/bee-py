@@ -44,8 +44,15 @@ def get_json_data(bee, reader: FeedReader) -> str:
     @return: JSON data
     """
     feed_update = reader.download()
-    retrieved_data = bee.download_data(str(feed_update))
-    # ! Update this Bee class
+    if not isinstance(feed_update, (bytes, str)):
+        feed_update = feed_update.model_dump()
+
+    retrieved_data = bee.download_data(feed_update)
+
+    if not isinstance(retrieved_data, (bytes, str)):
+        retrieved_data = retrieved_data.model_dump()
+    if isinstance(retrieved_data, dict):
+        return retrieved_data
     return json.loads(retrieved_data)
 
 
