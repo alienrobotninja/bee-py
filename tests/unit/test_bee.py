@@ -6,6 +6,7 @@ import pytest
 
 from bee_py.bee import Bee
 from bee_py.feed.topic import make_topic_from_string
+
 # from bee_py.feed.type import FeedType
 from bee_py.types.type import (
     CHUNK_SIZE,
@@ -691,7 +692,6 @@ def test_get_all_tags_invalid_limit(invalid_limit, expected_exception):
         bee.get_all_tags({"limit": invalid_limit})  # type: ignore
 
 
-# ! WHY god
 @pytest.mark.parametrize(
     "invalid_offset, expected_exception",
     [
@@ -945,7 +945,9 @@ def test_get_json_feed_request_options_assertion(input_value, expected_error_typ
         bee.get_json_feed(TOPIC, opts)
 
 
-def test_download_data_mock(mock_bee, requests_mock, test_json_payload, test_identity_address, signer, test_json_hash):
+def test_fetch_with_specified_address(
+    mock_bee, requests_mock, test_json_payload, test_identity_address, signer, test_json_hash
+):
     mock_bee.return_value.download_data.return_value = MagicMock(text=test_json_payload)
 
     requests_mock.get(
@@ -953,8 +955,6 @@ def test_download_data_mock(mock_bee, requests_mock, test_json_payload, test_ide
         json=test_json_payload,
     )
 
-    # ! make fetchFeedUpdateMock fetch first
-    # print(HASHED_TOPIC)
     requests_mock.get(
         "http://localhost:12345/feeds/0x1e59ce931B4CFea3fe4B875411e280e173cB7A9C/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",  # type: ignore # noqa: 501
         json={"reference": test_json_hash},

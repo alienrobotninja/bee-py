@@ -61,6 +61,7 @@ from bee_py.types.type import (
 )
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.collection import assert_collection, make_collection_from_file_list
+
 # from bee_py.utils.collection_node import make_collection_from_fs
 from bee_py.utils.data import prepare_websocket_data
 from bee_py.utils.error import BeeArgumentError, BeeError
