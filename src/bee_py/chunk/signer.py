@@ -39,7 +39,7 @@ def sign(
     data: Union[str, bytes, bytearray, SignableMessage],
     account: AccountAPI,
     auto_sign: Optional[bool] = False,  # noqa: FBT002
-) -> MessageSignature:
+) -> Optional[MessageSignature]:
     """
     Calculates the signature of the provided data using the given private key.
 
@@ -52,8 +52,8 @@ def sign(
         MessageSignature -> The signature of the data as HexBytes
 
     N.B. It is not recoomened to pass private key here & there that's why I
-    thought to use ape's account container which is much more secure that just
-    passing the public key while calling this function.
+    thought to use ape's account container which is much more secure than just
+    passing the private key while calling this function.
     """
 
     if not isinstance(data, SignableMessage):
@@ -62,8 +62,8 @@ def sign(
         else:
             data = encode_defunct(data)
 
-    # you have to set password as env variable
-    # more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure # noqa: E501
+    # * you have to set password as env variable
+    # * more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure # noqa: E501
     if auto_sign:
         account.set_autosign(True)
 

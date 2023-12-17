@@ -98,4 +98,4 @@ def alice(test_accounts):
 
 @pytest.fixture(scope="session")
 def bob():
-    return test_accounts[1]
+    return test_accounts[1]  # type: ignore

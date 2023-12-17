@@ -2,6 +2,7 @@ from struct import pack
 from typing import Optional, Union
 
 from eth_pydantic_types import HexBytes
+from eth_typing import ChecksumAddress as AddressType
 from eth_utils import is_0x_prefixed, is_hex, to_bytes, to_hex
 
 
@@ -18,14 +19,14 @@ def bytes_to_hex(inp: Union[bytes, str], length: Optional[int] = None) -> str:
     Raises:
         ValueError: If the length of the resulting hex string does not match the specified length.
     """
-    # # Convert byte array to hexadecimal
+    # * Convert byte array to hexadecimal
     if isinstance(inp, bytes):
         hex_string = to_hex(inp)
     elif isinstance(inp, str):
         hex_string = to_hex(inp.encode())
 
     if hex_string.startswith("0x"):
-        hex_string = hex_string[2:]
+        hex_string = hex_string[2:]  # type: ignore
 
     if length is not None and len(hex_string) != length:
         msg = f"Length mismatch for valid hex string. Expected length {length}: {hex_string}"
@@ -34,7 +35,7 @@ def bytes_to_hex(inp: Union[bytes, str], length: Optional[int] = None) -> str:
     return hex_string
 
 
-def hex_to_bytes(hex_string: str) -> bytes:
+def hex_to_bytes(hex_string: Union[str, HexBytes, AddressType]) -> bytes:
     """Converts a hex string to a byte array.
 
     Args:
@@ -224,11 +225,11 @@ def to_big_endian(value: int) -> bytes:
 def remove_0x_prefix(input_string: str) -> str:
     if input_string.startswith("0x"):
         return input_string[2:]
-    else:
-        return input_string
+
+    return input_string
 
 
-def assert_hex_string(value: bytes, length: Optional[int] = None) -> Optional[bool]:
+def assert_hex_string(value: str, length: Optional[int] = None) -> None:
     if is_0x_prefixed(value):
         msg = f"{value} is not a valid hex string. '0x' prefix is not allowed"
         raise TypeError(msg)

@@ -57,7 +57,7 @@ def test_is_hex_eth_address(address, expected):
 )
 def test_assert_eth_address(address, expected):
     if expected:
-        assert assert_eth_address(address)
+        assert_eth_address(address)
     else:
         with pytest.raises(ValueError):
             assert_eth_address(address)
@@ -73,7 +73,7 @@ def test_assert_eth_address(address, expected):
 )
 def test_assert_swarm_network_id(network_id, expected):
     if expected is None:
-        assert not assert_swarm_network_id(network_id)
+        assert_swarm_network_id(network_id)
     else:
         with pytest.raises(expected):
             assert_swarm_network_id(network_id)

@@ -8,7 +8,7 @@ def test_wrap_bytes_with_helpers_text(wrapped_bytes):
 
 
 def test_wrap_bytes_with_helpers_json(wrapped_bytes):
-    assert wrapped_bytes.json() == {"hello": "world"}
+    assert wrapped_bytes.to_json() == {"hello": "world"}
 
 
 def test_wrap_bytes_with_helpers_hex(wrapped_bytes):
@@ -38,7 +38,7 @@ def test_data_text():
 
 def test_data_json():
     data = Data(data=b'{"hello": "world"}')
-    assert data.json() == {"hello": "world"}
+    assert data.to_json() == {"hello": "world"}
 
 
 def test_data_hex():
@@ -48,4 +48,4 @@ def test_data_hex():
 
 def test_data_str_json_output():
     data = Data(data="hello world")
-    assert data.json() == {"hello": "world"}
+    assert data.to_json() == {"hello": "world"}

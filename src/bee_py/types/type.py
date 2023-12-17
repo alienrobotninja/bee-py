@@ -4,7 +4,6 @@ from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
-
 # from eth_pydantic_types import HexBytes
 # from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
@@ -18,7 +17,7 @@ Name = TypeVar("Name")
 Length = TypeVar("Length", bound=int)
 T: TypeAlias = Union[str, bytes]
 NumberString = Annotated[str, "NumberString"]
-Signer = TypeVar("Signer", bound=AccountAPI)
+# Signer = TypeVar("Signer", bound=AccountAPI)
 
 SPAN_SIZE = 8
 SECTION_SIZE = 32
@@ -53,6 +52,10 @@ TOPIC_HEX_LENGTH = 64
 # Type aliases
 BatchId: TypeAlias = str
 AddressPrefix: TypeAlias = str
+
+
+class Signer(BaseModel):
+    singer: AccountAPI
 
 
 class BeeRequest(BaseModel):
@@ -284,21 +287,21 @@ class Data(BaseModel):
         """
         return self.data.hex()
 
-    def json(self) -> dict[str, Any]:
+    def to_json(self) -> dict[str, Any]:
         """Converts the binary data into string which is then parsed into JSON.
 
         Returns:
           The decoded JSON object.
         """
         if isinstance(self.data, bytes):
-            self.data = self.data.decode("utf-8")
-        if "{" in self.data:
+            self.data = self.data.decode("utf-8")  # type: ignore
+        if "{" in self.data:  # type: ignore
             return json.loads(self.data)
 
         # Split the string into a list of words
         words = self.data.split()
         # Convert the list into a dictionary
-        dict_obj = {words[0]: " ".join(words[1:])}
+        dict_obj = {words[0]: " ".join(words[1:])}  # type: ignore
         # Convert the dictionary to a JSON object
         json_object = json.dumps(dict_obj)
 
@@ -456,8 +459,8 @@ class NodeAddresses(BaseModel):
     overlay: str
     underlay: list[str]
     ethereum: str
-    public_key: str = Field(default=None, alias="publicKey")
-    pss_public_key: str = Field(default=None, alias="pssPublicKey")
+    public_key: str = Field(..., alias="publicKey")
+    pss_public_key: str = Field(..., alias="pssPublicKey")
 
 
 class Peer(BaseModel):
@@ -504,7 +507,7 @@ class Topology(BaseModel):
     population: int
     connected: int
     timestamp: str
-    nn_low_watermark: int = Field(default=None, alias="nnLowWatermark")
+    nn_low_watermark: int = Field(default=0, alias="nnLowWatermark")
     depth: int
     reachability: str
     network_availability: str = Field(default="", alias="networkAvailability")
@@ -577,7 +580,7 @@ class LastCashoutActionResponse(BaseModel):
     peer: str
     uncashed_amount: str = Field(..., alias="uncashedAmount")
     transaction_hash: Optional[str] = Field(default="", alias="transactionHash")
-    last_cashed_cheque: Optional[Cheque] = Field(default="", alias="lastCashedCheque")
+    last_cashed_cheque: Optional[Cheque] = Field(..., alias="lastCashedCheque")
     result: Optional[CashoutResult]
 
 
@@ -617,14 +620,14 @@ class PostageBatch(BaseModel):
 
 
 class BatchBucket(BaseModel):
-    bucket_id: int = Field(default=None, alias="bucketID")
+    bucket_id: int = Field(..., alias="bucketID")
     collisions: int
 
 
 class PostageBatchBuckets(BaseModel):
     depth: int
-    bucket_depth: int = Field(default=None, alias="bucketDepth")
-    bucket_upper_bound: int = Field(default=None, alias="bucketUpperBound")
+    bucket_depth: int = Field(..., alias="bucketDepth")
+    bucket_upper_bound: int = Field(..., alias="bucketUpperBound")
     buckets: Optional[list[BatchBucket]]
 
 
@@ -746,7 +749,7 @@ class FeedUpdateOptions(UploadOptions, BaseModel):
     """
 
     at: Optional[int] = None
-    _type: Optional[FeedType] = "sequence"
+    _type: Optional[FeedType] = FeedType.SEQUENCE
     index: Optional[str] = None
 
 

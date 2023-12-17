@@ -53,7 +53,7 @@ def make_eth_address(address: Union[str, AddressType, Any]) -> Union[AddressType
         if not is_address(address):
             msg = "Invalid Ethereum address"
             raise ValueError(msg)
-        return to_normalized_address(address)
+        return to_normalized_address(address)  # type: ignore
 
     if isinstance(address, bytes):
         if len(address) != ETH_ADDR_BYTES_LENGTH:
@@ -87,9 +87,9 @@ def make_hex_eth_address(address: Union[str, AddressType, Any]) -> HexBytes:
         return HexBytes(hex_address)
 
     except TypeError as e:
-        # Wrap the error message to indicate that the address is an invalid hexadecimal Ethereum address.
-        e.message = f"Invalid HexEthAddress: {e.message}"
-        raise e
+        # * Wrap the error message to indicate that the address is an invalid hexadecimal Ethereum address.
+        msg = f"Invalid HexEthAddress: {address}"
+        raise TypeError(msg) from e
 
 
 def is_eth_addr_case_ins(address: Union[str, bytes]) -> bool:
@@ -121,12 +121,11 @@ def is_hex_eth_address(address: Union[str, HexBytes, AddressType]) -> bool:
     return is_eth_addr_case_ins(address) or is_valid_checksum_eth_address(address)
 
 
-def assert_eth_address(address: Union[str, HexBytes, AddressType]) -> AddressType:
+def assert_eth_address(address: Union[str, HexBytes, AddressType]) -> None:
     """Asserts if the address is a valid ethereum address"""
     if not is_address(address):
         msg = "Invalid Ethereum address"
         raise ValueError(msg)
-    return True
 
 
 def assert_swarm_network_id(network_id: int) -> None:
@@ -164,7 +163,7 @@ def eth_to_swarm_address(
     """
 
     if not is_address(eth_address):
-        msg = f"Invalid address: {eth_address}"
+        msg = f"Invalid address: {eth_address!r}"
         raise ValueError(msg)
     if isinstance(network_id, int):
         if network_id < 0:
@@ -184,12 +183,12 @@ def eth_to_swarm_address(
             nonce = nonce[2:]
             nonce = bytes.fromhex(nonce)
 
-    assert_swarm_network_id(network_id)
+    assert_swarm_network_id(network_id)  # type: ignore
 
     ethereum_address_bytes = hex_to_bytes(eth_address)
 
     # Prepare network ID and nonce bytes
-    network_id_bytes = network_id.to_bytes(32, byteorder="little")
+    network_id_bytes = network_id.to_bytes(32, byteorder="little")  # type: ignore
     nonce_bytes = None
     if nonce is not None:
         if isinstance(nonce, int):
@@ -241,7 +240,7 @@ def make_ethereum_wallet_signer(
 
             # * get the account from address to use for signing
             account_list = [a.address for a in accounts]
-            account_index = account_list.index(address)
+            account_index = account_list.index(address)  # type: ignore
             if not account_index:
                 msg = f"Account with address '{address}' not found"
                 raise AccountNotFoundError(msg)

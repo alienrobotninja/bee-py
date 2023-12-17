@@ -1,7 +1,6 @@
 from ape.types import AddressType
 
 from bee_py.feed.feed import get_feed_update_chunk_reference
-
 # from bee_py.bee import Bee
 from bee_py.modules.bytes import read_big_endian
 from bee_py.types.type import BeeRequestOptions, Index, Reference, Topic

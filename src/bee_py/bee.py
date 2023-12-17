@@ -7,7 +7,7 @@ from eth_pydantic_types import HexBytes
 from requests import HTTPError
 from swarm_cid import ReferenceType
 
-from bee_py.chunk.signer import sign
+# from bee_py.chunk.signer import sign
 from bee_py.chunk.soc import download_single_owner_chunk, upload_single_owner_chunk_data
 from bee_py.feed import json as json_api  # get_json_data, set_json_data
 from bee_py.feed.feed import make_feed_reader as _make_feed_reader
@@ -61,7 +61,6 @@ from bee_py.types.type import (
 )
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.collection import assert_collection, make_collection_from_file_list
-
 # from bee_py.utils.collection_node import make_collection_from_fs
 from bee_py.utils.data import prepare_websocket_data
 from bee_py.utils.error import BeeArgumentError, BeeError
@@ -577,7 +576,7 @@ class Bee:
             * [Bee docs - Keep your data alive / Postage stamps](https://docs.ethswarm.org/docs/develop/access-the-swarm/keep-your-data-alive)
             * [Bee docs - Upload directory](https://docs.ethswarm.org/docs/develop/access-the-swarm/upload-a-directory/)
             * [Bee API reference - `POST /bzz`](https://docs.ethswarm.org/api/#tag/Collection/paths/~1bzz/post)
-        """
+        """  # noqa: E501
 
         assert_batch_id(postage_batch_id)
 
@@ -612,7 +611,7 @@ class Bee:
         See Also:
             * [Bee docs - Upload and download](https://docs.ethswarm.org/docs/develop/access-the-swarm/upload-and-download)
             * [Bee API reference - `PUT /bzz/`](https://docs.ethswarm.org/api/#tag/Collection/paths/~1bzz/{reference}~1{path}/put)
-        """
+        """  # noqa: 501
         assert_request_options(options)
 
         return tag_api.create_tag(self.__get_request_options_for_call(options))
@@ -701,7 +700,7 @@ class Bee:
             * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/develop/access-the-swarm/syncing)
             * [Bee API reference - `DELETE /tags/{uid}`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags~1{uid}/delete)
             */
-        """
+        """  # noqa: 501
         assert_request_options(options)
         tag_uid = make_tag_uid(uid)
 
@@ -733,7 +732,7 @@ class Bee:
         See also:
             * [Bee docs - Syncing / Tags](https://docs.ethswarm.org/docs/develop/access-the-swarm/syncing)
             * [Bee API reference - `PATCH /tags/{uid}`](https://docs.ethswarm.org/api/#tag/Tag/paths/~1tags~1{uid}/patch)
-        """
+        """  # noqa: 501
         assert_reference(reference)
         assert_request_options(request_options)
 
@@ -857,7 +856,7 @@ class Bee:
 
         See also:
             * [Bee API reference - `PUT /stewardship`](https://docs.ethswarm.org/api/#tag/Stewardship/paths/~1stewardship~1{reference}/put)
-        """
+        """  # noqa: 501
         assert_reference(reference)
         assert_request_options(request_options)
 
@@ -883,7 +882,7 @@ class Bee:
 
         See also:
             * [Bee API reference - `GET /stewardship`](https://docs.ethswarm.org/api/#tag/Stewardship/paths/~1stewardship~1{reference}/get)
-        """
+        """  # noqa: 501
         assert_reference(reference)
         assert_request_options(request_options)
 
@@ -970,7 +969,7 @@ class Bee:
         References:
             [Bee docs - PSS](https://docs.ethswarm.org/docs/dapps-on-swarm/pss)
             [Bee API reference - `POST /pss`](https://docs.ethswarm.org/api/#tag/Postal-Service-for-Swarm/paths/~1pss~1send~1{topic}~1{targets}/post)
-        """
+        """  # noqa: 501
 
         assert_request_options(options)
         assert_data(data)
@@ -1011,7 +1010,7 @@ class Bee:
         References:
             [Bee docs - PSS](https://docs.ethswarm.org/docs/dapps-on-swarm/pss)
             [Bee API reference - `GET /pss`](https://docs.ethswarm.org/api/#tag/Postal-Service-for-Swarm/paths/~1pss~1subscribe~1{topic}/get)
-        """
+        """  # noqa: 501
         if not isinstance(topic, Topic) or not isinstance(topic, str):
             msg = "topic has to be an string or Topic type!"
             raise TypeError(msg)
@@ -1084,7 +1083,7 @@ class Bee:
         See also:
             - [Bee docs - PSS](https://docs.ethswarm.org/docs/dapps-on-swarm/pss)
             - [Bee API reference - `GET /pss`](https://docs.ethswarm.org/api/#tag/Postal-Service-for-Swarm/paths/~1pss~1subscribe~1{topic}/get)
-        """
+        """  # noqa: 501
         if not isinstance(topic, Topic) or not isinstance(topic, str):
             msg = "topic has to be an string or Topic type!"
             raise TypeError(msg)
@@ -1146,7 +1145,7 @@ class Bee:
         References:
             [Bee docs - Feeds](https://docs.ethswarm.org/docs/dapps-on-swarm/feeds)
             [Bee API reference - `POST /feeds`](https://docs.ethswarm.org/api/#tag/Feed/paths/~1feeds~1{owner}~1{topic}/post)
-        """
+        """  # noqa: 501
 
         assert_request_options(options)
         assert_feed_type(feed_type)
