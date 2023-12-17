@@ -577,7 +577,7 @@ class Bee:
             * [Bee docs - Keep your data alive / Postage stamps](https://docs.ethswarm.org/docs/develop/access-the-swarm/keep-your-data-alive)
             * [Bee docs - Upload directory](https://docs.ethswarm.org/docs/develop/access-the-swarm/upload-a-directory/)
             * [Bee API reference - `POST /bzz`](https://docs.ethswarm.org/api/#tag/Collection/paths/~1bzz/post)
-        """  # noqa: E501
+        """  # noqa: 501
 
         assert_batch_id(postage_batch_id)
 

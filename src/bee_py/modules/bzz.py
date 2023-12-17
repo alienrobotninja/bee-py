@@ -41,7 +41,7 @@ def upload_file(
     data: Union[str, bytes],
     postage_batch_id: BatchId,
     name: Optional[str] = None,
-    options: Optional[FileUploadOptions] = None,
+    options: Optional[Union[FileUploadOptions, dict]] = None,
 ) -> UploadResult:
     """
     Uploads a single file to the Bee node.
@@ -116,7 +116,6 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())
-
     file_headers = read_file_headers(response.headers)
     file_data = wrap_bytes_with_helpers(response.content)
 

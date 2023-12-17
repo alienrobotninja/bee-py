@@ -7,8 +7,7 @@ from ape.managers.accounts import AccountAPI
 from eth_account.messages import encode_defunct
 from eth_pydantic_types import HexBytes
 from eth_typing import ChecksumAddress as AddressType
-from eth_utils import (
-    ValidationError,
+from eth_utils import (  # ValidationError,
     is_address,
     is_checksum_address,
     keccak,
@@ -47,7 +46,7 @@ def make_eth_address(address: Union[str, AddressType, Any]) -> Union[AddressType
         The address as a 20-byte array.
 
     Raises:
-        ValidationError: If the address is invalid.
+        ValueError: If the address is invalid.
     """
     if isinstance(address, str):
         if not is_address(address):
@@ -58,11 +57,11 @@ def make_eth_address(address: Union[str, AddressType, Any]) -> Union[AddressType
     if isinstance(address, bytes):
         if len(address) != ETH_ADDR_BYTES_LENGTH:
             msg = f"Invalid Ethereum address length: {len(address)} "
-            raise ValidationError(msg)
+            raise ValueError(msg)
         return to_checksum_address(address)
 
     msg = "Invalid Ethereum address"
-    raise ValidationError(msg)
+    raise ValueError(msg)
 
 
 def make_hex_eth_address(address: Union[str, AddressType, Any]) -> HexBytes:

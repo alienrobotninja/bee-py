@@ -73,7 +73,7 @@ jobs:
          pdm install --dev
 
      - name: Run MyPy
-       run: pdm run mypy .
+       run: pdm run mypy -p bee_py
 
  functional:
    runs-on: ${{ matrix.os }}

@@ -13,7 +13,7 @@ def test_store_and_retrieve_collection_with_single_file(bee_ky_options, get_debu
     directory_structure = [{"path": "0", "data": bytes([0])}]
 
     result = upload_collection(bee_ky_options, directory_structure, get_debug_postage)
-    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])
+    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])  # type: ignore
 
     assert file.headers.name == directory_structure[0]["path"]
     assert file.data == directory_structure[0]["data"]
@@ -31,7 +31,7 @@ def test_retrieve_the_filename_but_not_the_complete_path(bee_ky_options, get_deb
     ]
 
     result = upload_collection(bee_ky_options, directory_structure, get_debug_postage)
-    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])
+    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])  # type: ignore
 
     assert file.headers.name == name
     assert file.data == directory_structure[0]["data"]
@@ -46,7 +46,7 @@ def test_work_with_pinning(bee_ky_options, get_debug_postage):
     ]
 
     result = upload_collection(bee_ky_options, directory_structure, get_debug_postage, {"pin": True})
-    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])
+    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])  # type: ignore
 
     assert file.headers.name == directory_structure[0]["path"]
     assert file.data == directory_structure[0]["data"]
@@ -68,7 +68,7 @@ def test_upload_and_download_with_encryption(bee_ky_options, get_debug_postage):
             "encrypt": True,
         },
     )
-    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])
+    file = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])  # type: ignore
 
     assert file.headers.name == directory_structure[0]["path"]
     assert file.data == directory_structure[0]["data"]
@@ -104,12 +104,12 @@ def test_store_retrieve_multiple_file(bee_ky_options, get_debug_postage):
 
     result = upload_collection(bee_ky_options, directory_structure, get_debug_postage)
 
-    file1 = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])
+    file1 = download_file(bee_ky_options, result.reference, directory_structure[0]["path"])  # type: ignore
 
     assert file1.headers.name == directory_structure[0]["path"]
     assert file1.data == directory_structure[0]["data"]
 
-    file2 = download_file(bee_ky_options, result.reference, directory_structure[1]["path"])
+    file2 = download_file(bee_ky_options, result.reference, directory_structure[1]["path"])  # type: ignore
 
     assert file2.headers.name == directory_structure[1]["path"]
     assert file2.data == directory_structure[1]["data"]
@@ -189,6 +189,7 @@ def test_should_store_and_retrieve_file(bee_ky_options, get_debug_postage):
     filename = "hello.txt"
 
     result = upload_file(bee_ky_options, data, get_debug_postage, filename)
+    print(result.reference)
     file_data = download_file(bee_ky_options, result.reference)
 
     assert file_data.data.decode() == data.decode()

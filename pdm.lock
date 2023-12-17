@@ -4,8 +4,8 @@
 [metadata]
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform"]
-lock_version = "4.4"
-content_hash = "sha256:d74aa8855d5b191334a9f33a7a5d0397f7934926da8bfa92a9b8c3988e235314"
+lock_version = "4.4.1"
+content_hash = "sha256:508b2bef62ff5df6cb6077ea31fceafdfba04261be29c378ca25a980ce9d1635"
 
 [[package]]
 name = "aiohttp"
@@ -3097,7 +3097,7 @@ version = "2.0.23"
 requires_python = ">=3.7"
 summary = "Database Abstraction Library"
 dependencies = [
-    "greenlet!=0.4.17; platform_machine == \"aarch64\" or (platform_machine == \"ppc64le\" or (platform_machine == \"x86_64\" or (platform_machine == \"amd64\" or (platform_machine == \"AMD64\" or (platform_machine == \"win32\" or platform_machine == \"WIN32\")))))",
+    "greenlet!=0.4.17; platform_machine == \"win32\" or platform_machine == \"WIN32\" or platform_machine == \"AMD64\" or platform_machine == \"amd64\" or platform_machine == \"x86_64\" or platform_machine == \"ppc64le\" or platform_machine == \"aarch64\"",
     "typing-extensions>=4.2.0",
 ]
 files = [

@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 
 import ape
 import pytest
+from click.testing import CliRunner
 
 from bee_py.bee import Bee
 from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
@@ -19,6 +20,9 @@ PROJECT_PATH = Path(__file__).parent
 DATA_FOLDER = PROJECT_PATH / "data"
 BEE_DATA_FILE = DATA_FOLDER / "bee_data.json"
 ENV_FILE = PROJECT_PATH / "../Env"
+ALIAS = "bee"
+PRIVATE_KEY = "634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd"
+PASSWORD = "a"
 
 
 @pytest.fixture
@@ -385,3 +389,27 @@ def test_accounts(accounts):
 @pytest.fixture(scope="session")
 def signer(test_accounts):
     return test_accounts[0]
+
+
+@pytest.fixture
+def runner():
+    return CliRunner()
+
+
+@pytest.fixture(scope="session")
+def ape_cli():
+    from ape._cli import cli
+
+    yield cli
+
+
+@pytest.fixture(scope="session")
+def bee_signer(runner, ape_cli):
+    # Add account from valid private key
+    result = runner.invoke(
+        ape_cli,
+        ["accounts", "import", ALIAS],
+        input="\n".join([f"0x{PRIVATE_KEY}", PASSWORD, PASSWORD]),
+    )
+
+    assert result.exit_code == 0, result.output

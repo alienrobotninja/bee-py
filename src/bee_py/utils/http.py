@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import urljoin
 
 import requests
@@ -38,12 +38,15 @@ def sanitise_config(options: Union[BeeRequestOptions, dict]) -> Union[BeeRequest
     return options
 
 
-def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Response:
+def http(
+    options: Union[BeeRequestOptions, dict], config: dict, sanitise: Optional[bool] = True  # noqa: FBT002
+) -> requests.Response:
     """Makes an HTTP request.
 
     Args:
       options: User defined settings.
       config: Internal settings and/or Bee settings.
+      sanitise: remove signer & other unintended settings from config
 
     Returns:
       A requests.Response object.
@@ -69,7 +72,8 @@ def http(options: Union[BeeRequestOptions, dict], config: dict) -> requests.Resp
             **options,
         }
         request_config = maybe_run_on_request_hook(options, request_config)
-        request_config = sanitise_config(request_config)
+        if sanitise:
+            request_config = sanitise_config(request_config)
 
         if "http" not in request_config["url"]:
             msg = f"Invalid URL: {request_config['url']}"

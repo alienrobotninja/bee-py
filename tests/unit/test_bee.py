@@ -8,16 +8,16 @@ from bee_py.bee import Bee
 from bee_py.feed.topic import make_topic_from_string
 
 # from bee_py.feed.type import FeedType
-from bee_py.types.type import (
-    CHUNK_SIZE,
-    SPAN_SIZE,
-    BatchId,
-    BeeRequestOptions,
-    CollectionUploadOptions,
-    PssMessageHandler,
-    ReferenceResponse,
-    UploadOptions,
-)
+# from bee_py.types.type import (
+#     CHUNK_SIZE,
+#     SPAN_SIZE,
+#     BatchId,
+#     BeeRequestOptions,
+#     CollectionUploadOptions,
+#     PssMessageHandler,
+#     ReferenceResponse,
+#     UploadOptions,
+# )
 from bee_py.utils.error import BeeArgumentError, BeeError
 
 TOPIC = "some=very%nice#topic"
@@ -269,10 +269,6 @@ make_signer_assertions: list[tuple] = [
     ({"address": None}, TypeError),
     ({"address": []}, TypeError),
     ({"address": {}}, TypeError),
-    ({"address": b"\x00" * 20}, TypeError),
-    ({"address": b"\x00" * 20}, TypeError),
-    ({"address": b"\x00" * 20}, TypeError),
-    ({"address": b"\x00" * 20}, TypeError),
     ({"address": b"\x00" * 20}, TypeError),
 ]
 
@@ -968,3 +964,56 @@ def test_fetch_with_specified_address(
     json_data = bee.get_json_feed(TOPIC, {"address": test_identity_address})
 
     assert json.loads(json_data["data"]) == test_json_payload
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_make_soc_reader_request_options_assertion(input_value, expected_error_type, test_identity_private_key):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.make_soc_reader(test_identity_private_key, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", eth_address_assertions)
+def test_make_soc_reader_eth_address_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.make_soc_reader(input_value)
+
+
+def test_set_owner_property(test_identity_address):
+    bee = Bee(MOCK_SERVER_URL)
+
+    soc_reader = bee.make_soc_reader(test_identity_address)
+
+    assert soc_reader.owner == f"0x{test_identity_address}"
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_make_soc_writer_request_options_assertion(input_value, expected_error_type, test_identity_private_key):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.make_soc_writer(test_identity_private_key, input_value)
+
+
+@pytest.mark.parametrize(
+    "input_value, expected_error_type",
+    [
+        (1, AttributeError),
+        (True, AttributeError),
+        ({}, AttributeError),
+        (None, AttributeError),
+        ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", AttributeError),
+        ("4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", AttributeError),
+        (b"\x00" * 31, AttributeError),
+        ({"address": b"\x00" * 19}, AttributeError),
+        ({"address": ""}, AttributeError),
+        ({"address": None}, AttributeError),
+        ({"address": []}, AttributeError),
+        ({"address": {}}, AttributeError),
+        ({"address": b"\x00" * 20}, AttributeError),
+    ],
+)
+def test_make_soc_writer_make_signer_assertion(input_value, expected_error_type):
+    bee = Bee(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.make_soc_writer(input_value)

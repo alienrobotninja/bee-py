@@ -54,6 +54,7 @@ test = [
     "pytest-print>=1.0.0",
     "pytest-mock>=3.12.0",
     "pytest-asyncio>=0.21.1",
+    "click>=8.1.7",
 ]
 lint = [
     "black>=23.11.0",              # Auto-formatter and linter
