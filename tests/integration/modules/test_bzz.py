@@ -189,7 +189,6 @@ def test_should_store_and_retrieve_file(bee_ky_options, get_debug_postage):
     filename = "hello.txt"
 
     result = upload_file(bee_ky_options, data, get_debug_postage, filename)
-    print(result.reference)
     file_data = download_file(bee_ky_options, result.reference)
 
     assert file_data.data.decode() == data.decode()
@@ -237,10 +236,11 @@ def test_store_file_with_tag(bee_ky_options, get_debug_postage, random_byte_arra
     upload_file(bee_ky_options, data, get_debug_postage, filename, {"tag": tag1.uid})
     tag2 = retrieve_tag(bee_ky_options, tag1.uid)
 
-    # * For older version of the APi
+    # * For older version of the API
     if tag2.split == 0:
         assert tag2.total == expected_tags_count
         assert tag2.seen == 0
+    # * Newer version of the API
     else:
         assert tag2.split == expected_tags_count
         assert tag2.synced == 0

@@ -60,7 +60,6 @@ def read_file_headers(headers: dict[str, str]) -> FileHeaders:
     Returns:
       The file headers.
     """
-    print("headers-->", headers)
 
     name = read_content_disposition_filename(headers.get("Content-Disposition"))
     tag_uid = read_tag_uid(headers.get("swarm-tag-uid"))

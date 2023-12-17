@@ -74,7 +74,7 @@ def upload_file(
         "headers": headers,
         "params": {"name": name},
     }
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
