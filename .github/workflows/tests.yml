@@ -121,7 +121,7 @@ jobs:
 
      - name: Run Bee Factory
        run: |
-         bee-factory start --detach 1.9.0
+         bee-factory start --detach 1.15.0-rc2
 
      - name: Run Tests
        run: pdm run pytest
@@ -158,7 +158,7 @@ jobs:
 
      - name: Run Bee Factory
        run: |
-         bee-factory start --detach 1.9.0
+         bee-factory start --detach 1.15.0-rc2
          
      - name: Run Tests
        run: pdm run pytest
