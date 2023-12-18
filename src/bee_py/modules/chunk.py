@@ -9,9 +9,6 @@ from bee_py.utils.logging import logger
 ENDPOINT = "chunks"
 
 
-# TODO: there is an issue with the upload function of chunk. tests are sutck
-
-
 def upload(
     request_options: BeeRequestOptions,
     data: bytes,

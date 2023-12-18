@@ -357,7 +357,7 @@ class Bee:
             msg = f"Chunk must have a maximum size of {CHUNK_SIZE} bytes. Received chunk size: {len(data)}"
             raise BeeArgumentError(msg, data)
 
-        if options is not None:
+        if options:
             assert_upload_options(options)
 
         return chunk_api.upload(

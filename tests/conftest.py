@@ -31,7 +31,7 @@ def max_int() -> int:
 
 
 @pytest.fixture(scope="session", autouse=True)
-def get_api_url():
+def bee_api_url():
     if os.path.isfile(ENV_FILE):
         with open(ENV_FILE) as f:
             data = json.loads(f.read())
@@ -44,7 +44,7 @@ def get_api_url():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def get_peer_api_url():
+def bee_peer_api_url():
     if os.path.isfile(ENV_FILE):
         with open(ENV_FILE) as f:
             data = json.loads(f.read())
@@ -88,13 +88,13 @@ def get_data_folder() -> Path:
 
 
 @pytest.fixture
-def bee_url(get_api_url) -> str:
-    return get_api_url
+def bee_url(bee_api_url) -> str:
+    return bee_api_url
 
 
 @pytest.fixture
-def bee_peer_url(get_peer_api_url) -> str:
-    return get_peer_api_url
+def bee_peer_url(bee_peer_api_url) -> str:
+    return bee_peer_api_url
 
 
 @pytest.fixture
@@ -413,3 +413,8 @@ def bee_signer(runner, ape_cli):
     )
 
     assert result.exit_code == 0, result.output
+
+
+@pytest.fixture
+def bee_class(bee_url) -> Bee:
+    return Bee(bee_url)
