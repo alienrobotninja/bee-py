@@ -4,11 +4,15 @@ from bee_py.utils.hex import bytes_to_hex
 
 payload = bytes([1, 2, 3])
 identifier = bytearray(32)
-soc_hash = "9d453ebb73b2fedaaf44ceddcf7a0aa37f3e3d6453fea5841c31f0ea6d61dc85"
+soc_hash = "8976a1ed19644f9b7d0e654dc427fd7b902f7b13f337ea05794f96fd6a2014eb"
 
 
 def test_upload_single_owner_chunk(
-    signer, payload, bee_ky_options, get_debug_postage, try_delete_chunk_from_local_storage
+    signer,
+    payload,
+    bee_ky_options,
+    get_debug_postage,
+    try_delete_chunk_from_local_storage,
 ):
     cac = make_content_addressed_chunk(payload)
 
@@ -26,5 +30,4 @@ def test_upload_single_owner_chunk(
 
     response = upload_single_owner_chunk(bee_ky_options, soc, get_debug_postage)
 
-    # * remove the 0x
     assert soc_address == response

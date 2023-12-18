@@ -16,7 +16,9 @@ from bee_py.utils.logging import logger
 CHEQUEBOOK_ENDPOINT = "chequebook"
 
 
-def get_chequebook_address(request_options: BeeRequestOptions) -> ChequebookAddressResponse:
+def get_chequebook_address(
+    request_options: BeeRequestOptions,
+) -> ChequebookAddressResponse:
     """
     Retrieves the address of the chequebook contract used.
 
@@ -40,7 +42,9 @@ def get_chequebook_address(request_options: BeeRequestOptions) -> ChequebookAddr
     return ChequebookAddressResponse.model_validate(chequebook_address_response)
 
 
-def get_chequebook_balance(request_options: BeeRequestOptions) -> ChequebookBalanceResponse:
+def get_chequebook_balance(
+    request_options: BeeRequestOptions,
+) -> ChequebookBalanceResponse:
     """
     Retrieves the balance of the chequebook.
 

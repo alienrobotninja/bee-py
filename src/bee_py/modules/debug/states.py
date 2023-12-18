@@ -79,7 +79,9 @@ def map_wallet_properties(data: WalletBalance) -> WalletBalance:
     return WalletBalance.model_validate(data_dict)
 
 
-def get_wallet_balance(request_options: BeeRequestOptions) -> Union[WalletBalance, None]:
+def get_wallet_balance(
+    request_options: BeeRequestOptions,
+) -> Union[WalletBalance, None]:
     """
     Retrieves the wallet balances for xDai and BZZ of the Bee node.
 

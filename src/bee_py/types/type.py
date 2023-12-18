@@ -4,6 +4,7 @@ from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar
 
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
+
 # from eth_pydantic_types import HexBytes
 # from eth_pydantic_types import HexBytes as BaseHexBytes
 from pydantic import BaseModel, Field, validator
@@ -365,9 +366,10 @@ class Reference(BaseModel):
 
     @validator("value")
     def validate_value(cls, v):  # noqa: N805
-        if len(v) not in (REFERENCE_HEX_LENGTH, ENCRYPTED_REFERENCE_HEX_LENGTH) or not all(
-            c in "0123456789abcdefABCDEF" for c in v
-        ):
+        if len(v) not in (
+            REFERENCE_HEX_LENGTH,
+            ENCRYPTED_REFERENCE_HEX_LENGTH,
+        ) or not all(c in "0123456789abcdefABCDEF" for c in v):
             msg = "Reference must be a hex string of length 64 or 128"
             raise ValueError(msg)
         return v

@@ -6,15 +6,8 @@ from typing import Optional, Union
 
 # from bee_py.bee import Bee
 # from bee_py.feed.type import FeedType
-from bee_py.types.type import (  # Reference,
-    BatchId,
-    BeeRequestOptions,
-    FeedReader,
-    FeedWriter,
-    JsonFeedOptions,
-    Reference,
-    UploadOptions,
-)
+from bee_py.types.type import JsonFeedOptions  # Reference,
+from bee_py.types.type import BatchId, BeeRequestOptions, FeedReader, FeedWriter, Reference, UploadOptions
 
 
 def serialize_json(data: dict) -> bytes:

@@ -61,6 +61,7 @@ from bee_py.types.type import (
 )
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.collection import assert_collection, make_collection_from_file_list
+
 # from bee_py.utils.collection_node import make_collection_from_fs
 from bee_py.utils.data import prepare_websocket_data
 from bee_py.utils.error import BeeArgumentError, BeeError
@@ -162,7 +163,10 @@ class Bee:
         if options:
             if isinstance(options, (JsonFeedOptions, BeeRequestOptions, AllTagsOptions)):
                 options = options.model_dump()
-            if isinstance(self.request_options, (JsonFeedOptions, BeeRequestOptions, AllTagsOptions)):
+            if isinstance(
+                self.request_options,
+                (JsonFeedOptions, BeeRequestOptions, AllTagsOptions),
+            ):
                 self.request_options = self.request_options.model_dump()
             return {**self.request_options, **options}
         else:
@@ -195,7 +199,10 @@ class Bee:
         canonical_owner = make_hex_eth_address(owner)
 
         return _make_feed_reader(
-            self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_owner
+            self.__get_request_options_for_call(options),
+            feed_type,
+            canonical_topic,
+            canonical_owner,
         )
 
     def __resolve_signer(self, signer: Optional[Union[Signer, bytes, str]] = None) -> Signer:
@@ -353,7 +360,12 @@ class Bee:
         if options is not None:
             assert_upload_options(options)
 
-        return chunk_api.upload(self.__get_request_options_for_call(request_options), data, postage_batch_id, options)
+        return chunk_api.upload(
+            self.__get_request_options_for_call(request_options),
+            data,
+            postage_batch_id,
+            options,
+        )
 
     def download_chunk(self, reference: ReferenceOrENS, options: Optional[BeeRequestOptions] = None) -> Data:
         """
@@ -417,7 +429,11 @@ class Bee:
 
         return add_cid_conversion_function(
             bzz_api.upload_file(
-                self.__get_request_options_for_call(request_options), data, postage_batch_id, name, options
+                self.__get_request_options_for_call(request_options),
+                data,
+                postage_batch_id,
+                name,
+                options,
             ),
             ReferenceType.MANIFEST,
         )
@@ -515,7 +531,10 @@ class Bee:
         data = make_collection_from_file_list(file_list)
 
         upload_result = bzz_api.upload_collection(
-            self.__get_request_options_for_call(request_options), data, postage_batch_id, options
+            self.__get_request_options_for_call(request_options),
+            data,
+            postage_batch_id,
+            options,
         )
         return add_cid_conversion_function(upload_result, ReferenceType.MANIFEST)
 
@@ -591,7 +610,10 @@ class Bee:
         data = make_collection_from_file_list([directory])
 
         upload_result = bzz_api.upload_collection(
-            self.__get_request_options_for_call(request_options), data, postage_batch_id, options
+            self.__get_request_options_for_call(request_options),
+            data,
+            postage_batch_id,
+            options,
         )
 
         return add_cid_conversion_function(upload_result, ReferenceType.MANIFEST)
@@ -644,7 +666,11 @@ class Bee:
             options = AllTagsOptions.model_validate(options, strict=True)
 
         if options.offset and options.limit:
-            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset, options.limit)
+            return tag_api.get_all_tags(
+                self.__get_request_options_for_call(options),
+                options.offset,
+                options.limit,
+            )
         elif options.offset:
             return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset)
         elif options.limit:
@@ -740,7 +766,11 @@ class Bee:
 
         return tag_api.update_tag(self.__get_request_options_for_call(request_options), tag_uid)
 
-    def pin(self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None) -> None:
+    def pin(
+        self,
+        reference: Union[Reference, str],
+        request_options: Optional[BeeRequestOptions] = None,
+    ) -> None:
         """
         Pins the local data specified by the given reference to the Bee node.
 
@@ -766,7 +796,11 @@ class Bee:
 
         return pinning_api.pin(self.__get_request_options_for_call(request_options), reference)
 
-    def unpin(self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None) -> None:
+    def unpin(
+        self,
+        reference: Union[Reference, str],
+        request_options: Optional[BeeRequestOptions] = None,
+    ) -> None:
         """
         Unpins the local data specified by the given reference from the Bee node.
 
@@ -809,7 +843,11 @@ class Bee:
 
         return pinning_api.get_all_pins(self.__get_request_options_for_call(request_options))
 
-    def get_pin(self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None) -> Pin:
+    def get_pin(
+        self,
+        reference: Union[Reference, str],
+        request_options: Optional[BeeRequestOptions] = None,
+    ) -> Pin:
         """
         Get the pinning status of the data specified by the given reference.
 
@@ -835,7 +873,9 @@ class Bee:
         return pinning_api.get_pin(self.__get_request_options_for_call(request_options), reference)
 
     def reupload_pinned_data(
-        self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None
+        self,
+        reference: Union[Reference, str],
+        request_options: Optional[BeeRequestOptions] = None,
     ) -> None:
         """
         Reuploads a locally pinned data into the network.
@@ -863,7 +903,9 @@ class Bee:
         return stewardship_api.reupload(self.__get_request_options_for_call(request_options), reference)
 
     def is_reference_retrievable(
-        self, reference: Union[Reference, str], request_options: Optional[BeeRequestOptions] = None
+        self,
+        reference: Union[Reference, str],
+        request_options: Optional[BeeRequestOptions] = None,
     ) -> bool:
         """
         Checks if content specified by reference is retrievable from the network.
@@ -983,10 +1025,21 @@ class Bee:
         if recipient:
             assert_public_key(recipient)
             return pss_api.send(
-                self.__get_request_options_for_call(options), topic, target, data, postage_batch_id, recipient
+                self.__get_request_options_for_call(options),
+                topic,
+                target,
+                data,
+                postage_batch_id,
+                recipient,
             )
         else:
-            return pss_api.send(self.__get_request_options_for_call(options), topic, target, data, postage_batch_id)
+            return pss_api.send(
+                self.__get_request_options_for_call(options),
+                topic,
+                target,
+                data,
+                postage_batch_id,
+            )
 
     # ! Not yet implemented properly
     async def pss_subscribe(
@@ -1197,7 +1250,11 @@ class Bee:
         canonical_signer = self.__resolve_signer(signer).address
 
         return _make_feed_reader(
-            self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_signer, canonical_signer
+            self.__get_request_options_for_call(options),
+            feed_type,
+            canonical_topic,
+            canonical_signer,
+            canonical_signer,
         )
 
     def make_feed_writer(
@@ -1231,7 +1288,10 @@ class Bee:
         canonical_signer = self.__resolve_signer(signer).address
 
         return _make_feed_writer(
-            self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_signer
+            self.__get_request_options_for_call(options),
+            feed_type,
+            canonical_topic,
+            canonical_signer,
         )
 
     def set_json_feed(
@@ -1337,7 +1397,9 @@ class Bee:
         return json_api.get_json_data(self, reader)
 
     def make_soc_reader(
-        self, owner_address: [AddressType, str, bytes], options: Optional[BeeRequestOptions] = None
+        self,
+        owner_address: [AddressType, str, bytes],
+        options: Optional[BeeRequestOptions] = None,
     ) -> SOCReader:
         """
         Returns an object for reading single owner chunks
@@ -1362,7 +1424,9 @@ class Bee:
         return SOCReader(owner=make_hex_eth_address(canonical_owner), download=download)
 
     def make_soc_writer(
-        self, signer: Optional[Union[Signer, bytes, str]], options: Optional[BeeRequestOptions] = None
+        self,
+        signer: Optional[Union[Signer, bytes, str]],
+        options: Optional[BeeRequestOptions] = None,
     ) -> SOCWriter:
         """
         Returns an object for reading and writing single owner chunks.

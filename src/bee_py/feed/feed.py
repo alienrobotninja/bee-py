@@ -13,11 +13,11 @@ from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian
 from bee_py.modules.chunk import download
 from bee_py.modules.feed import fetch_latest_feed_update
-from bee_py.types.type import (  # Reference,; FeedType,
+from bee_py.types.type import FeedReader  # Reference,; FeedType,
+from bee_py.types.type import (
     FEED_INDEX_HEX_LENGTH,
     BatchId,
     BeeRequestOptions,
-    FeedReader,
     FeedUpdate,
     FeedUpdateOptions,
     FeedWriter,
@@ -185,7 +185,9 @@ def make_feed_reader(
         update = download_feed_update(request_options, bytes.fromhex(owner[2:]), topic, options.index)
 
         return FetchFeedUpdateResponse(
-            reference=bytes_to_hex(update.reference), feed_index=options.index, feed_index_next=""
+            reference=bytes_to_hex(update.reference),
+            feed_index=options.index,
+            feed_index_next="",
         )
 
     download_partial = partial(__download, request_options)
@@ -201,7 +203,10 @@ def make_feed_reader(
 
 
 def make_feed_writer(
-    request_options: BeeRequestOptions, _type: FeedType, topic: Topic, signer: AccountAPI
+    request_options: BeeRequestOptions,
+    _type: FeedType,
+    topic: Topic,
+    signer: AccountAPI,
 ) -> FeedWriter:
     """
     Creates a new feed writer object.
@@ -231,4 +236,10 @@ def make_feed_writer(
             {**options, type: _type},
         )
 
-    return FeedWriter(request_options=request_options, type=_type, topic=topic, signer=signer, upload=__upload)
+    return FeedWriter(
+        request_options=request_options,
+        type=_type,
+        topic=topic,
+        signer=signer,
+        upload=__upload,
+    )

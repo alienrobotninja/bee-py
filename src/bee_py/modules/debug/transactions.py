@@ -82,7 +82,9 @@ def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash
 
 
 def cancel_transaction(
-    request_options: BeeRequestOptions, transaction_hash: TransactionHash, gas_price: Optional[NumberString] = None
+    request_options: BeeRequestOptions,
+    transaction_hash: TransactionHash,
+    gas_price: Optional[NumberString] = None,
 ) -> TransactionHash:
     """
     Cancels an existing pending transaction.
@@ -101,7 +103,11 @@ def cancel_transaction(
     if gas_price:
         headers["gas-price"] = gas_price
 
-    config = {"url": f"{TRANSACTIONS_ENDPOINT}/{transaction_hash}", "method": "DELETE", "headers": headers}
+    config = {
+        "url": f"{TRANSACTIONS_ENDPOINT}/{transaction_hash}",
+        "method": "DELETE",
+        "headers": headers,
+    }
     response = http(request_options, config)
 
     if response.status_code != 200:  # noqa: PLR2004

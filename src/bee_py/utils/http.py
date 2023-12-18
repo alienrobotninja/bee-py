@@ -39,7 +39,9 @@ def sanitise_config(options: Union[BeeRequestOptions, dict]) -> Union[BeeRequest
 
 
 def http(
-    options: Union[BeeRequestOptions, dict], config: dict, sanitise: Optional[bool] = True  # noqa: FBT002
+    options: Union[BeeRequestOptions, dict],
+    config: dict,
+    sanitise: Optional[bool] = True,  # noqa: FBT002
 ) -> requests.Response:
     """Makes an HTTP request.
 

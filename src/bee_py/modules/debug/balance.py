@@ -52,7 +52,9 @@ def get_peer_balance(request_options: BeeRequestOptions, address: AddressType) -
     return PeerBalance.model_validate(balances_response)
 
 
-def get_past_due_consumption_balances(request_options: BeeRequestOptions) -> BalanceResponse:
+def get_past_due_consumption_balances(
+    request_options: BeeRequestOptions,
+) -> BalanceResponse:
     """Retrieves past due consumption balances for all known peers.
 
     Args:

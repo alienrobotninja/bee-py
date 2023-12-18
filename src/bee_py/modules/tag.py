@@ -18,7 +18,11 @@ def create_tag(request_options: BeeRequestOptions, address: Optional[str] = None
         Tag: The newly created tag.
     """
     if address:
-        config = {"url": TAGS_ENDPOINT, "method": "POST", "params": {"address": address}}
+        config = {
+            "url": TAGS_ENDPOINT,
+            "method": "POST",
+            "params": {"address": address},
+        }
     else:
         config = {
             "url": TAGS_ENDPOINT,

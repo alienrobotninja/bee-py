@@ -8,12 +8,39 @@ from bee_py.types.type import FeedWriter, UploadResult
 
 test_data: list[tuple] = [
     ("", bytes([34, 34])),
-    ("hello world", bytes([34, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 34])),
+    (
+        "hello world",
+        bytes([34, 104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 34]),
+    ),
     (None, bytes([110, 117, 108, 108])),
     (True, bytes([116, 114, 117, 101])),
     (10, bytes([49, 48])),
     ([], bytes([91, 93])),
-    ([1, "hello", None], bytes([91, 49, 44, 32, 34, 104, 101, 108, 108, 111, 34, 44, 32, 110, 117, 108, 108, 93])),
+    (
+        [1, "hello", None],
+        bytes(
+            [
+                91,
+                49,
+                44,
+                32,
+                34,
+                104,
+                101,
+                108,
+                108,
+                111,
+                34,
+                44,
+                32,
+                110,
+                117,
+                108,
+                108,
+                93,
+            ]
+        ),
+    ),
     (
         {"hello": "world", "from": None},
         bytes(
@@ -67,7 +94,12 @@ def test_set_feed(data, expected_bytes, test_chunk_hash, feed_reference_hash, te
 
     assert set_json_data(bee, writer, test_address, data) == feed_reference_hash
     # bee.upload_data.assert_called_with(test_address, expected_bytes)
-    assert bee.upload_data.call_args[0] == (test_address, expected_bytes.decode(), None, None)
+    assert bee.upload_data.call_args[0] == (
+        test_address,
+        expected_bytes.decode(),
+        None,
+        None,
+    )
 
 
 @pytest.mark.parametrize("data, expected_bytes", test_data)

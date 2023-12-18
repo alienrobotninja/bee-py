@@ -150,7 +150,8 @@ def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceO
 
 
 def extract_collection_upload_headers(
-    postage_batch_id: BatchId, options: Optional[Union[CollectionUploadOptions, dict]] = None
+    postage_batch_id: BatchId,
+    options: Optional[Union[CollectionUploadOptions, dict]] = None,
 ) -> dict[str, str]:
     """
     Extracts headers for collection upload requests.

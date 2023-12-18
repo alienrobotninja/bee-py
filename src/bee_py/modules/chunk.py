@@ -13,7 +13,10 @@ ENDPOINT = "chunks"
 
 
 def upload(
-    request_options: BeeRequestOptions, data: bytes, postage_batch_id: BatchId, options: Optional[UploadOptions] = None
+    request_options: BeeRequestOptions,
+    data: bytes,
+    postage_batch_id: BatchId,
+    options: Optional[UploadOptions] = None,
 ) -> Reference:
     """Uploads a chunk of data to a Bee node.
 

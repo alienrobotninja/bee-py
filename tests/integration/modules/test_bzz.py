@@ -177,7 +177,12 @@ def test_should_store_and_retrieve_actual_directory_with_index_document(
     data = bytes([49, 10])
 
     directory_structure = make_collection_from_fs(directory)
-    result = upload_collection(bee_ky_options, directory_structure, get_debug_postage, {"indexDocument": file_name})
+    result = upload_collection(
+        bee_ky_options,
+        directory_structure,
+        get_debug_postage,
+        {"indexDocument": file_name},
+    )
     file = download_file(bee_ky_options, result.reference)
 
     assert file.headers.name == file_name

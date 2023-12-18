@@ -29,7 +29,11 @@ def test_get_reserve_state(bee_debug_ky_options):
 
 def test_get_wallet_balance_old_version(requests_mock, bee_debug_url, bee_debug_ky_options):
     # Mock the response data
-    response_data = {"bzz": "bzz_value", "contractAddress": "contract_address_value", "xDai": "x_dai_value"}
+    response_data = {
+        "bzz": "bzz_value",
+        "contractAddress": "contract_address_value",
+        "xDai": "x_dai_value",
+    }
 
     # Mock the requests.get call
     requests_mock.get(bee_debug_url + "/" + WALLET_ENDPOINT, json=response_data)

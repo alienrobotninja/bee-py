@@ -6,6 +6,7 @@ import pytest
 
 from bee_py.bee import Bee
 from bee_py.feed.topic import make_topic_from_string
+
 # from bee_py.feed.type import FeedType
 # from bee_py.types.type import (
 #     CHUNK_SIZE,
@@ -291,7 +292,15 @@ request_options_json_assertions: list[tuple] = [
 
 
 @pytest.mark.parametrize(
-    "url", ["", None, "some-invalid-url", "invalid:protocol", "javascript:console.log()", "ws://localhost:1633"]
+    "url",
+    [
+        "",
+        None,
+        "some-invalid-url",
+        "invalid:protocol",
+        "javascript:console.log()",
+        "ws://localhost:1633",
+    ],
 )
 def test_bee_constructor(url):
     with pytest.raises(BeeArgumentError):
@@ -326,7 +335,11 @@ def test_upload_file_mock(mock_bee, requests_mock, test_batch_id):
 
 @patch("bee_py.bee.Bee")
 def test_cid_encrypted_references(
-    mock_bee, requests_mock, test_chunk_encrypted_reference, test_chunk_encrypted_reference_cid, test_batch_id
+    mock_bee,
+    requests_mock,
+    test_chunk_encrypted_reference,
+    test_chunk_encrypted_reference_cid,
+    test_batch_id,
 ):
     test_tag_id = "123"
     # Mock the upload_file method
@@ -404,7 +417,11 @@ def test_accept_valid_ens_domain(mock_bee, requests_mock):
     test_json_ens = "example.eth"
     test_json_string_payload = "testing.eth"
 
-    requests_mock.get("http://localhost:12345/bytes/example.eth", text=test_json_string_payload, status_code=200)
+    requests_mock.get(
+        "http://localhost:12345/bytes/example.eth",
+        text=test_json_string_payload,
+        status_code=200,
+    )
 
     bee_instance = mock_bee.return_value
     bee_instance.download_data.return_value.text.return_value = test_json_string_payload
@@ -421,7 +438,9 @@ def test_accept_valid_ens_sub_domain(mock_bee, requests_mock):
     test_json_string_payload = "testing.eth"
 
     requests_mock.get(
-        "http://localhost:12345/bytes/subdomain.example.eth", text=test_json_string_payload, status_code=200
+        "http://localhost:12345/bytes/subdomain.example.eth",
+        text=test_json_string_payload,
+        status_code=200,
     )
 
     bee_instance = mock_bee.return_value
@@ -808,7 +827,11 @@ def test_pss_send_topic_assertion(input_value, expected_error_type, test_batch_i
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
 def test_create_feed_manifest_request_options_assertion(
-    input_value, expected_error_type, test_batch_id, test_chunk_hash, test_identity_address
+    input_value,
+    expected_error_type,
+    test_batch_id,
+    test_chunk_hash,
+    test_identity_address,
 ):
     with pytest.raises(expected_error_type):
         bee = Bee(MOCK_SERVER_URL, input_value)
@@ -941,7 +964,12 @@ def test_get_json_feed_request_options_assertion(input_value, expected_error_typ
 
 
 def test_fetch_with_specified_address(
-    mock_bee, requests_mock, test_json_payload, test_identity_address, signer, test_json_hash
+    mock_bee,
+    requests_mock,
+    test_json_payload,
+    test_identity_address,
+    signer,
+    test_json_hash,
 ):
     mock_bee.return_value.download_data.return_value = MagicMock(text=test_json_payload)
 
@@ -1001,8 +1029,14 @@ def test_make_soc_writer_request_options_assertion(input_value, expected_error_t
         (True, AttributeError),
         ({}, AttributeError),
         (None, AttributeError),
-        ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", AttributeError),
-        ("4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", AttributeError),
+        (
+            "ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd",
+            AttributeError,
+        ),
+        (
+            "4fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd",
+            AttributeError,
+        ),
         (b"\x00" * 31, AttributeError),
         ({"address": b"\x00" * 19}, AttributeError),
         ({"address": ""}, AttributeError),

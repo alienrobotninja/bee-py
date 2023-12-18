@@ -113,5 +113,7 @@ def fetch_latest_feed_update(
     headers = read_feed_update_headers(response.headers)
 
     return FetchFeedUpdateResponse(
-        reference=data["reference"], feed_index=headers.feed_index, feed_index_next=headers.feed_index_next
+        reference=data["reference"],
+        feed_index=headers.feed_index,
+        feed_index_next=headers.feed_index_next,
     )

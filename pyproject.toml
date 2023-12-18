@@ -74,6 +74,7 @@ lint = [
     "Flake8-pyproject>=1.2.3",
 ]
 
+# * https://black.readthedocs.io/en/stable/guides/using_black_with_other_tools.html#isort
 
 # black formatter
 [tool.black]
@@ -83,6 +84,8 @@ include = '\.pyi?$'
 
 # isort
 [tool.isort]
+# make it compatible with black
+profile = "black"
 line_length = 120
 force_grid_wrap = 0
 include_trailing_comma = true
