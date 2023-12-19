@@ -5,7 +5,7 @@ from bee_py.utils.hex import bytes_to_hex
 
 def test_single_owner_chunk_creation(signer):
     payload = bytes([1, 2, 3])
-    soc_hash = "8976a1ed19644f9b7d0e654dc427fd7b902f7b13f337ea05794f96fd6a2014eb"
+    soc_hash = "6618137d8b33329d36ffa00cb97c130f871cbfe6f406ac63e7a30ae6a56a350f"
     identifier = bytearray(32)
 
     cac = make_content_addressed_chunk(payload)

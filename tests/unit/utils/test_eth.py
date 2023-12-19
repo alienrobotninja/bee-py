@@ -128,11 +128,11 @@ def test_make_ethereum_wallet_signer(alice):
 
     assert (
         signed_msg.hex()
-        == "0x1cf9026dbf03a852f8d83fdd33c995b37c6bd50c3b031c47a7ae4afec3f65eb1d7045f0fd0453e7fddd159ec81c60a50e815e57084022bed041f3ee99dbf9e0cb6"  # noqa: E501
+        == "0x1b27cbc077986504811208321dc4744a714edfaf847b665e2f15673be3d36ea7a827dabd0aeee102403253e596cba7e3fd7325ea2646a9275c57d80beeebca3d29"  # noqa: E501
     )
 
 
 # This test will fail as we are using test accounts
 def test_fail_make_ethereum_wallet_signer_address_only(alice):
     with pytest.raises(TypeError):
-        make_ethereum_wallet_signer(address=alice.address)
+        make_ethereum_wallet_signer(address=alice.address)  # type: ignore

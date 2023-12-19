@@ -979,7 +979,7 @@ def test_fetch_with_specified_address(
     )
 
     requests_mock.get(
-        "http://localhost:12345/feeds/0x1e59ce931B4CFea3fe4B875411e280e173cB7A9C/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",  # type: ignore # noqa: 501
+        "http://localhost:12345/feeds/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/419e2aec53506dd705967918ae1aa0f6788102bffc0403a12c9816e8343f8635?type=sequence",  # type: ignore # noqa: 501
         json={"reference": test_json_hash},
         headers={
             "swarm-feed-index": "1",

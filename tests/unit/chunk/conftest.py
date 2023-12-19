@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import ape
-import eth_keys
+import eth_keys  # type: ignore
 import pytest
 from eth_keys import keys
 from eth_utils import decode_hex

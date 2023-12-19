@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, Any, Callable, Generic, NewType, Optional, TypeVar, Union
 
 from ape.managers.accounts import AccountAPI
-from ape.types import AddressType
+from eth_typing import ChecksumAddress as AddressType
 
 # from eth_pydantic_types import HexBytes
 # from eth_pydantic_types import HexBytes as BaseHexBytes
