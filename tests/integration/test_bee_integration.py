@@ -28,10 +28,10 @@ def test_strip_trailing_slash():
     assert bee.url == "http://127.0.0.1:1633"
 
 
-def test_upload_and_downalod_chunk(bee_class, get_debug_postage):
-    content = bytes(bytearray(100))
+def test_upload_and_downalod_chunk(bee_class, get_debug_postage, random_byte_array):
+    data = bytes(random_byte_array)
 
-    referece = bee_class.upload_chunk(get_debug_postage, content)
+    referece = bee_class.upload_chunk(get_debug_postage, data)
     downloaded_chunk = bee_class.download_chunk(referece)
 
-    assert downloaded_chunk == content
+    assert downloaded_chunk.data == data

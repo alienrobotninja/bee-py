@@ -33,8 +33,7 @@ def upload(
         "data": data,
         "headers": {**extract_upload_headers(postage_batch_id, options)},
     }
-
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -47,9 +46,9 @@ def upload(
 def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
     config = {
         "url": f"/{ENDPOINT}/{_hash}",
-        "method": "get",
+        "method": "GET",
     }
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())

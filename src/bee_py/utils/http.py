@@ -2,6 +2,7 @@ from typing import Optional, Union
 from urllib.parse import urljoin
 
 import requests
+from deepmerge import always_merger  # type: ignore
 
 from bee_py.types.type import BeeRequestOptions
 
@@ -68,18 +69,17 @@ def http(
         options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
 
     try:
-        request_config = {
-            "headers": DEFAULT_HTTP_CONFIG["headers"].copy(),
-            **config,
-            **options,
-        }
+        intermediate_dict = always_merger.merge(config, options)
+        request_config = always_merger.merge(intermediate_dict, {"headers": DEFAULT_HTTP_CONFIG["headers"].copy()})
+
         request_config = maybe_run_on_request_hook(options, request_config)
+
         if sanitise:
             request_config = sanitise_config(request_config)
-
         if "http" not in request_config["url"]:
             msg = f"Invalid URL: {request_config['url']}"
             raise TypeError(msg)
+
         response = requests.request(**request_config)
         return response
     except Exception as e:

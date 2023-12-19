@@ -240,7 +240,7 @@ def peer_overlay(bee_debug_peer_ky_options) -> str:
 
 
 @pytest.fixture
-def random_byte_array(length=10, seed=500):
+def random_byte_array(length=100, seed=500):
     # * not completely random
     random.seed(seed)
     return bytearray(random.randint(0, 255) for _ in range(length))  # noqa: S311

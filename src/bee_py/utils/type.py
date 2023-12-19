@@ -103,8 +103,8 @@ def assert_reference(value: Any) -> None:
 def assert_reference_or_ens(value: Any) -> None:
     if isinstance(value, dict):
         value = value.get("reference", None)
-    if isinstance(value, ReferenceResponse):
-        value = value.reference
+    if isinstance(value, (ReferenceResponse, Reference)):
+        value = str(value)
     if not isinstance(value, str):
         msg = "ReferenceOrEns has to be a string!"
         raise TypeError(msg)
