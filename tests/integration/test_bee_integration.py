@@ -53,5 +53,5 @@ def test_work_with_files(bee_class, get_debug_postage):
     result = bee_class.upload_file(get_debug_postage, content, name)
     file = bee_class.download_file(str(result.reference))
 
-    assert file.name == name
+    assert file.headers.name == name
     assert file.data == content

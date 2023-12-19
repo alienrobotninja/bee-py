@@ -143,6 +143,8 @@ def make_reference_or_ens(value: str, expected_cid_type: ReferenceType) -> Refer
         return result.reference
     except BeeError as e:
         raise e
+    except ValueError:
+        pass
 
     assert_reference_or_ens(value)
 
