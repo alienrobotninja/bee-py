@@ -35,3 +35,23 @@ def test_upload_and_downalod_chunk(bee_class, get_debug_postage, random_byte_arr
     downloaded_chunk = bee_class.download_chunk(referece)
 
     assert downloaded_chunk.data == data
+
+
+def test_upload_and_downalod_chunk_with_direct_upload(bee_class, get_debug_postage, random_byte_array):
+    content = bytes(random_byte_array)
+
+    referece = bee_class.upload_chunk(get_debug_postage, content, {"deferred": False})
+    downloaded_chunk = bee_class.download_chunk(referece)
+
+    assert downloaded_chunk.data == content
+
+
+def test_work_with_files(bee_class, get_debug_postage):
+    content = bytes([1, 2, 3])
+    name = "hello.txt"
+
+    result = bee_class.upload_file(get_debug_postage, content, name)
+    file = bee_class.download_file(str(result.reference))
+
+    assert file.name == name
+    assert file.data == content

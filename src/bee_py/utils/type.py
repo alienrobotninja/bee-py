@@ -118,7 +118,7 @@ def assert_reference_or_ens(value: Any) -> None:
         raise TypeError(msg)
 
 
-def make_reference_or_ens(value: Any, expected_cid_type: ReferenceType) -> ReferenceOrENS:
+def make_reference_or_ens(value: str, expected_cid_type: ReferenceType) -> ReferenceOrENS:
     """
     Converts a Swarm CID or ENS name to a hex-encoded Swarm Reference.
 
