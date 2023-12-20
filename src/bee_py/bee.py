@@ -463,7 +463,7 @@ class Bee:
         if options:
             assert_request_options(options)
 
-        assert_reference_or_ens(reference)
+        # assert_reference_or_ens(reference)
         reference = make_reference_or_ens(reference, ReferenceType.MANIFEST)
 
         return bzz_api.download_file(self.__get_request_options_for_call(options), reference, path)

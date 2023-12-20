@@ -1,6 +1,9 @@
 # from unittest.mock import MagicMock, patch
 
 # import pydantic
+import random
+from pathlib import Path
+
 import pytest
 
 from bee_py.bee import Bee
@@ -20,6 +23,22 @@ from bee_py.types.type import (
 from bee_py.utils.error import BeeArgumentError, BeeError
 
 # * Global variables
+
+
+# * Helper Functions
+def random_byte_array(length=100, seed=500):
+    # * not completely random
+    random.seed(seed)
+    return bytearray(random.randint(0, 255) for _ in range(length))  # noqa: S311
+
+
+def sample_file(data: bytes):
+    project_path = Path(__file__).parent
+    temp_folder = project_path / "../data"
+    tmp_file = f"{temp_folder}/tmp_file"  # noqa: S108
+    with open(tmp_file, "wb+") as f:
+        f.write(data)
+    return tmp_file
 
 
 def test_strip_trailing_slash():
@@ -55,3 +74,63 @@ def test_work_with_files(bee_class, get_debug_postage):
 
     assert file.headers.name == name
     assert file.data == content
+
+
+def test_work_with_files_and_CIDs(bee_class, get_debug_postage):  # noqa: N802
+    content = bytes([1, 2, 3])
+    name = "hello.txt"
+
+    result = bee_class.upload_file(get_debug_postage, content, name)
+    file = bee_class.download_file(str(result.cid()))
+
+    assert file.headers.name == name
+    assert file.data == content
+
+
+def test_work_with_files_and_direct_upload(bee_class, get_debug_postage):
+    content = bytes([1, 2, 3])
+    name = "hello.txt"
+
+    result = bee_class.upload_file(get_debug_postage, content, name, {"deferred": False})
+    file = bee_class.download_file(str(result.reference))
+
+    assert file.headers.name == name
+    assert file.data == content
+
+
+def test_work_with_files_and_tags(bee_class, get_debug_postage):
+    tag = bee_class.create_tag()
+    name = "hello.txt"
+    # * Should fit into 4 chunks
+    content = bytes(random_byte_array(13000))
+
+    result = bee_class.upload_file(get_debug_postage, content, name, {"tag": tag.uid})
+    file = bee_class.download_file(str(result.reference))
+
+    assert file.headers.name == name
+    assert file.data == content
+
+    retrieve_tag = bee_class.retrieve_tag(tag)
+    # ? Backwards compatibility for older versions of Bee API
+    if retrieve_tag.split == 0:
+        assert retrieve_tag.processed == 8
+    else:
+        assert retrieve_tag.split == 8
+
+
+def test_should_work_with_file_object(bee_class, get_debug_postage):
+    content = bytes([1, 2, 3])
+    name = "hello.txt"
+
+    input_file = sample_file(content)
+
+    with open(input_file, "rb") as f:
+        content = f.read()
+
+    result = bee_class.upload_file(get_debug_postage, content)
+    downloaded_file = bee_class.download_file(str(result.reference))
+
+    assert downloaded_file.headers.name == name
+    assert downloaded_file.data == content
+
+    input_file.unlink()
