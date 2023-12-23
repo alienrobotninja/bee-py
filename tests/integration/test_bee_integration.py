@@ -130,6 +130,8 @@ def test_should_work_with_file_object(bee_class, get_debug_postage):
     result = bee_class.upload_file(get_debug_postage, content)
     downloaded_file = bee_class.download_file(str(result.reference))
 
+    print(downloaded_file)
+
     assert downloaded_file.headers.name == name
     assert downloaded_file.data == content
 

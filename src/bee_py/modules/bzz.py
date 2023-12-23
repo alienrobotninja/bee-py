@@ -119,6 +119,8 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
     file_headers = read_file_headers(response.headers)
     file_data = wrap_bytes_with_helpers(response.content)
 
+    print(f"response.headers --->{response.headers}")
+
     return FileData(headers=file_headers, data=file_data.data)
 
 
