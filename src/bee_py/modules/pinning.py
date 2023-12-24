@@ -1,5 +1,5 @@
 from bee_py.Exceptions import PinNotFoundError
-from bee_py.types.type import BeeRequestOptions, Pin, Reference
+from bee_py.types.type import BeeRequestOptions, GetAllPinResponse, Pin, Reference
 from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 
@@ -78,7 +78,7 @@ def get_pin(request_options: BeeRequestOptions, reference: Reference) -> Pin:
     return Pin.model_validate(response.json())
 
 
-def get_all_pins(request_options: BeeRequestOptions) -> Reference:
+def get_all_pins(request_options: BeeRequestOptions) -> GetAllPinResponse:
     """
     Retrieves a list of all pinned references.
 
@@ -97,7 +97,9 @@ def get_all_pins(request_options: BeeRequestOptions) -> Reference:
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    response_data = response.data
+    response_data = response.json()
+    # print("Response data--->", response_data)
     references = response_data.get("references", [])
+    references = [Reference(value=ref) for ref in references]
 
-    return Reference(value=references)
+    return GetAllPinResponse(references=references)

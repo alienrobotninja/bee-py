@@ -40,6 +40,7 @@ from bee_py.types.type import (
     FeedWriter,
     FileData,
     FileUploadOptions,
+    GetAllPinResponse,
     Index,
     IndexBytes,
     JsonFeedOptions,
@@ -824,7 +825,7 @@ class Bee:
 
         return pinning_api.unpin(self.__get_request_options_for_call(request_options), reference)
 
-    def get_all_pins(self, request_options: Optional[BeeRequestOptions] = None) -> Reference:
+    def get_all_pins(self, request_options: Optional[BeeRequestOptions] = None) -> GetAllPinResponse:
         """
         Get list of all locally pinned references
 
@@ -928,7 +929,9 @@ class Bee:
         assert_reference(reference)
         assert_request_options(request_options)
 
-        return stewardship_api.is_retrievable(self.__get_request_options_for_call(request_options), reference)
+        return stewardship_api.is_retrievable(
+            self.__get_request_options_for_call(request_options), reference
+        ).is_retrievable
 
     def is_feed_retrievable(
         self,

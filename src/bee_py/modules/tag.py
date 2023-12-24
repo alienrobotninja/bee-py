@@ -117,7 +117,7 @@ def delete_tag(request_options: BeeRequestOptions, uid: int) -> None:
     Raises:
         HTTPXError: If an HTTP error occurs during the request.
     """
-    url = f"{TAGS_ENDPOINT}/tags/{uid}"
+    url = f"{TAGS_ENDPOINT}/{uid}"
 
     config = {"url": url, "method": "DELETE"}
 
