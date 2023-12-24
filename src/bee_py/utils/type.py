@@ -1,3 +1,4 @@
+import os
 from typing import IO, Any, Union
 
 from ens.utils import is_valid_ens_name  # type: ignore
@@ -537,8 +538,9 @@ def assert_directory(directory: Any) -> None:
     """
 
     if not isinstance(directory, str):
-        msg = f"directory has to be string:! Got{type(directory)}"
-        raise TypeError(msg)
+        if not isinstance(directory, os.PathLike):
+            msg = f"directory has to be string or Path Object:! Got{type(directory)}"
+            raise TypeError(msg)
     if directory == "":
         msg = "directory must not be empty string!"
         raise TypeError(msg)

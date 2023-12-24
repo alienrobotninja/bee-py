@@ -127,12 +127,16 @@ def test_should_work_with_file_object(bee_class, get_debug_postage):
     with open(input_file, "rb") as f:
         content = f.read()
 
-    result = bee_class.upload_file(get_debug_postage, content)
+    result = bee_class.upload_file(get_debug_postage, content, name)
     downloaded_file = bee_class.download_file(str(result.reference))
-
-    print(downloaded_file)
 
     assert downloaded_file.headers.name == name
     assert downloaded_file.data == content
 
-    input_file.unlink()
+
+def test_sbould_work_with_directory_unicode_file_names(bee_class, get_debug_postage, data_folder):
+    result = bee_class.upload_files_from_directory(get_debug_postage, data_folder, {"deferred": False})
+
+    assert result.reference
+
+

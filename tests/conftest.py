@@ -26,6 +26,16 @@ PASSWORD = "a"
 
 
 @pytest.fixture
+def project_path():
+    return PROJECT_PATH
+
+
+@pytest.fixture
+def data_folder():
+    return DATA_FOLDER
+
+
+@pytest.fixture
 def max_int() -> int:
     return 9007199254740991
 

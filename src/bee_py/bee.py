@@ -571,7 +571,7 @@ class Bee:
     def upload_files_from_directory(
         self,
         postage_batch_id: Union[BatchId, str],
-        directory: str,
+        directory: Union[str, os.PathLike],
         options: Optional[CollectionUploadOptions] = None,
         request_options: Optional[BeeRequestOptions] = None,
     ) -> UploadResultWithCid:
@@ -607,7 +607,7 @@ class Bee:
 
         assert_directory(directory)
 
-        data = make_collection_from_file_list([directory])
+        data = make_collection_from_file_list(directory)
 
         upload_result = bzz_api.upload_collection(
             self.__get_request_options_for_call(request_options),

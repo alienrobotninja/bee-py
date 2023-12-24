@@ -1,7 +1,7 @@
 # from bee_py.utils.error import BeeArgumentError
 import os
 from pathlib import Path
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 from bee_py.types.type import Collection, CollectionEntry
 
@@ -38,32 +38,37 @@ def _make_filepath(file: Union[os.PathLike, str, Path]) -> str:
     raise TypeError(msg)
 
 
-def make_collection_from_file_list(file_list: list[Union[os.PathLike, str]]) -> Collection:
+def make_collection_from_file_list(path: Union[os.PathLike, str], relative_path: Optional[str] = None) -> Collection:
     """
     Creates a collection of files from the provided file list.
 
     Args:
-        file_list (list[Union[os.PathLike, str]]): A list of file paths.
+        path (list[Union[os.PathLike, str]]): A list of file paths.
 
     Returns:
         Collection: A list of dictionaries representing the files in the collection.
     """
     collection = []
+    if isinstance(path, str):
+        dirname = Path(path) / relative_path
+    else:
+        dirname = path
 
-    for file_path in file_list:
-        if file_path:
-            filename = _make_filepath(file_path)
-            file_data = open(file_path, "rb").read()
-
-            collection.append(
-                CollectionEntry.model_validate(
-                    {
-                        "path": filename,
-                        "data": bytearray(file_data),
-                    }
+    for entry in dirname.iterdir():
+        if entry.is_file():
+            with open(str(entry), "rb") as f:
+                file_data = bytearray(f.read())
+                collection.append(
+                    CollectionEntry.model_validate(
+                        {
+                            "path": str(entry.relative_to(path)),
+                            "data": file_data,
+                        }
+                    )
                 )
-            )
 
+        elif entry.is_dir():
+            collection = [*make_collection_from_file_list(str(path), str(entry)), *collection]
     return collection
 
 

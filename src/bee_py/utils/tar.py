@@ -35,8 +35,11 @@ def make_tar(data: Union[Collection, list[dict]]) -> bytes:
     """
 
     if isinstance(data, list):
-        # * Convert the list of dictionaries to a list of CollectionEntry objects
-        entries = [CollectionEntry(**entry) for entry in data]
+        if not isinstance(data[0], CollectionEntry):
+            # * Convert the list of dictionaries to a list of CollectionEntry objects
+            entries = [CollectionEntry(**entry) for entry in data]
+        else:
+            entries = data
         # * Create a Collection object from the list of CollectionEntry objects
         data = Collection(entries=entries)
 
