@@ -1,7 +1,8 @@
-import datetime
+from datetime import datetime, timezone
 from functools import partial
 from typing import Optional, Union
 
+import requests
 from ape.managers.accounts import AccountAPI
 from eth_typing import ChecksumAddress as AddressType
 
@@ -13,11 +14,11 @@ from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian
 from bee_py.modules.chunk import download
 from bee_py.modules.feed import fetch_latest_feed_update
-from bee_py.types.type import FeedReader  # Reference,; FeedType,
 from bee_py.types.type import (
     FEED_INDEX_HEX_LENGTH,
     BatchId,
     BeeRequestOptions,
+    FeedReader,  # Reference,; FeedType,
     FeedUpdate,
     FeedUpdateOptions,
     FeedWriter,
@@ -59,7 +60,7 @@ def find_next_index(
     try:
         feed_update = fetch_latest_feed_update(request_options, owner, topic, options)
         return make_hex_string(feed_update.feed_index_next, FEED_INDEX_HEX_LENGTH)
-    except Exception as e:
+    except requests.HTTPError as e:
         if e.response.status_code == 404:  # noqa: PLR2004
             return bytes_to_hex(make_bytes(8))
         raise e
@@ -68,7 +69,7 @@ def find_next_index(
 def update_feed(
     request_options: BeeRequestOptions,
     signer: AccountAPI,
-    topic: Topic,
+    topic: Union[Topic, str],
     reference: Reference,
     postage_batch_id: BatchId,
     options: Optional[FeedUpdateOptions] = None,
@@ -94,12 +95,14 @@ def update_feed(
     :return: The reference.
     :rtype: Reference
     """
-    owner_hex = make_hex_eth_address(signer.address)
+    owner_hex = make_hex_eth_address(signer.address).hex()
+    if isinstance(topic, Topic):
+        topic = topic.value
     next_index = index if index != "latest" else find_next_index(request_options, owner_hex, topic, options)
 
     identifier = make_feed_identifier(topic, next_index)
-    at = options.at if options and options.at else datetime.now().timestamp()
-    timestamp = write_big_endian(at)
+    at = options.at if options and options.at else datetime.now(tz=timezone.utc).timestamp()
+    timestamp = write_big_endian(int(at))
     payload_bytes = serialize_bytes(timestamp, reference)
 
     return upload_single_owner_chunk_data(request_options, signer, postage_batch_id, identifier, payload_bytes, options)
@@ -179,7 +182,9 @@ def make_feed_reader(
             options = FeedUpdateOptions.model_validate(options)
 
         if not options or not options.index:
-            options = options.model_dump()
+            # * if options exists but not options.index then keep other configs from options
+            if not options:
+                options = {}
             return fetch_latest_feed_update(request_options, owner, topic, {**options, "type": _type})
 
         update = download_feed_update(request_options, bytes.fromhex(owner[2:]), topic, options.index)
@@ -190,7 +195,7 @@ def make_feed_reader(
             feed_index_next="",
         )
 
-    download_partial = partial(__download, request_options)
+    download_partial = partial(__download)
 
     return FeedReader(
         request_options=request_options,
@@ -224,7 +229,7 @@ def make_feed_writer(
     def __upload(
         postage_batch_id: Union[BatchId, AddressType],
         reference: Reference,
-        options: Optional[FeedUpdateOptions] = None,
+        options: Optional[FeedUpdateOptions] = {},  # noqa: B006
     ) -> Reference:
         canonical_reference = make_bytes_reference(reference)
         return update_feed(
@@ -238,7 +243,7 @@ def make_feed_writer(
 
     return FeedWriter(
         request_options=request_options,
-        type=_type,
+        Type=_type,
         topic=topic,
         signer=signer,
         upload=__upload,

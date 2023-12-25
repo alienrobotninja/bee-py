@@ -1288,7 +1288,7 @@ class Bee:
         assert_feed_type(feed_type)
 
         canonical_topic = make_topic(topic)
-        canonical_signer = self.__resolve_signer(signer).address
+        canonical_signer = self.__resolve_signer(signer)
 
         return _make_feed_writer(
             self.__get_request_options_for_call(options),

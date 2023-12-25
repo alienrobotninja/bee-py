@@ -426,7 +426,7 @@ def assert_address(value: Any):
     Raises:
         ValueError: If the value is not an Ethereum address.
     """
-    if not isinstance(value, str) or len(value) != ADDRESS_HEX_LENGTH or not value.startswith("0x"):
+    if not isinstance(value, str) or len(value) != ADDRESS_HEX_LENGTH:
         msg = "Value is not an Ethereum address!"
         raise ValueError(msg)
 
@@ -798,13 +798,12 @@ class FeedUploadOptions(BaseModel):
 
 
 class FeedReader(BaseModel):
-    Type: FeedType
-    owner: str
-    topic: str
+    Type: Union[FeedType, str]
+    owner: Optional[str] = ""
+    topic: Union[Topic, str]
     request_options: Optional[BeeRequestOptions] = None
 
-    download: Callable
-    # * Callable[[Union[str, BatchId], Union[bytes, Reference], Optional[FeedUploadOptions], Reference]]
+    download: Callable = ""
     # upload: Callable
 
 
@@ -819,8 +818,9 @@ class FeedWriter(FeedReader):
         upload: The upload function.
     """
 
+    # * Callable[[Union[str, BatchId], Union[bytes, Reference], Optional[FeedUploadOptions], Reference]]
     upload: Callable
-    signer: Signer
+    signer: Union[Signer, AccountAPI]
 
 
 class JsonFeedOptions(BaseModel):

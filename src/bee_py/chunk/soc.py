@@ -50,7 +50,7 @@ class SingleOwnerChunkBase(BaseModel):
         owner: The owner of the SOC.
     """
 
-    identifier: str = Field(..., description="The identifier of the SOC")
+    identifier: Union[str, bytes] = Field(..., description="The identifier of the SOC")
     signature: bytes = Field(..., description="The signature of the SOC")
     owner: str = Field(..., description="The owner of the SOC")
 

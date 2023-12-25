@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 from bee_py.chunk.soc import Identifier
 from bee_py.types.type import FEED_INDEX_HEX_LENGTH, Index, IndexBytes, Topic
@@ -12,7 +12,7 @@ def is_epoch(epoch: Any) -> bool:
 
 
 def hash_feed_identifier(topic: Topic, index: IndexBytes) -> Identifier:
-    keccak256_hash(hex_to_bytes(topic), index)
+    return keccak256_hash(hex_to_bytes(topic), index)
 
 
 def make_sequential_feed_identifier(topic: Topic, index: int) -> Identifier:
@@ -35,7 +35,7 @@ def make_feed_index_bytes(s: str) -> IndexBytes:
     return hex_to_bytes(hex_string)
 
 
-def make_feed_identifier(topic: Topic, index: Index) -> Identifier:
+def make_feed_identifier(topic: Topic, index: Index) -> Union[Identifier, bytes]:
     """
     Converts a topic and an index into a feed identifier.
 

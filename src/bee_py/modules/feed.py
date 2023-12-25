@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from eth_typing import ChecksumAddress as AddressType
 
@@ -21,7 +21,7 @@ FEED_ENDPOINT = "feeds"
 def create_feed_manifest(
     request_options: BeeRequestOptions,
     owner: AddressType,
-    topic: Topic,
+    topic: Union[Topic, str],
     postage_batch_id: str,
     options: Optional[CreateFeedOptions] = None,
 ) -> Reference:
@@ -38,6 +38,9 @@ def create_feed_manifest(
     Returns:
         Reference: The reference of the created feed.
     """
+    if isinstance(topic, Topic):
+        topic = str(topic)
+
     config = {
         "method": "post",
         "url": f"{FEED_ENDPOINT}/{owner}/{topic}",
@@ -82,7 +85,7 @@ def read_feed_update_headers(headers: dict[str, str]) -> FeedUpdateHeaders:
 def fetch_latest_feed_update(
     request_options: BeeRequestOptions,
     owner: AddressType,
-    topic: Topic,
+    topic: Union[Topic, str],
     options: Optional[FeedUpdateOptions] = None,
 ) -> FetchFeedUpdateResponse:
     """Finds and retrieves the latest feed update.
@@ -96,6 +99,8 @@ def fetch_latest_feed_update(
     Returns:
         A FetchFeedUpdateResponse object containing the feed update reference, index, and next index.
     """
+    if isinstance(topic, Topic):
+        topic = topic.value
 
     response = http(
         request_options,

@@ -124,7 +124,7 @@ def write_big_endian(value: int, bytes_data: Optional[bytes] = None):
     :return: The byte array.
     :rtype: bytearray
     """
-    if bytes_data:
+    if not bytes_data:
         bytes_data = make_bytes(8)
     struct.pack_into(">Q", bytes_data, 0, value)
     return bytes_data

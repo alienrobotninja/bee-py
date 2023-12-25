@@ -271,3 +271,26 @@ def test_if_reference_is_retrievable(bee_class, get_debug_postage):
     assert (
         bee_class.is_reference_retrievable("ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4332") is False
     )
+
+
+# @pytest.mark.timeout(ERR_TIMEOUT)
+# def test_send_receive_data(bee_class, get_debug_postage):
+#     topic = "bee-class-topic"
+#     message = bytes([1, 2, 3])
+# ! need bee debug
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_write_two_updates(bee_url, get_debug_postage, signer):
+    topic = bytes(random_byte_array(32, datetime.now(tz=timezone.utc)))
+    bee_class = Bee(bee_url, {"signer": signer})
+
+    feed = bee_class.make_feed_writer("sequence", topic, signer)
+    reference_zero = bytes([0] * 32)
+
+    feed.upload(get_debug_postage, reference_zero)
+    feed_reader = bee_class.make_feed_reader("sequence", topic, signer)
+    first_update_reference_response = feed_reader.download()
+
+    assert str(first_update_reference_response) == reference_zero.hex()
+    assert first_update_reference_response.feed_index == "0000000000000000"

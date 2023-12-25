@@ -25,7 +25,8 @@ def sanitise_config(options: Union[BeeRequestOptions, dict]) -> Union[BeeRequest
         if key and key not in bad_configs:
             if key not in [True, False]:
                 if key == "type":
-                    value = str(value.value)  # noqa: PLW2901
+                    if not isinstance(value, str):
+                        value = str(value.value)  # noqa: PLW2901
                 query_params.append(f"{key}={value}")
                 if key != "type":
                     keys_to_remove.append(key)
