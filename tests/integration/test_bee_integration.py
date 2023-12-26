@@ -341,16 +341,22 @@ def test_create_feeds_manifest_and_retreive_data(bee_url, get_debug_postage, sig
     owner = signer.address
 
     directory_structure = Collection(
-        entries=[CollectionEntry.model_validate({"path": "index.html", "data": bytearray(b"hello-world")})]
+        entries=[CollectionEntry.model_validate({"path": "index.html", "data": bytearray(b"Some Data")})]
     )
 
     cac_result = bzz.upload_collection(bee_ky_options, directory_structure, get_debug_postage)
+
+    print(cac_result)
 
     feed = bee_class.make_feed_writer("sequence", topic, signer)
     feed.upload(get_debug_postage, str(cac_result.reference))
 
     manifest_result = bee_class.create_feed_manifest(get_debug_postage, "sequence", topic, owner)
 
-    print(manifest_result)
+    assert isinstance(str(manifest_result.reference), str)
+    assert manifest_result.cid()
 
-    assert manifest_result
+    # * this calls /bzz endpoint that should resolve the manifest and the feed returning the latest feed's content
+    file = bee_class.download_file(str(manifest_result.reference), "index.html")
+
+    assert file.data.decode() == "Some Data"

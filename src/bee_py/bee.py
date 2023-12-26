@@ -1180,7 +1180,7 @@ class Bee:
         topic: Union[Topic, str, bytes],
         owner: Union[str, bytes, AddressType],
         options: Optional[BeeRequestOptions] = None,
-    ) -> str:
+    ) -> UploadResultWithCid:
         """
         Creates a feed manifest chunk and returns its reference.
 
