@@ -1218,7 +1218,7 @@ class Bee:
             {"type": feed_type},  # TODO: see this value by printing debug information on bee-js
         )
 
-        return add_cid_conversion_function(UploadResult(reference=reference), ReferenceType.Feed)
+        return add_cid_conversion_function(UploadResult(reference=reference), ReferenceType.FEED)
 
     def make_feed_reader(
         self,
@@ -1256,7 +1256,6 @@ class Bee:
             self.__get_request_options_for_call(options),
             feed_type,
             canonical_topic,
-            canonical_signer,
             canonical_signer,
         )
 

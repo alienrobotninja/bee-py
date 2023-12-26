@@ -80,7 +80,6 @@ def http(
         if "http" not in request_config["url"]:
             msg = f"Invalid URL: {request_config['url']}"
             raise TypeError(msg)
-
         response = requests.request(**request_config)
         return response
     except Exception as e:

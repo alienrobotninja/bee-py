@@ -31,11 +31,11 @@ def make_bytes_reference(reference: Union[Reference, bytes, str], offset: int = 
         try:
             # Non-encrypted chunk hex string reference
             hex_reference = make_hex_string(reference, REFERENCE_HEX_LENGTH)
-            return hex_to_bytes(hex_reference, REFERENCE_BYTES_LENGTH)
+            return hex_to_bytes(hex_reference)
         except TypeError:
             # Encrypted chunk hex string reference
             hex_reference = make_hex_string(reference, ENCRYPTED_REFERENCE_HEX_LENGTH)
-            return hex_to_bytes(hex_reference, ENCRYPTED_REFERENCE_BYTES_LENGTH)
+            return hex_to_bytes(hex_reference)
 
     elif isinstance(reference, bytes):
         if has_bytes_at_offset(reference, offset, ENCRYPTED_REFERENCE_BYTES_LENGTH):

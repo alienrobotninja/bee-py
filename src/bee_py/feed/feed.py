@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
-from functools import partial
+
+# from functools import partial
 from typing import Optional, Union
 
 import requests
@@ -14,11 +15,11 @@ from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian
 from bee_py.modules.chunk import download
 from bee_py.modules.feed import fetch_latest_feed_update
+from bee_py.types.type import FeedReader  # Reference,; FeedType,
 from bee_py.types.type import (
     FEED_INDEX_HEX_LENGTH,
     BatchId,
     BeeRequestOptions,
-    FeedReader,  # Reference,; FeedType,
     FeedUpdate,
     FeedUpdateOptions,
     FeedWriter,
@@ -30,7 +31,7 @@ from bee_py.types.type import (
 from bee_py.utils.bytes import bytes_at_offset, make_bytes
 from bee_py.utils.eth import make_hex_eth_address
 from bee_py.utils.hash import keccak256_hash
-from bee_py.utils.hex import bytes_to_hex, make_hex_string
+from bee_py.utils.hex import bytes_to_hex, hex_to_bytes, make_hex_string
 from bee_py.utils.reference import make_bytes_reference
 
 TIMESTAMP_PAYLOAD_OFFSET = 0
@@ -122,6 +123,8 @@ def get_feed_update_chunk_reference(owner: AddressType, topic: Topic, index: Ind
     :rtype: PlainBytesReference
     """
     identifier = make_feed_identifier(topic, index)
+    if not isinstance(owner, bytes):
+        owner = hex_to_bytes(owner)
 
     return keccak256_hash(identifier, owner)
 
@@ -187,7 +190,7 @@ def make_feed_reader(
                 options = {}
             return fetch_latest_feed_update(request_options, owner, topic, {**options, "type": _type})
 
-        update = download_feed_update(request_options, bytes.fromhex(owner[2:]), topic, options.index)
+        update = download_feed_update(request_options, owner, topic, options.index)
 
         return FetchFeedUpdateResponse(
             reference=bytes_to_hex(update.reference),
@@ -195,7 +198,7 @@ def make_feed_reader(
             feed_index_next="",
         )
 
-    download_partial = partial(__download)
+    # download_partial = partial(__download)
 
     return FeedReader(
         request_options=request_options,
@@ -203,7 +206,7 @@ def make_feed_reader(
         owner=owner,
         topic=topic,
         options=options,
-        download=download_partial,
+        download=__download,
     )
 
 

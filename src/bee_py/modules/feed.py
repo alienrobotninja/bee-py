@@ -52,7 +52,7 @@ def create_feed_manifest(
     # *  Raises a HTTPError if the response status is 4xx, 5xx
     response.raise_for_status()
 
-    return response.json()["reference"]
+    return Reference(value=response.json()["reference"])
 
 
 def read_feed_update_headers(headers: dict[str, str]) -> FeedUpdateHeaders:

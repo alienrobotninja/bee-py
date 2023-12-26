@@ -48,6 +48,7 @@ def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
         "url": f"/{ENDPOINT}/{_hash}",
         "method": "GET",
     }
+
     response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004

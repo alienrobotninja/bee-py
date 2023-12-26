@@ -13,6 +13,7 @@ from bee_py.bee import Bee
 from bee_py.Exceptions import PinNotFoundError
 from bee_py.feed.topic import make_topic_from_string
 from bee_py.feed.type import FeedType
+from bee_py.modules import bzz
 from bee_py.types.type import (
     CHUNK_SIZE,
     REFERENCE_HEX_LENGTH,
@@ -281,7 +282,7 @@ def test_if_reference_is_retrievable(bee_class, get_debug_postage):
 
 
 @pytest.mark.timeout(ERR_TIMEOUT)
-def test_write_two_updates(bee_url, get_debug_postage, signer):
+def test_write_updates_reference_zero(bee_url, get_debug_postage, signer):
     topic = bytes(random_byte_array(32, datetime.now(tz=timezone.utc)))
     bee_class = Bee(bee_url, {"signer": signer})
 
@@ -294,3 +295,62 @@ def test_write_two_updates(bee_url, get_debug_postage, signer):
 
     assert str(first_update_reference_response) == reference_zero.hex()
     assert first_update_reference_response.feed_index == "0000000000000000"
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_write_updates_reference_non_zero(bee_url, get_debug_postage, signer):
+    topic = bytes(random_byte_array(32, datetime.now(tz=timezone.utc)))
+    bee_class = Bee(bee_url, {"signer": signer})
+
+    feed = bee_class.make_feed_writer("sequence", topic, signer)
+    # * with referenceOne
+    reference_one = bytes(
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+    )
+    feed.upload(get_debug_postage, reference_one)
+    feed_reader = bee_class.make_feed_reader("sequence", topic, signer)
+    first_update_reference_response = feed_reader.download()
+
+    assert str(first_update_reference_response) == reference_one.hex()
+    assert first_update_reference_response.feed_index_next == "0000000000000001"
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_fail_fetching_non_existing_index(bee_url, get_debug_postage, signer):
+    topic = bytes(random_byte_array(32, datetime.now(tz=timezone.utc)))
+    bee_class = Bee(bee_url, {"signer": signer})
+
+    feed = bee_class.make_feed_writer("sequence", topic, signer)
+    reference_zero = bytes([0] * 32)
+
+    feed.upload(get_debug_postage, reference_zero)
+    feed_reader = bee_class.make_feed_reader("sequence", topic, signer)
+    first_update_reference_response = feed_reader.download()
+
+    assert str(first_update_reference_response) == reference_zero.hex()
+    assert first_update_reference_response.feed_index == "0000000000000000"
+
+    with pytest.raises(requests.exceptions.HTTPError):
+        feed_reader.download({"index": "0000000000000001"})
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_create_feeds_manifest_and_retreive_data(bee_url, get_debug_postage, signer, bee_ky_options):
+    topic = bytes(random_byte_array(32, datetime.now(tz=timezone.utc)))
+    bee_class = Bee(bee_url, {"signer": signer})
+    owner = signer.address
+
+    directory_structure = Collection(
+        entries=[CollectionEntry.model_validate({"path": "index.html", "data": bytearray(b"hello-world")})]
+    )
+
+    cac_result = bzz.upload_collection(bee_ky_options, directory_structure, get_debug_postage)
+
+    feed = bee_class.make_feed_writer("sequence", topic, signer)
+    feed.upload(get_debug_postage, str(cac_result.reference))
+
+    manifest_result = bee_class.create_feed_manifest(get_debug_postage, "sequence", topic, owner)
+
+    print(manifest_result)
+
+    assert manifest_result
