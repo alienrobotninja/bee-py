@@ -16,6 +16,7 @@ dependencies = [
     "deepmerge>=1.1.1",
     "eth-ape>=0.7.0",
     "swarm-cid-py>=0.1.2",
+    "ecdsa>=0.18.0",
 ]
 requires-python = ">=3.9"
 readme = "README.md"

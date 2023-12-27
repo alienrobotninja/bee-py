@@ -8,7 +8,7 @@ from requests import HTTPError
 from swarm_cid import ReferenceType
 
 # from bee_py.chunk.signer import sign
-from bee_py.chunk.soc import download_single_owner_chunk, upload_single_owner_chunk_data
+from bee_py.chunk.soc import Identifier, download_single_owner_chunk, upload_single_owner_chunk_data
 from bee_py.feed import json as json_api  # get_json_data, set_json_data
 from bee_py.feed.feed import make_feed_reader as _make_feed_reader
 from bee_py.feed.feed import make_feed_writer as _make_feed_writer
@@ -197,7 +197,7 @@ class Bee:
         assert_request_options(options)
 
         canonical_topic = make_topic(topic)
-        canonical_owner = make_hex_eth_address(owner)
+        canonical_owner = make_hex_eth_address(owner).hex()
 
         return _make_feed_reader(
             self.__get_request_options_for_call(options),
@@ -937,7 +937,7 @@ class Bee:
         self,
         feed_type: Union[FeedType, str],
         owner: AddressType,
-        topic: Union[Topic, str],
+        topic: Union[Topic, str, bytes],
         index: Optional[Union[Index, IndexBytes]] = None,
         options: Optional[BeeRequestOptions] = None,
     ) -> bool:
@@ -964,7 +964,7 @@ class Bee:
         # If no index is passed, try downloading the feed and return true if successful
         if not index:
             try:
-                self.__make_feed_reader(type, canonical_topic, canonical_owner).download(options)
+                self.__make_feed_reader(feed_type, canonical_topic, canonical_owner).download(options)
                 return True
             except BeeError as e:
                 raise e
@@ -984,7 +984,7 @@ class Bee:
     def pss_send(
         self,
         postage_batch_id: Union[BatchId, str],
-        topic: Union[Topic, str],
+        topic: Union[Topic, str, bytes],
         target: AddressPrefix,
         data: Union[str, bytes],
         recipient: Optional[Union[str, HexBytes]] = None,
@@ -1047,7 +1047,7 @@ class Bee:
     # ! Not yet implemented properly
     async def pss_subscribe(
         self,
-        topic: Union[Topic, str],
+        topic: Union[Topic, str, bytes],
         handler: PssMessageHandler,
     ) -> PssSubscription:
         """
@@ -1109,7 +1109,7 @@ class Bee:
     # ! Not yet implemented properly
     async def pss_receive(
         self,
-        topic: Union[Topic, str],
+        topic: Union[Topic, str, bytes],
         timeout_msec: int = 0,
     ) -> bytes:
         """
@@ -1208,7 +1208,7 @@ class Bee:
         assert_batch_id(postage_batch_id)
 
         canonical_topic = make_topic(topic)
-        canonical_owner = make_hex_eth_address(owner)
+        canonical_owner = make_hex_eth_address(owner).hex()
 
         reference = _create_feed_manifest(
             self.__get_request_options_for_call(options),
@@ -1420,10 +1420,12 @@ class Bee:
         assert_request_options(options)
         canonical_owner = make_eth_address(owner_address)
 
-        def download():
-            return download_single_owner_chunk(self.__get_request_options_for_call(options), canonical_owner, None)
+        def __download(identifier: Identifier):
+            return download_single_owner_chunk(
+                self.__get_request_options_for_call(options), canonical_owner, identifier
+            )
 
-        return SOCReader(owner=make_hex_eth_address(canonical_owner), download=download)
+        return SOCReader(owner=make_hex_eth_address(canonical_owner).hex(), download=__download)
 
     def make_soc_writer(
         self,
@@ -1449,11 +1451,17 @@ class Bee:
 
         reader = self.make_soc_reader(canonical_signer.address, options)
 
-        def upload():
-            return upload_single_owner_chunk_data(self.__get_request_options_for_call(options), canonical_signer)
+        def __upload(postage_batch_id: Union[str, BatchId], identifier: Identifier, data: bytes):
+            return upload_single_owner_chunk_data(
+                postage_batch_id=postage_batch_id,
+                request_options=self.__get_request_options_for_call(options),
+                identifier=identifier,
+                data=data,
+                signer=canonical_signer,
+            )
 
         # TODO: Look into it
-        return SOCWriter(owner=reader.owner, download=reader.download, upload=upload)
+        return SOCWriter(owner=reader.owner, download=reader.download, upload=__upload)
 
     def check_connection(self, options: Optional[BeeRequestOptions] = None) -> bool:
         """

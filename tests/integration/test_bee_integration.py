@@ -4,12 +4,12 @@
 import random
 from datetime import datetime, timezone
 from pathlib import Path
-from time import sleep
 
 import pytest
 import requests
 
 from bee_py.bee import Bee
+from bee_py.chunk.soc import make_soc_address
 from bee_py.Exceptions import PinNotFoundError
 from bee_py.feed.topic import make_topic_from_string
 from bee_py.feed.type import FeedType
@@ -25,13 +25,16 @@ from bee_py.types.type import (
     CollectionUploadOptions,
     GetAllPinResponse,
     PssMessageHandler,
+    Reference,
     ReferenceResponse,
     UploadOptions,
 )
 from bee_py.utils.error import BeeArgumentError, BeeError
+from bee_py.utils.eth import make_eth_address
 
 # * Global variables
 ERR_TIMEOUT = 40_000
+test_chunk_payload = bytes([1, 2, 3])
 
 
 # * Helper Functions
@@ -50,6 +53,26 @@ def sample_file(data: bytes):
     return tmp_file
 
 
+# * Global Settings for testing
+existing_topic = bytes(random_byte_array(32, datetime.now(tz=timezone.utc)))
+updates: list = [
+    {"index": "0000000000000000", "reference": bytes([0] * 32)},
+    {
+        "index": "0000000000000001",
+        "reference": bytes(
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+        ),
+    },
+    {
+        "index": "0000000000000002",
+        "reference": bytes(
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1]
+        ),
+    },
+]
+
+
+# * Tests
 def test_strip_trailing_slash():
     bee = Bee("http://127.0.0.1:1633/")
 
@@ -346,8 +369,6 @@ def test_create_feeds_manifest_and_retreive_data(bee_url, get_debug_postage, sig
 
     cac_result = bzz.upload_collection(bee_ky_options, directory_structure, get_debug_postage)
 
-    print(cac_result)
-
     feed = bee_class.make_feed_writer("sequence", topic, signer)
     feed.upload(get_debug_postage, str(cac_result.reference))
 
@@ -357,6 +378,36 @@ def test_create_feeds_manifest_and_retreive_data(bee_url, get_debug_postage, sig
     assert manifest_result.cid()
 
     # * this calls /bzz endpoint that should resolve the manifest and the feed returning the latest feed's content
-    file = bee_class.download_file(str(manifest_result.reference), "index.html")
+    file = bee_class.download_file(str(cac_result.reference), "index.html")
 
     assert file.data.decode() == "Some Data"
+
+
+def test_create_feed_topic(bee_url, signer):
+    owner = signer.address
+
+    bee_class = Bee(bee_url, {"signer": signer})
+    topic = bee_class.make_feed_topic("swarm.eth:application:handshake")
+    feed = bee_class.make_feed_reader("sequence", topic, owner)
+
+    assert feed.topic == str(topic)
+
+
+def test_read_and_write(bee_url, signer, get_debug_postage, try_delete_chunk_from_local_storage):
+    soc_hash = "6618137d8b33329d36ffa00cb97c130f871cbfe6f406ac63e7a30ae6a56a350f"
+    identifier = bytes([0] * 32)
+    soc_address = make_soc_address(identifier, make_eth_address(signer.address))
+    bee_class = Bee(bee_url, {"signer": signer})
+
+    try_delete_chunk_from_local_storage(soc_address)
+
+    soc_writer = bee_class.make_soc_writer(signer)
+
+    referecne = soc_writer.upload(get_debug_postage, identifier, test_chunk_payload)
+
+    assert referecne == soc_hash
+
+    soc = soc_writer.download(identifier)
+    payload = soc.payload
+
+    assert payload == test_chunk_payload

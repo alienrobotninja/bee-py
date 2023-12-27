@@ -7,11 +7,16 @@ from ape.managers.accounts import AccountAPI
 from eth_account.messages import encode_defunct
 from eth_pydantic_types import HexBytes
 from eth_typing import ChecksumAddress as AddressType
-from eth_utils import to_checksum_address  # ValidationError,
-from eth_utils import is_address, is_checksum_address, keccak, to_normalized_address
+from eth_utils import (
+    is_address,
+    is_checksum_address,
+    keccak,
+    to_checksum_address,  # ValidationError,
+    to_normalized_address,
+)
 
 from bee_py.Exceptions import AccountNotFoundError
-from bee_py.utils.hex import bytes_to_hex, hex_to_bytes, str_to_hex
+from bee_py.utils.hex import hex_to_bytes, str_to_hex
 
 ETH_ADDR_BYTES_LENGTH = 20
 ETH_ADDR_HEX_LENGTH = 40
@@ -59,7 +64,7 @@ def make_eth_address(address: Union[str, AddressType, Any]) -> Union[AddressType
     raise ValueError(msg)
 
 
-def make_hex_eth_address(address: Union[str, AddressType, Any]) -> HexBytes:
+def make_hex_eth_address(address: Union[str, AddressType, Any]) -> Union[HexBytes, str]:
     """Converts an Ethereum address to a hexadecimal string.
 
     Args:
@@ -71,14 +76,16 @@ def make_hex_eth_address(address: Union[str, AddressType, Any]) -> HexBytes:
     Raises:
         TypeError: If the address is not a valid Ethereum address.
     """
+    if isinstance(address, bytes):
+        return address.hex()
     try:
         # Convert the address to a bytes object.
         address_bytes = make_eth_address(address)
 
         # Convert the bytes object to a hexadecimal string.
-        hex_address = bytes_to_hex(address_bytes)
+        # hex_address = bytes_to_hex(address_bytes)
 
-        return HexBytes(hex_address)
+        return HexBytes(address_bytes)
 
     except TypeError as e:
         # * Wrap the error message to indicate that the address is an invalid hexadecimal Ethereum address.

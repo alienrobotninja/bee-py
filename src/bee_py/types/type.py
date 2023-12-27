@@ -921,7 +921,8 @@ class SOCWriter(SOCReader):
      upload: A function to upload a single owner chunk.
     """
 
-    upload: Callable[[Union[str, BatchId], bytes, bytes, UploadOptions], Reference]
+    # upload: Callable[[Union[str, BatchId], bytes, bytes, UploadOptions], Reference]
+    upload: Callable
 
 
 class AllTagsOptions(BaseModel):

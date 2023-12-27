@@ -18,7 +18,7 @@ from bee_py.chunk.signer import recover_address, sign
 from bee_py.chunk.span import SPAN_SIZE
 from bee_py.modules.chunk import download
 from bee_py.modules.soc import upload
-from bee_py.types.type import BatchId, BeeRequestOptions, Reference, Signer, UploadOptions, assert_address
+from bee_py.types.type import BatchId, BeeRequestOptions, Data, Reference, Signer, UploadOptions, assert_address
 from bee_py.utils.bytes import bytes_at_offset, bytes_equal, flex_bytes_at_offset
 from bee_py.utils.error import BeeError
 from bee_py.utils.hash import keccak256_hash
@@ -93,7 +93,7 @@ def recover_chunk_owner(data: bytes) -> AddressType:
     return owner_address
 
 
-def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> SingleOwnerChunk:
+def make_single_owner_chunk_from_data(data: Union[Data, bytes], address: AddressType) -> SingleOwnerChunk:
     """
     Verifies if the data is a valid single owner chunk.
 
@@ -104,6 +104,8 @@ def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> Sing
     Returns:
         dict: A dictionary representing a single owner chunk.
     """
+    if isinstance(data, Data):
+        data = data.data
     owner_address = recover_chunk_owner(data)
     identifier = bytes_at_offset(data, SOC_IDENTIFIER_OFFSET, IDENTIFIER_SIZE)
     soc_address = keccak256_hash(identifier, owner_address)
@@ -132,7 +134,7 @@ def make_single_owner_chunk_from_data(data: bytes, address: AddressType) -> Sing
     )
 
 
-def make_soc_address(identifier: Identifier, address: AddressType) -> bytes:
+def make_soc_address(identifier: Union[Identifier, bytes], address: Union[AddressType, bytes]) -> bytes:
     address_bytes = hex_to_bytes(address)
     return keccak256_hash(identifier, address_bytes)
 
