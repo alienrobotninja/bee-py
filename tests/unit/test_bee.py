@@ -904,7 +904,7 @@ def test_make_feed_reader_eth_address_assertion(input_value, expected_error_type
 def test_set_json_feed_request_options_assertion(
     input_value, expected_error_type, test_identity_private_key, test_batch_id
 ):
-    opts = {"signer": test_identity_private_key}
+    opts = test_identity_private_key
     with pytest.raises(expected_error_type):
         bee = Bee(MOCK_SERVER_URL, input_value)
         bee.set_json_feed(test_batch_id, "epoch", "123", opts)
@@ -913,7 +913,7 @@ def test_set_json_feed_request_options_assertion(
 @pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
 def test_set_json_feed_batch_id_assertion(input_value, expected_error_type, test_identity_private_key):
     bee = Bee(MOCK_SERVER_URL)
-    opts = {"signer": test_identity_private_key}
+    opts = test_identity_private_key
     with pytest.raises(expected_error_type):
         bee.set_json_feed(input_value, "epoch", "123", opts)
 
@@ -936,13 +936,13 @@ def test_set_json_feed_feed_type_assertion(input_value, expected_error_type, tes
     opts = {"signer": test_identity_private_key}
 
     with pytest.raises(expected_error_type):
-        bee.set_json_feed(test_batch_id, "123", "data", {"type": input_value, **opts})
+        bee.set_json_feed(test_batch_id, "123", "data", "test_identity_private_key", {"type": input_value, **opts})
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", topic_assertions)
 def test_set_json_feed_topic_assertion(input_value, expected_error_type, test_identity_private_key):
     bee = Bee(MOCK_SERVER_URL)
-    opts = {"signer": test_identity_private_key}
+    opts = test_identity_private_key
     with pytest.raises(expected_error_type):
         bee.set_json_feed("epoch", input_value, "data", opts)
 
@@ -950,7 +950,7 @@ def test_set_json_feed_topic_assertion(input_value, expected_error_type, test_id
 @pytest.mark.parametrize("input_value, expected_error_type", make_signer_assertions)
 def test_set_json_feed_make_signer_assertion(input_value, expected_error_type):
     bee = Bee(MOCK_SERVER_URL)
-    opts = {"signer": input_value}
+    opts = input_value
     with pytest.raises(expected_error_type):
         bee.set_json_feed("epoch", "123", "data", opts)
 

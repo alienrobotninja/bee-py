@@ -5,7 +5,7 @@
 groups = ["default", "lint", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:4316622eeb633ae9a953c3d87a64635059503827a279d590252c2344cbad1706"
+content_hash = "sha256:ac9418075225c6708ed005d2ab2517b0c458d75349996135d72179d5d22dab3a"
 
 [[package]]
 name = "aiohttp"
@@ -2819,6 +2819,20 @@ dependencies = [
 files = [
     {file = "pytest_print-1.0.0-py3-none-any.whl", hash = "sha256:23484f42b906b87e31abd564761efffeb0348a6f83109fb857ee6e8e5df42b69"},
     {file = "pytest_print-1.0.0.tar.gz", hash = "sha256:1fcde9945fba462227a8959271369b10bb7a193be8452162707e63cd60875ca0"},
+]
+
+[[package]]
+name = "pytest-timeout"
+version = "2.2.0"
+requires_python = ">=3.7"
+summary = "pytest plugin to abort hanging tests"
+groups = ["test"]
+dependencies = [
+    "pytest>=5.0.0",
+]
+files = [
+    {file = "pytest-timeout-2.2.0.tar.gz", hash = "sha256:3b0b95dabf3cb50bac9ef5ca912fa0cfc286526af17afc806824df20c2f72c90"},
+    {file = "pytest_timeout-2.2.0-py3-none-any.whl", hash = "sha256:bde531e096466f49398a59f2dde76fa78429a09a12411466f88a07213e220de2"},
 ]
 
 [[package]]

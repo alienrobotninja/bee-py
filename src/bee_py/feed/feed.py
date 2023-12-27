@@ -1,13 +1,10 @@
 from datetime import datetime, timezone
-
-# from functools import partial
 from typing import Optional, Union
 
 import requests
 from ape.managers.accounts import AccountAPI
 from eth_typing import ChecksumAddress as AddressType
 
-# from pydantic import BaseModel
 from bee_py.chunk.serialize import serialize_bytes
 from bee_py.chunk.soc import make_single_owner_chunk_from_data, upload_single_owner_chunk_data
 from bee_py.feed.identifiers import make_feed_identifier
@@ -15,11 +12,11 @@ from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian
 from bee_py.modules.chunk import download
 from bee_py.modules.feed import fetch_latest_feed_update
-from bee_py.types.type import FeedReader  # Reference,; FeedType,
 from bee_py.types.type import (
     FEED_INDEX_HEX_LENGTH,
     BatchId,
     BeeRequestOptions,
+    FeedReader,
     FeedUpdate,
     FeedUpdateOptions,
     FeedWriter,

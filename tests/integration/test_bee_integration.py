@@ -1,6 +1,3 @@
-# from unittest.mock import MagicMock, patch
-
-# import pydantic
 import json
 import random
 from datetime import datetime, timezone

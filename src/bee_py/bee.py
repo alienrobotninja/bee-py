@@ -7,9 +7,8 @@ from eth_pydantic_types import HexBytes
 from requests import HTTPError
 from swarm_cid import ReferenceType
 
-# from bee_py.chunk.signer import sign
 from bee_py.chunk.soc import Identifier, download_single_owner_chunk, upload_single_owner_chunk_data
-from bee_py.feed import json as json_api  # get_json_data, set_json_data
+from bee_py.feed import json as json_api
 from bee_py.feed.feed import make_feed_reader as _make_feed_reader
 from bee_py.feed.feed import make_feed_writer as _make_feed_writer
 from bee_py.feed.retrievable import are_all_sequential_feeds_update_retrievable
@@ -62,8 +61,6 @@ from bee_py.types.type import (
 )
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.collection import assert_collection, make_collection_from_file_list
-
-# from bee_py.utils.collection_node import make_collection_from_fs
 from bee_py.utils.data import prepare_websocket_data
 from bee_py.utils.error import BeeArgumentError, BeeError
 from bee_py.utils.eth import make_eth_address, make_hex_eth_address
