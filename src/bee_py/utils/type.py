@@ -233,6 +233,9 @@ def assert_upload_options(value: Any, name: str = "UploadOptions") -> None:
 
     if not isinstance(value, UploadOptions):
         value = UploadOptions.model_validate(value)
+    elif isinstance(value, JsonFeedOptions):
+        value = JsonFeedOptions.model_validate(value)
+        return
 
     options = value
 

@@ -1,6 +1,7 @@
 # from unittest.mock import MagicMock, patch
 
 # import pydantic
+import json
 import random
 from datetime import datetime, timezone
 from pathlib import Path
@@ -35,6 +36,9 @@ from bee_py.utils.eth import make_eth_address
 # * Global variables
 ERR_TIMEOUT = 40_000
 test_chunk_payload = bytes([1, 2, 3])
+test_json_hash = "5a424d833847b8fe977c5c7ca205cd018f29c003c95db24f48e962d535aa3523"
+test_json_payload = [{"some": "Json Object"}]
+TOPIC = "some=very%nice#topic"
 
 
 # * Helper Functions
@@ -411,3 +415,57 @@ def test_read_and_write(bee_url, signer, get_debug_postage, try_delete_chunk_fro
     payload = soc.payload
 
     assert payload == test_chunk_payload
+
+
+def test_fail_not_signer_passed(bee_url, signer):
+    with pytest.raises(AttributeError):
+        bee_class = Bee(bee_url)
+        bee_class.make_soc_writer(signer)
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_set_JSON_to_feed(get_debug_postage, bee_url, signer):  # noqa: N802
+    bee_class = Bee(bee_url, {"signer": signer})
+    bee_class.set_json_feed(get_debug_postage, TOPIC, test_json_payload, signer.address)
+
+    hashed_topic = bee_class.make_feed_topic(TOPIC)
+    reader = bee_class.make_feed_reader("sequence", hashed_topic, signer.address)
+    chunk_reference_response = reader.download()
+
+    assert chunk_reference_response.reference == test_json_hash
+
+    downloaded_data = bee_class.download_data(chunk_reference_response)
+
+    assert json.loads(downloaded_data.data.decode()) == test_json_payload
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_get_JSON_from_feed(get_debug_postage, bee_url, signer):  # noqa: N802
+    bee_class = Bee(bee_url, {"signer": signer})
+    data = [{"some": {"other": "object"}}]
+
+    hashed_topic = bee_class.make_feed_topic(TOPIC)
+    writer = bee_class.make_feed_writer("sequence", hashed_topic, signer.address)
+    data_chunk_result = bee_class.upload_data(get_debug_postage, json.dumps(data))
+
+    writer.upload(get_debug_postage, data_chunk_result.reference)
+
+    fetched_data = bee_class.get_json_feed(TOPIC)
+
+    assert json.loads(fetched_data["data"]) == data
+
+
+@pytest.mark.timeout(ERR_TIMEOUT)
+def test_get_JSON_from_feed_with_address(get_debug_postage, bee_url, signer):  # noqa: N802
+    bee_class = Bee(bee_url, {"signer": signer})
+    data = [{"some": {"other": "object"}}]
+
+    hashed_topic = bee_class.make_feed_topic(TOPIC)
+    writer = bee_class.make_feed_writer("sequence", hashed_topic, signer.address)
+    data_chunk_result = bee_class.upload_data(get_debug_postage, json.dumps(data))
+
+    writer.upload(get_debug_postage, data_chunk_result.reference)
+
+    fetched_data = bee_class.get_json_feed(TOPIC, {"address": signer.address})
+
+    assert json.loads(fetched_data["data"]) == data

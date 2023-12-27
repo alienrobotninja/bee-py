@@ -276,7 +276,7 @@ class Bee:
             assert_upload_options(options)
         if request_options:
             assert_request_options(request_options)
-        return bytes_api.upload(request_options, data, postage_batch_id, options)
+        return bytes_api.upload(self.__get_request_options_for_call(request_options), data, postage_batch_id, options)
 
     def download_data(self, reference: ReferenceOrENS, options: Optional[BeeRequestOptions] = None) -> Data:
         """
@@ -1262,7 +1262,7 @@ class Bee:
     def make_feed_writer(
         self,
         feed_type: Union[FeedType, str],
-        topic: Union[bytes, str],
+        topic: Union[Topic, bytes, str],
         signer: Union[Signer, bytes, str],
         options: Optional[BeeRequestOptions] = None,
     ) -> FeedWriter:
@@ -1301,6 +1301,7 @@ class Bee:
         postage_batch_id: Union[str, BatchId],
         topic: str,
         data,
+        signer: Union[AddressType, str],
         options: Optional[Union[JsonFeedOptions, dict]] = None,
         request_options: Optional[BeeRequestOptions] = None,
     ) -> Reference:
@@ -1328,12 +1329,12 @@ class Bee:
         if isinstance(options, dict):
             options = JsonFeedOptions.model_validate(options)
 
-        if options.Type:
+        if options and options.Type:
             feed_type = options.Type
         else:
             feed_type = DEFAULT_FEED_TYPE
 
-        writer = self.make_feed_writer(feed_type, hashed_topic, options.signer, request_options)
+        writer = self.make_feed_writer(feed_type, hashed_topic, signer, request_options)
 
         return json_api.set_json_data(self, writer, postage_batch_id, data, options, request_options)
 
@@ -1341,7 +1342,7 @@ class Bee:
         self,
         topic: Union[Topic, bytes, str],
         options: Optional[Union[JsonFeedOptions, dict]] = None,
-    ):
+    ) -> dict:
         """
         High-level function that allows you to easily get data from feed.
         Returned data are parsed using json.loads().
@@ -1370,12 +1371,14 @@ class Bee:
         """
 
         assert_request_options(options, "JsonFeedOptions")
+        if not options:
+            options = {}
         if isinstance(options, dict):
             options = JsonFeedOptions.model_validate(options)
 
         hashed_topic = self.make_feed_topic(topic)
 
-        if options.Type:
+        if options and options.Type:
             feed_type = options.Type
         else:
             feed_type = DEFAULT_FEED_TYPE

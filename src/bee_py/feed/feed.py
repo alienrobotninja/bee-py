@@ -15,11 +15,11 @@ from bee_py.feed.type import FeedType
 from bee_py.modules.bytes import read_big_endian, write_big_endian
 from bee_py.modules.chunk import download
 from bee_py.modules.feed import fetch_latest_feed_update
+from bee_py.types.type import FeedReader  # Reference,; FeedType,
 from bee_py.types.type import (
     FEED_INDEX_HEX_LENGTH,
     BatchId,
     BeeRequestOptions,
-    FeedReader,  # Reference,; FeedType,
     FeedUpdate,
     FeedUpdateOptions,
     FeedWriter,

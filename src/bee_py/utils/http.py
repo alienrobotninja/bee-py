@@ -64,10 +64,11 @@ def http(
 
         # * Replace keys
         options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
-    else:
-        tmp_options = options
-        key_mapping = {"base_url": "baseURL", "on_request": "onRequest"}
-        options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
+    else:  # noqa: PLR5501
+        if options:
+            tmp_options = options
+            key_mapping = {"base_url": "baseURL", "on_request": "onRequest"}
+            options = {key_mapping.get(k, k): v for k, v in tmp_options.items()}
 
     try:
         intermediate_dict = always_merger.merge(config, options)
@@ -93,7 +94,8 @@ def maybe_run_on_request_hook(options: dict, request_config: dict) -> dict:
       options: User defined settings.
       request_config: The request configuration.
     """
-
+    if not options:
+        return {}
     if options.get("onRequest"):
         new_request_config = request_config.copy()
         hook_result = {

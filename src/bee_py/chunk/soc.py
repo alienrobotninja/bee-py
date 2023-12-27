@@ -108,19 +108,19 @@ def make_single_owner_chunk_from_data(data: Union[Data, bytes], address: Address
         data = data.data
     owner_address = recover_chunk_owner(data)
     identifier = bytes_at_offset(data, SOC_IDENTIFIER_OFFSET, IDENTIFIER_SIZE)
-    soc_address = keccak256_hash(identifier, owner_address)
+    soc_address = keccak256_hash(identifier, hex_to_bytes(owner_address[2:]))
 
     if bytes_equal(address, soc_address):
         msg = "SOC Data does not match given address!"
         raise BeeError(msg)
 
-    def signature():
+    def signature() -> bytes:
         return bytes_at_offset(data, SOC_SIGNATURE_OFFSET, SIGNATURE_SIZE)
 
-    def span():
+    def span() -> bytes:
         return bytes_at_offset(data, SOC_SPAN_OFFSET, SPAN_SIZE)
 
-    def payload():
+    def payload() -> bytes:
         return flex_bytes_at_offset(data, SOC_PAYLOAD_OFFSET, MIN_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE)
 
     return SingleOwnerChunk(
@@ -128,7 +128,7 @@ def make_single_owner_chunk_from_data(data: Union[Data, bytes], address: Address
         identifier=identifier,
         signature=signature(),
         span=span(),
-        payload=payload,
+        payload=payload(),
         address=soc_address,
         owner=owner_address,
     )

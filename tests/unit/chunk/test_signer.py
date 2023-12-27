@@ -4,7 +4,7 @@ from eth_account.messages import encode_defunct
 from eth_pydantic_types import HexBytes
 from eth_utils import is_same_address
 
-from bee_py.chunk.signer import public_key_to_address, recover_address, sign
+from bee_py.chunk.signer import public_key_to_address, sign
 
 expected_signature_hex = "1bf05d437c1146b84b2cd410a25b70d300abdd54f4df17256472b2402849c07b5c240387a4ab5dfdc49c150997f435a7e66d0d001ba59b87600423a583f50ed0d0"  # noqa: E501
 
@@ -22,14 +22,6 @@ def test_make_private_key_signer_bytes_data(signer):
     signature = sign(data=data, account=signer)
 
     assert signature.encode_vrs().hex() == expected_signature_hex  # type: ignore
-
-
-def test_recover_address_from_signature(signer):
-    msg = encode_defunct(text="Hi from bee_py")
-    signature = sign(data=msg, account=signer)
-    recovered_address = recover_address(msg, signature)  # type: ignore
-
-    assert recovered_address == signer.address
 
 
 def test_public_key_str_to_address(signer, public_key_str):

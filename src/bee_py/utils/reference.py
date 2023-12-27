@@ -22,6 +22,8 @@ def make_bytes_reference(reference: Union[Reference, bytes, str], offset: int = 
     Returns:
         bytes: The byte array representation of the chunk reference.
     """
+    if isinstance(reference, Reference):
+        reference = str(reference)
 
     if isinstance(reference, str):
         if offset:
