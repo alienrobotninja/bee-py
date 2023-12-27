@@ -12,25 +12,8 @@ import requests
 from bee_py.bee import Bee
 from bee_py.chunk.soc import make_soc_address
 from bee_py.Exceptions import PinNotFoundError
-from bee_py.feed.topic import make_topic_from_string
-from bee_py.feed.type import FeedType
 from bee_py.modules import bzz
-from bee_py.types.type import (
-    CHUNK_SIZE,
-    REFERENCE_HEX_LENGTH,
-    SPAN_SIZE,
-    BatchId,
-    BeeRequestOptions,
-    Collection,
-    CollectionEntry,
-    CollectionUploadOptions,
-    GetAllPinResponse,
-    PssMessageHandler,
-    Reference,
-    ReferenceResponse,
-    UploadOptions,
-)
-from bee_py.utils.error import BeeArgumentError, BeeError
+from bee_py.types.type import REFERENCE_HEX_LENGTH, Collection, CollectionEntry, GetAllPinResponse
 from bee_py.utils.eth import make_eth_address
 
 # * Global variables

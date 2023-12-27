@@ -1,7 +1,7 @@
 import pytest
 
-from bee_py.modules.debug.connectivity import get_node_addresses, get_peers
-from bee_py.modules.pss import send, subscribe
+from bee_py.modules.debug.connectivity import get_peers
+from bee_py.modules.pss import send
 
 PSS_TIMEOUT = 120_000
 

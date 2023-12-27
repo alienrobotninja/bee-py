@@ -117,6 +117,7 @@ ignore_missing_imports = true
 # ruff
 [tool.ruff]
 line-length = 120
+extend-select = ["I"]
 select = [
     "A",
     "ARG",
@@ -127,7 +128,6 @@ select = [
     "EM",
     "F",
     "FBT",
-    "I",
     "ICN",
     "ISC",
     "N",
