@@ -1,4 +1,4 @@
-from typing import Union
+# from typing import Union
 
 from pydantic import ValidationError
 
@@ -81,7 +81,7 @@ def map_wallet_properties(data: WalletBalance) -> WalletBalance:
 
 def get_wallet_balance(
     request_options: BeeRequestOptions,
-) -> Union[WalletBalance, None]:
+) -> WalletBalance:
     """
     Retrieves the wallet balances for xDai and BZZ of the Bee node.
 

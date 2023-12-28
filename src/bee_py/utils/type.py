@@ -5,6 +5,7 @@ from ens.utils import is_valid_ens_name  # type: ignore
 from swarm_cid import ReferenceType, decode_cid, encode_reference
 
 from bee_py.types.type import (
+    ADDRESS_HEX_LENGTH,
     BATCH_ID_HEX_LENGTH,
     ENCRYPTED_REFERENCE_HEX_LENGTH,
     PSS_TARGET_HEX_LENGTH_MAX,
@@ -46,6 +47,26 @@ def assert_non_negative_integer(value: Union[int, str], name: str = "Value"):
     value = int(value) if isinstance(value, str) else value
     if value < 0:
         msg = f"{name} has to be bigger or equal to zero"
+        raise ValueError(msg)
+
+
+def assert_positive_integer(value: Union[int, str], name: str = "Value"):
+    """
+    Assert that the provided value is a positive integer.
+
+    Args:
+        value (Union[int, str]): The value to check.
+        name (str, optional): The name of the value. Defaults to 'Value'.
+
+    Raises:
+        ValueError: If the value is not a positive integer.
+    """
+    if not isinstance(value, (int, str)):
+        msg = f"{name} must be a number or a string representing a number"
+        raise ValueError(msg)
+    value = int(value) if isinstance(value, str) else value
+    if value <= 0:
+        msg = f"{name} has to be bigger than 0"
         raise ValueError(msg)
 
 
@@ -553,3 +574,7 @@ def assert_data(value: Any) -> None:
     if not isinstance(value, str) and not isinstance(value, bytes):
         msg = "Data must be either string or bytes"
         raise TypeError(msg)
+
+
+def assert_address(value: Any) -> None:
+    assert_hex_string(value, ADDRESS_HEX_LENGTH)

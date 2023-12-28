@@ -1448,8 +1448,10 @@ class Bee:
         assert_request_options(options)
 
         canonical_signer = self.__resolve_signer(signer)
+        if isinstance(canonical_signer, Signer):
+            canonical_signer = Signer.singer  # type: ignore[attr-defined]
 
-        reader = self.make_soc_reader(canonical_signer.address, options)
+        reader = self.make_soc_reader(canonical_signer.address, options)  # type: ignore[attr-defined]
 
         def __upload(postage_batch_id: Union[str, BatchId], identifier: Identifier, data: bytes):
             return upload_single_owner_chunk_data(
@@ -1463,7 +1465,7 @@ class Bee:
         # TODO: Look into it
         return SOCWriter(owner=reader.owner, download=reader.download, upload=__upload)
 
-    def check_connection(self, options: Optional[BeeRequestOptions] = None) -> bool:
+    def check_connection(self, options: Optional[BeeRequestOptions] = None) -> None:
         """
         Pings the Bee node to see if there's a live Bee node on the URL provided.
 
@@ -1478,7 +1480,7 @@ class Bee:
         """
         assert_request_options(options)
 
-        return status_api.check_connection(self.__get_request_options_for_call(options))
+        status_api.check_connection(self.__get_request_options_for_call(options))
 
     def is_connected(self, options: Optional[BeeRequestOptions] = None) -> bool:
         """
@@ -1494,5 +1496,6 @@ class Bee:
 
         try:
             status_api.check_connection(self.__get_request_options_for_call(options))
-        except HTTPError as e:
-            raise HTTPError() from e
+        except HTTPError:
+            return False
+        return True

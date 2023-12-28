@@ -5,9 +5,43 @@ from bee_py.utils.http import http
 from bee_py.utils.logging import logger
 
 STAMPS_ENDPOINT = "stamps"
+BATCHES_ENDPOINT = "batches"
 
 
-def get_all_postage_batches(request_options: BeeRequestOptions) -> PostageBatch:
+def parse_postage_batch(response_json) -> list[PostageBatch]:
+    postage_batches = response_json.get("batches", [])
+    parsed_batches = []
+
+    for batch_data in postage_batches:
+        parsed_batches.append(PostageBatch.model_validate(batch_data))
+
+    return parsed_batches
+
+
+def get_global_postage_batches(request_options: BeeRequestOptions) -> list[PostageBatch]:
+    """Retrieves all globally available postage batches.
+
+    Args:
+        request_options: Request options for making the API call.
+
+    Returns:
+        A list of all globally available postage batches.
+
+    Raises:
+        HTTPError: If the API request fails.
+    """
+    config = {"url": BATCHES_ENDPOINT, "method": "GET"}
+    response = http(request_options, config)
+
+    if response.status_code != 200:  # noqa: PLR2004
+        logger.info(response.json())
+        if response.raise_for_status():
+            logger.error(response.raise_for_status())
+
+    return parse_postage_batch(response.json())
+
+
+def get_all_postage_batches(request_options: BeeRequestOptions) -> list[PostageBatch]:
     """
     Retrieves all postage batches from the Bee node.
 
@@ -26,8 +60,7 @@ def get_all_postage_batches(request_options: BeeRequestOptions) -> PostageBatch:
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    postage_batches = response.json()
-    return PostageBatch.model_validate(postage_batches)
+    return parse_postage_batch(response.json())
 
 
 def get_postage_batch(
@@ -53,8 +86,7 @@ def get_postage_batch(
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    postage_batch = response.json()
-    return PostageBatch.model_validate(postage_batch)
+    return parse_postage_batch(response.json())
 
 
 def get_postage_batch_buckets(

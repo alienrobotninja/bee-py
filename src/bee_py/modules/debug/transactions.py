@@ -7,7 +7,7 @@ from bee_py.utils.logging import logger
 TRANSACTIONS_ENDPOINT = "transactions"
 
 
-def get_all_transactions(request_options: BeeRequestOptions) -> TransactionInfo:
+def get_all_transactions(request_options: BeeRequestOptions) -> list[TransactionInfo]:
     """
     Retrieves a list of all pending transactions from the Bee node.
 
