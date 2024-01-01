@@ -7,13 +7,8 @@ from ape.managers.accounts import AccountAPI
 from eth_account.messages import encode_defunct
 from eth_pydantic_types import HexBytes
 from eth_typing import ChecksumAddress as AddressType
-from eth_utils import (
-    is_address,
-    is_checksum_address,
-    keccak,
-    to_checksum_address,  # ValidationError,
-    to_normalized_address,
-)
+from eth_utils import to_checksum_address  # ValidationError,
+from eth_utils import is_address, is_checksum_address, keccak, to_normalized_address
 
 from bee_py.Exceptions import AccountNotFoundError
 from bee_py.utils.hex import hex_to_bytes, str_to_hex
