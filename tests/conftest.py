@@ -428,3 +428,13 @@ def bee_signer(runner, ape_cli):
 @pytest.fixture
 def bee_class(bee_url) -> Bee:
     return Bee(bee_url)
+
+
+# @pytest.fixture
+# def deposit_tokens_mock():
+#     def _method(amount: int, gas_price: str, extra_headers={}):  # noqa: B006
+#         headers = extra_headers.copy()
+#         if gas_price:
+#             headers["gasPrice"] = gas_price
+
+#     return _method
