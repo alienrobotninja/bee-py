@@ -31,7 +31,7 @@ def get_chequebook_address(
 
     url = f"{CHEQUEBOOK_ENDPOINT}/address"
     config = {"url": url, "method": "GET"}
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -57,7 +57,7 @@ def get_chequebook_balance(
 
     url = f"{CHEQUEBOOK_ENDPOINT}/balance"
     config = {"url": url, "method": "GET"}
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -85,7 +85,7 @@ def get_last_cashout_action(
 
     url = f"{CHEQUEBOOK_ENDPOINT}/cashout/{peer}"
     config = {"url": url, "method": "GET"}
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -130,7 +130,7 @@ def cashout_last_cheque(
 
     url = f"{CHEQUEBOOK_ENDPOINT}/cashout/{peer}"
     config = {"url": url, "method": "POST", "headers": headers}
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -158,7 +158,7 @@ def get_last_cheques_for_peer(
 
     url = f"{CHEQUEBOOK_ENDPOINT}/cheque/{peer}"
     config = {"url": url, "method": "GET"}
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -182,7 +182,7 @@ def get_last_cheques(request_options: BeeRequestOptions) -> LastChequesResponse:
 
     url = f"{CHEQUEBOOK_ENDPOINT}/cheque"
     config = {"url": url, "method": "GET"}
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -215,14 +215,14 @@ def deposit_tokens(
     if gas_price:
         headers["gas-price"] = gas_price
 
-    url = f"{CHEQUEBOOK_ENDPOINT}/deposit"
+    url = f"{CHEQUEBOOK_ENDPOINT}/deposit?amount={amount!s}"
     config = {
         "url": url,
         "method": "POST",
         "params": {"amount": str(amount)},
         "headers": headers,
     }
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
@@ -262,7 +262,7 @@ def withdraw_tokens(
         "params": {"amount": str(amount)},
         "headers": headers,
     }
-    response = http(request_options, config)
+    response = http(request_options, config, False)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())

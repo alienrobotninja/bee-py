@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 
 from bee_py.bee_debug import BeeDebug
@@ -17,7 +19,7 @@ from bee_py.utils.type import (
 
 TRANSACTION_HASH = "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
 
-CASHOUT_RESPONSE = {"transcationHash": TRANSACTION_HASH}
+CASHOUT_RESPONSE = {"transactionHash": TRANSACTION_HASH}
 
 MOCK_SERVER_URL = "http://localhost:12345/"
 
@@ -46,10 +48,9 @@ def test_bee_constructor(url):
 
 
 def test_default_headers_and_use_them_if_specified(requests_mock):
-    # url = f"{MOCK_SERVER_URL}{CHEQUEBOOK_ENDPOINT}/deposit?amount={10}"
     url = "http://localhost:12345/chequebook/deposit?amount=10"
 
-    requests_mock.post(url, json={}, headers={"X-Awesome-Header": "123"})
+    requests_mock.post(url, headers={"X-Awesome-Header": "123"}, json=CASHOUT_RESPONSE)
 
     bee = BeeDebug(MOCK_SERVER_URL, {"X-Awesome-Header": "123"})
 
