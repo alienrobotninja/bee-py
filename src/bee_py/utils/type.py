@@ -21,6 +21,7 @@ from bee_py.types.type import (
     ReferenceOrENS,
     ReferenceResponse,
     Tag,
+    TransactionOptions,
     UploadOptions,
     UploadResult,
     UploadResultWithCid,
@@ -438,10 +439,12 @@ def assert_transaction_options(value: Any, name: str = "TransactionOptions"):
 
     options = value
     assert_request_options(options, "TransactionOptions")
+    if isinstance(options, dict):
+        options = TransactionOptions.model_validate(value)
 
     if options.gas_price:
         if not isinstance(options.gas_price, int) or options.gas_price < 0:
-            msg = f"{name}.gas_price must be a non-negative integer"
+            msg = f"{name}.gas_price must be a non-negative integer. Got {options.gas_price}"
             raise ValueError(msg)
 
     if options.gas_limit:

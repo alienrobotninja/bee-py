@@ -448,7 +448,7 @@ class BeeDebug:
     def cashout_last_cheque(
         self,
         address: Union[AddressType, str],
-        options: Optional[CashoutOptions] = None,
+        options: Optional[Union[CashoutOptions, dict]] = None,
         request_options: Optional[Union[BeeRequestOptions, dict]] = None,
     ) -> str:
         """Cashes out the last cheque for a specific peer.

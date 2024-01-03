@@ -546,8 +546,8 @@ class RedistributionState(BaseModel):
 
 
 class TransactionOptions(BaseModel):
-    gas_price: str = Field(..., alias="gasPrice")
-    gas_limit: str = Field(..., alias="gasLimit")
+    gas_price: Optional[int] = Field(None, alias="gasPrice")
+    gas_limit: Optional[int] = Field(None, alias="gasLimit")
 
 
 CashoutOptions = TransactionOptions

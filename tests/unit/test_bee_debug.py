@@ -200,3 +200,139 @@ def test_cashout_last_cheque_invalid_address(input_value, expected_error_type):
     with pytest.raises(expected_error_type):
         bee = BeeDebug(MOCK_SERVER_URL)
         bee.cashout_last_cheque(input_value)
+
+
+def test_no_headers_if_no_gas_price_is_set(requests_mock, test_address):
+    url = "http://localhost:12345/chequebook/cashout/ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
+
+    requests_mock.post(url, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.cashout_last_cheque(test_address) == TRANSACTION_HASH
+
+
+def test_no_headers_if_gas_price_is_set(requests_mock, test_address):
+    url = "http://localhost:12345/chequebook/cashout/ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
+
+    requests_mock.post(url, headers={"gas-price": "100000000000"}, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.cashout_last_cheque(test_address, {"gasPrice": "100000000000"}) == TRANSACTION_HASH
+
+
+def test_no_headers_if_gas_limit_is_set(requests_mock, test_address):
+    url = "http://localhost:12345/chequebook/cashout/ca6357a08e317d15ec560fef34e4c45f8f19f01c372aa70f1da72bfa7f1a4338"
+
+    requests_mock.post(url, headers={"gas-limit": "100000000000"}, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.cashout_last_cheque(test_address, {"gasLimit": "100000000000"}) == TRANSACTION_HASH
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_withdraw_tokens(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.withdraw_tokens("1", "0", input_value)
+
+
+def test_withdraw_tokens_no_headers_if_no_gas_price_is_set(requests_mock):
+    url = "http://localhost:12345/chequebook/withdraw?amount=10"
+
+    requests_mock.post(url, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.withdraw_tokens("10") == TRANSACTION_HASH
+
+
+def test_withdraw_tokens_if_gas_price_is_set(requests_mock):
+    url = "http://localhost:12345/chequebook/withdraw?amount=10"
+
+    requests_mock.post(url, headers={"gas-price": "100000000000"}, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.withdraw_tokens("10", "100000000000") == TRANSACTION_HASH
+
+
+def test_withdraw_tokens_if_gas_limit_is_set(requests_mock):
+    url = "http://localhost:12345/chequebook/withdraw?amount=10"
+
+    requests_mock.post(url, headers={"gas-limit": "100000000000"}, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.withdraw_tokens("10", "100000000000") == TRANSACTION_HASH
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", [(None, ValueError), ("", ValueError), (-1, ValueError)])
+def test_withdraw_tokens_wrong_input(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        assert bee.withdraw_tokens(input_value)
+
+
+@pytest.mark.parametrize(
+    "input_value, expected_error_type", [(True, ValueError), ("asd", ValueError), ("-1", ValueError)]
+)
+def test_withdraw_tokens_throw_error_if_passed_wrong_gas_price_as_input(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        assert bee.withdraw_tokens("1", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_deposit_tokens(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.deposit_tokens("1", "0", input_value)
+
+
+def test_deposit_tokens_no_headers_if_no_gas_price_is_set(requests_mock):
+    url = "http://localhost:12345/chequebook/deposit?amount=10"
+
+    requests_mock.post(url, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.deposit_tokens("10") == TRANSACTION_HASH
+
+
+def test_deposit_tokens_if_gas_price_is_set(requests_mock):
+    url = "http://localhost:12345/chequebook/deposit?amount=10"
+
+    requests_mock.post(url, headers={"gas-price": "100000000000"}, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.deposit_tokens("10", "100000000000") == TRANSACTION_HASH
+
+
+def test_deposit_tokens_if_gas_limit_is_set(requests_mock):
+    url = "http://localhost:12345/chequebook/deposit?amount=10"
+
+    requests_mock.post(url, headers={"gas-limit": "100000000000"}, json=CASHOUT_RESPONSE)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.deposit_tokens("10", "100000000000") == TRANSACTION_HASH
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", [(None, ValueError), ("", ValueError), (-1, ValueError)])
+def test_deposit_tokens_wrong_input(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        assert bee.deposit_tokens(input_value)
+
+
+@pytest.mark.parametrize(
+    "input_value, expected_error_type", [(True, ValueError), ("asd", ValueError), ("-1", ValueError)]
+)
+def test_deposit_tokens_throw_error_if_passed_wrong_gas_price_as_input(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        assert bee.deposit_tokens("1", input_value)
