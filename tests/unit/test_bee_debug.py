@@ -70,7 +70,6 @@ test_address_assertions: list[tuple] = [
 transaction_options_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
-    ([], TypeError),
     ("string", TypeError),
     ({"gasPrice": "plur"}, TypeError),
     ({"gasPrice": True}, TypeError),
@@ -82,6 +81,17 @@ transaction_options_assertions: list[tuple] = [
     ({"gasLimit": {}}, TypeError),
     ({"gasLimit": []}, TypeError),
     ({"gasLimit": -1}, TypeError),
+]
+
+batch_id_assertion_data: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    ({}, BeeError),
+    (None, BeeError),
+    ([], BeeError),
+    ("", BeeError),
+    ("ZZZfb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
+    ("0x634fb5a872396d9693e5c9f9d7233cfa93f395c093371017ff44aa9ae6564cdd", TypeError),
 ]
 
 
@@ -423,7 +433,7 @@ def test_create_postage_batch_transaction_assertions(input_value, expected_error
 def test_no_headers_if_no_create_postage_batch_is_set(requests_mock):
     url = "http://localhost:12345/stamps/10/17"
 
-    requests_mock.post(url, json=BATCH_ID)
+    requests_mock.post(url, json=BATCH_RESPONSE)
 
     bee = BeeDebug(MOCK_SERVER_URL)
 
@@ -433,8 +443,73 @@ def test_no_headers_if_no_create_postage_batch_is_set(requests_mock):
 def test_no_headers_if_create_postage_batch_is_set(requests_mock):
     url = "http://localhost:12345/stamps/10/17"
 
-    requests_mock.post(url, headers={"gas-price": "100000000000"}, json=BATCH_ID)
+    requests_mock.post(url, headers={"gas-price": "100000000000"}, json=BATCH_RESPONSE)
 
     bee = BeeDebug(MOCK_SERVER_URL)
 
     assert bee.create_postage_batch("10", 17, {"waitForUsable": False, "gasPrice": "100"}) == BATCH_ID
+
+
+#! Test from here
+
+
+@pytest.mark.parametrize(
+    "input_value, expected_error_type",
+    [
+        ({"immutable_flag": "asd"}, TypeError),
+        ({"immutable_flag": -1}, TypeError),
+        ({"immutable_flag": "true"}, TypeError),
+    ],
+)
+def test_throw_error_if_wrong_immutable_input(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.create_postage_batch("10", 17, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", [(-1, TypeError), (15, TypeError)])
+def test_throw_error_if_too_small_depth(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(TypeError):
+        bee.create_postage_batch("10", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", [("-10", TypeError), ("0", TypeError)])
+def test_throw_error_if_too_small_amount(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(TypeError):
+        bee.create_postage_batch(input_value, 17)
+
+
+def test_throw_error_if_too_big_depth():
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(TypeError):
+        bee.create_postage_batch("10", 256)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_get_postage_batch(input_value, expected_error_type, test_batch_id):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.get_postage_batch(test_batch_id, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", transaction_options_assertions)
+def test_get_postage_batch_transaction_assertions(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.get_postage_batch(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_get_postage_batch_buckets(input_value, expected_error_type, test_batch_id):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.get_postage_batch_buckets(input_value, test_batch_id)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
+def test_get_postage_batch_buckets_batch_id_assertion(input_value, expected_error_type, test_batch_id):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.get_postage_batch_buckets(input_value)

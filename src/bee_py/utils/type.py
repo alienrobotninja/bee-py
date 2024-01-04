@@ -492,7 +492,7 @@ def assert_transaction_hash(transaction_hash: Any, name: str = "TransactionHash"
         raise TypeError(msg)
 
     if not is_prefixed_hex_string(transaction_hash):
-        raise TypeError()
+        raise TypeError(f"Invalid transaction hash. Expected hex string got: {transaction_hash}")
 
     # Hash is 64 long + '0x' prefix = 66
     if len(transaction_hash) != PUBKEY_HEX_LENGTH:
