@@ -19,8 +19,12 @@ from bee_py.utils.type import (
 )
 
 TRANSACTION_HASH = "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
-
 CASHOUT_RESPONSE = {"transactionHash": TRANSACTION_HASH}
+
+BATCH_ID = "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
+BATCH_RESPONSE = {
+    "batchID": BATCH_ID,
+}
 
 MOCK_SERVER_URL = "http://localhost:12345/"
 
@@ -61,6 +65,23 @@ test_address_assertions: list[tuple] = [
     # Bytes length mismatch
     (b"\x00" * 19, TypeError),
     ("", TypeError),
+]
+
+transaction_options_assertions: list[tuple] = [
+    (1, TypeError),
+    (True, TypeError),
+    ([], TypeError),
+    ("string", TypeError),
+    ({"gasPrice": "plur"}, TypeError),
+    ({"gasPrice": True}, TypeError),
+    ({"gasPrice": {}}, TypeError),
+    ({"gasPrice": []}, TypeError),
+    ({"gasPrice": -1}, TypeError),
+    ({"gasLimit": "plur"}, TypeError),
+    ({"gasLimit": True}, TypeError),
+    ({"gasLimit": {}}, TypeError),
+    ({"gasLimit": []}, TypeError),
+    ({"gasLimit": -1}, TypeError),
 ]
 
 
@@ -336,3 +357,84 @@ def test_deposit_tokens_throw_error_if_passed_wrong_gas_price_as_input(input_val
     bee = BeeDebug(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         assert bee.deposit_tokens("1", input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_retrieve_extended_tag(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.retrieve_extended_tag(0, input_value)
+
+
+@pytest.mark.parametrize(
+    "input_value, expected_error_type",
+    [
+        ("", TypeError),
+        ([], TypeError),
+        ({}, TypeError),
+        (None, TypeError),
+        ({"total": True}, TypeError),
+        ({"total": "asdf"}, TypeError),
+        ({"total": None}, TypeError),
+        (-1, ValueError),
+    ],
+)
+def test_throw_exception_for_bad_tag(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.retrieve_extended_tag(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_get_stake(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.get_stake(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_deposit_stake(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.deposit_stake("100000000000000000", None, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", transaction_options_assertions)
+def test_deposit_stake_transaction_assertions(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.deposit_stake("100000000000000000", None, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_create_postage_batch(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = BeeDebug(MOCK_SERVER_URL, input_value)
+        bee.create_postage_batch("10", 17, input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", transaction_options_assertions)
+def test_create_postage_batch_transaction_assertions(input_value, expected_error_type):
+    bee = BeeDebug(MOCK_SERVER_URL)
+    with pytest.raises(expected_error_type):
+        bee.create_postage_batch("10", 17, None, input_value)
+
+
+def test_no_headers_if_no_create_postage_batch_is_set(requests_mock):
+    url = "http://localhost:12345/stamps/10/17"
+
+    requests_mock.post(url, json=BATCH_ID)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.create_postage_batch("10", 17, {"waitForUsable": False}) == BATCH_ID
+
+
+def test_no_headers_if_create_postage_batch_is_set(requests_mock):
+    url = "http://localhost:12345/stamps/10/17"
+
+    requests_mock.post(url, headers={"gas-price": "100000000000"}, json=BATCH_ID)
+
+    bee = BeeDebug(MOCK_SERVER_URL)
+
+    assert bee.create_postage_batch("10", 17, {"waitForUsable": False, "gasPrice": "100"}) == BATCH_ID

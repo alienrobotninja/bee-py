@@ -17,6 +17,7 @@ from bee_py.types.type import (
     FeedType,
     FileUploadOptions,
     JsonFeedOptions,
+    PostageBatchOptions,
     Reference,
     ReferenceOrENS,
     ReferenceResponse,
@@ -401,6 +402,9 @@ def assert_postage_batch_options(value: Any, name: str = "PostageBatchOptions") 
     options = value
 
     assert_request_options(options, name)
+
+    if isinstance(options, dict):
+        options = PostageBatchOptions.model_validate(value)
 
     if options.gas_price:
         if not isinstance(options.gas_price, int) or options.gas_price < 0:
