@@ -900,7 +900,7 @@ class BeeDebug:
         self,
         postage_batch_id: Union[BatchId, str],
         options: Optional[Union[BeeRequestOptions, dict]] = None,
-    ) -> PostageBatch:
+    ) -> list[PostageBatch]:
         """Retrieves details for a specific postage batch.
 
         Args:

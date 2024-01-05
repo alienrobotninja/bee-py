@@ -10,6 +10,7 @@ import pytest
 from click.testing import CliRunner
 
 from bee_py.bee import Bee
+from bee_py.bee_debug import BeeDebug
 from bee_py.modules.debug.chunk import delete_chunk_from_local_storage
 from bee_py.modules.debug.connectivity import get_node_addresses
 from bee_py.modules.debug.stamps import create_postage_batch, get_postage_batch
@@ -430,9 +431,14 @@ def bee_class(bee_url) -> Bee:
     return Bee(bee_url)
 
 
+@pytest.fixture
+def bee_debug_class(bee_debug_url) -> BeeDebug:
+    return BeeDebug(bee_debug_url)
+
+
 # @pytest.fixture
 # def deposit_tokens_mock():
-#     def _method(amount: int, gas_price: str, extra_headers={}):  # noqa: B006
+#     def _method(amount: int, gas_price: str, extra_headers={}):
 #         headers = extra_headers.copy()
 #         if gas_price:
 #             headers["gasPrice"] = gas_price

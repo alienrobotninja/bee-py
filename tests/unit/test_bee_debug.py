@@ -1,22 +1,8 @@
-from unittest.mock import patch
-
 import pydantic
 import pytest
 
 from bee_py.bee_debug import BeeDebug
-from bee_py.types.type import BatchId, BeeRequestOptions, CashoutOptions, PostageBatchOptions
 from bee_py.utils.error import BeeArgumentError, BeeError
-from bee_py.utils.type import (
-    assert_address,
-    assert_batch_id,
-    assert_cashout_options,
-    assert_non_negative_integer,
-    assert_positive_integer,
-    assert_postage_batch_options,
-    assert_request_options,
-    assert_transaction_hash,
-    assert_transaction_options,
-)
 
 TRANSACTION_HASH = "36b7efd913ca4cf880b8eeac5093fa27b0825906c600685b6abdd6566e6cfe8f"
 CASHOUT_RESPONSE = {"transactionHash": TRANSACTION_HASH}

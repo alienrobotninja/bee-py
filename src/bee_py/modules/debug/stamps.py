@@ -8,8 +8,8 @@ STAMPS_ENDPOINT = "stamps"
 BATCHES_ENDPOINT = "batches"
 
 
-def parse_postage_batch(response_json) -> list[PostageBatch]:
-    postage_batches = response_json.get("batches", [])
+def parse_postage_batch(response_json: dict) -> list[PostageBatch]:
+    postage_batches = response_json.get("stamps", [])
     parsed_batches = []
 
     for batch_data in postage_batches:
@@ -86,7 +86,7 @@ def get_postage_batch(
         if response.raise_for_status():
             logger.error(response.raise_for_status())
 
-    return parse_postage_batch(response.json())
+    return PostageBatch.model_validate(response.json())
 
 
 def get_postage_batch_buckets(
