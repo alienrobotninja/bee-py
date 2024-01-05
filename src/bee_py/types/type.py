@@ -635,7 +635,7 @@ class PostageBatchBuckets(BaseModel):
 
 class PostageBatchOptions(BaseModel):
     label: Optional[str] = Field(None)
-    gas_price: Optional[str] = Field(default="", alias="gasPrice")
+    gas_price: Optional[Union[str, int]] = Field(default="", alias="gasPrice")
     immutable_flag: Optional[bool] = Field(False)
     wait_for_usable: Optional[bool] = Field(default=True, alias="waitForUsable")
     wait_for_usable_timeout: Optional[int] = Field(default=120, alias="waitForUsableTimeout")

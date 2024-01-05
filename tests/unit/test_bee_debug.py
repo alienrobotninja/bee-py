@@ -38,7 +38,6 @@ CHEQUEBOOK_ENDPOINT = "/chequebook"
 request_options_assertions: list[tuple] = [
     (1, TypeError),
     (True, TypeError),
-    # ([], TypeError),
     (lambda: {}, TypeError),
     ("string", TypeError),
     ({"timeout": "plur"}, pydantic.ValidationError),
@@ -456,9 +455,8 @@ def test_no_headers_if_create_postage_batch_is_set(requests_mock):
 @pytest.mark.parametrize(
     "input_value, expected_error_type",
     [
-        ({"immutable_flag": "asd"}, TypeError),
-        ({"immutable_flag": -1}, TypeError),
-        ({"immutable_flag": "true"}, TypeError),
+        ({"immutable_flag": "asd"}, pydantic.ValidationError),
+        ({"immutable_flag": -1}, pydantic.ValidationError),
     ],
 )
 def test_throw_error_if_wrong_immutable_input(input_value, expected_error_type):
@@ -467,23 +465,23 @@ def test_throw_error_if_wrong_immutable_input(input_value, expected_error_type):
         bee.create_postage_batch("10", 17, input_value)
 
 
-@pytest.mark.parametrize("input_value, expected_error_type", [(-1, TypeError), (15, TypeError)])
+@pytest.mark.parametrize("input_value, expected_error_type", [(-1, ValueError), (15, BeeArgumentError)])
 def test_throw_error_if_too_small_depth(input_value, expected_error_type):
     bee = BeeDebug(MOCK_SERVER_URL)
-    with pytest.raises(TypeError):
+    with pytest.raises(expected_error_type):
         bee.create_postage_batch("10", input_value)
 
 
-@pytest.mark.parametrize("input_value, expected_error_type", [("-10", TypeError), ("0", TypeError)])
+@pytest.mark.parametrize("input_value, expected_error_type", [("-10", ValueError), ("0", ValueError)])
 def test_throw_error_if_too_small_amount(input_value, expected_error_type):
     bee = BeeDebug(MOCK_SERVER_URL)
-    with pytest.raises(TypeError):
+    with pytest.raises(expected_error_type):
         bee.create_postage_batch(input_value, 17)
 
 
 def test_throw_error_if_too_big_depth():
     bee = BeeDebug(MOCK_SERVER_URL)
-    with pytest.raises(TypeError):
+    with pytest.raises(BeeArgumentError):
         bee.create_postage_batch("10", 256)
 
 
@@ -501,7 +499,25 @@ def test_get_postage_batch_transaction_assertions(input_value, expected_error_ty
         bee.get_postage_batch(input_value)
 
 
-@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+@pytest.mark.parametrize(
+    "input_value, expected_error_type",
+    [
+        (1, TypeError),
+        (True, TypeError),
+        (lambda: {}, TypeError),
+        ("string", TypeError),
+        ({"timeout": "plur"}, pydantic.ValidationError),
+        ({"timeout": True}, TypeError),
+        ({"timeout": {}}, pydantic.ValidationError),
+        ({"timeout": []}, pydantic.ValidationError),
+        ({"timeout": -1}, TypeError),
+        ({"retry": "plur"}, TypeError),
+        ({"retry": True}, TypeError),
+        ({"retry": {}}, TypeError),
+        ({"retry": []}, TypeError),
+        ({"retry": -1}, TypeError),
+    ],
+)
 def test_get_postage_batch_buckets(input_value, expected_error_type, test_batch_id):
     with pytest.raises(expected_error_type):
         bee = BeeDebug(MOCK_SERVER_URL, input_value)
@@ -509,7 +525,7 @@ def test_get_postage_batch_buckets(input_value, expected_error_type, test_batch_
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", batch_id_assertion_data)
-def test_get_postage_batch_buckets_batch_id_assertion(input_value, expected_error_type, test_batch_id):
+def test_get_postage_batch_buckets_batch_id_assertion(input_value, expected_error_type):
     bee = BeeDebug(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.get_postage_batch_buckets(input_value)

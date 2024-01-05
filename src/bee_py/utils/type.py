@@ -407,6 +407,7 @@ def assert_postage_batch_options(value: Any, name: str = "PostageBatchOptions") 
         options = PostageBatchOptions.model_validate(value)
 
     if options.gas_price:
+        options.gas_price = int(options.gas_price)
         if not isinstance(options.gas_price, int) or options.gas_price < 0:
             msg = "gasPrice must be a non-negative integer"
             raise ValueError(msg)
@@ -492,7 +493,8 @@ def assert_transaction_hash(transaction_hash: Any, name: str = "TransactionHash"
         raise TypeError(msg)
 
     if not is_prefixed_hex_string(transaction_hash):
-        raise TypeError(f"Invalid transaction hash. Expected hex string got: {transaction_hash}")
+        msg = f"Invalid transaction hash. Expected hex string got: {transaction_hash}"
+        raise TypeError(msg)
 
     # Hash is 64 long + '0x' prefix = 66
     if len(transaction_hash) != PUBKEY_HEX_LENGTH:
