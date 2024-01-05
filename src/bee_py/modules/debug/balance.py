@@ -23,7 +23,8 @@ def get_all_balances(request_options: BeeRequestOptions) -> BalanceResponse:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+            return None  # type: ignore
 
     balances_response = response.json()
     return BalanceResponse.model_validate(balances_response)
@@ -46,7 +47,8 @@ def get_peer_balance(request_options: BeeRequestOptions, address: AddressType) -
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+            return None  # type: ignore
     balances_response = response.json()
 
     return PeerBalance.model_validate(balances_response)
@@ -69,7 +71,8 @@ def get_past_due_consumption_balances(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+            return None  # type: ignore
 
     balances_response = response.json()
     return BalanceResponse.model_validate(balances_response)
@@ -91,7 +94,8 @@ def get_past_due_consumption_peer_balance(request_options: BeeRequestOptions, ad
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+            return None  # type: ignore
 
     balances_response = response.json()
     return PeerBalance.model_validate(balances_response)

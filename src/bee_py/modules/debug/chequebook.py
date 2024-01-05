@@ -36,7 +36,8 @@ def get_chequebook_address(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     chequebook_address_response = response.json()
     return ChequebookAddressResponse.model_validate(chequebook_address_response)
@@ -62,7 +63,8 @@ def get_chequebook_balance(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     chequebook_balance_response = response.json()
     return ChequebookBalanceResponse.model_validate(chequebook_balance_response)
@@ -90,7 +92,9 @@ def get_last_cashout_action(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
+        return None  # type: ignore
 
     last_cashout_action_response = response.json()
     return LastCashoutActionResponse.model_validate(last_cashout_action_response)
@@ -135,7 +139,8 @@ def cashout_last_cheque(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     transaction_response = response.json()
     return transaction_response["transactionHash"]
@@ -163,7 +168,8 @@ def get_last_cheques_for_peer(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     last_cheques_for_peer_response = response.json()
     return LastChequesForPeerResponse.model_validate(last_cheques_for_peer_response)
@@ -187,7 +193,8 @@ def get_last_cheques(request_options: BeeRequestOptions) -> LastChequesResponse:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     last_cheques_response = response.json()
     return LastChequesResponse.model_validate(last_cheques_response)
@@ -227,7 +234,8 @@ def deposit_tokens(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     transaction_response = response.json()
     return transaction_response["transactionHash"]
@@ -267,7 +275,8 @@ def withdraw_tokens(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     transaction_response = response.json()
     return transaction_response["transactionHash"]

@@ -25,7 +25,8 @@ def get_settlements(request_options: BeeRequestOptions, peer: str) -> Settlement
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     settlements_response = response.json()
     return Settlements.model_validate(settlements_response)
@@ -49,7 +50,8 @@ def get_all_settlements(request_options: BeeRequestOptions) -> AllSettlements:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     all_settlements_response = response.json()
 

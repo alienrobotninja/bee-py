@@ -56,7 +56,7 @@ AddressPrefix: TypeAlias = str
 
 
 class Signer(BaseModel):
-    singer: AccountAPI
+    signer: AccountAPI
 
 
 class BeeRequest(BaseModel):
@@ -972,17 +972,17 @@ class Epoch(BaseModel):
 
 
 IndexBytes = NewType("IndexBytes", bytes)
+Index = Union[int, Epoch, bytes, str]
 
+# class Index(BaseModel):
+#     """
+#     Index model.
 
-class Index(BaseModel):
-    """
-    Index model.
+#     :param index: The index can be a number, an epoch, index bytes or a string.
+#     :type index: Union[int, Epoch, bytes, str]
+#     """
 
-    :param index: The index can be a number, an epoch, index bytes or a string.
-    :type index: Union[int, Epoch, bytes, str]
-    """
-
-    index: Union[int, Epoch, bytes, str]
+#     index: Union[int, Epoch, bytes, str]
 
 
 class FeedUpdate(BaseModel):

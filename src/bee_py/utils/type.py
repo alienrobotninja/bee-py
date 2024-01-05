@@ -19,6 +19,7 @@ from bee_py.types.type import (
     JsonFeedOptions,
     PostageBatchOptions,
     Reference,
+    ReferenceCidOrENS,
     ReferenceOrENS,
     ReferenceResponse,
     Tag,
@@ -142,7 +143,7 @@ def assert_reference_or_ens(value: Any) -> None:
         raise TypeError(msg)
 
 
-def make_reference_or_ens(value: str, expected_cid_type: ReferenceType) -> ReferenceOrENS:
+def make_reference_or_ens(value: ReferenceCidOrENS, expected_cid_type: Union[ReferenceType, str]) -> ReferenceOrENS:
     """
     Converts a Swarm CID or ENS name to a hex-encoded Swarm Reference.
 

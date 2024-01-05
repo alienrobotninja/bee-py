@@ -1,3 +1,5 @@
+from typing import Union
+
 from bee_py.Exceptions import PinNotFoundError
 from bee_py.types.type import BeeRequestOptions, GetAllPinResponse, Pin, Reference
 from bee_py.utils.http import http
@@ -6,7 +8,7 @@ from bee_py.utils.logging import logger
 PINNING_ENDPOINT = "pins"
 
 
-def pin(request_options: BeeRequestOptions, reference: Reference) -> None:
+def pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Reference, str]) -> None:
     """
     Pins a piece of data with the given reference.
 
@@ -25,10 +27,11 @@ def pin(request_options: BeeRequestOptions, reference: Reference) -> None:
         logger.info(response.json())
         if response.raise_for_status():
             if response.raise_for_status():
-                logger.error(response.raise_for_status())
+                logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
 
-def unpin(request_options: BeeRequestOptions, reference: Reference) -> None:
+def unpin(request_options: Union[BeeRequestOptions, dict], reference: Union[Reference, str]) -> None:
     """
     Unpins a piece of data with the given reference.
 
@@ -46,10 +49,11 @@ def unpin(request_options: BeeRequestOptions, reference: Reference) -> None:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
 
-def get_pin(request_options: BeeRequestOptions, reference: Reference) -> Pin:
+def get_pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Reference, str]) -> Pin:
     """
     Retrieves the pin status for a specific address.
 
@@ -73,12 +77,13 @@ def get_pin(request_options: BeeRequestOptions, reference: Reference) -> Pin:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     return Pin.model_validate(response.json())
 
 
-def get_all_pins(request_options: BeeRequestOptions) -> GetAllPinResponse:
+def get_all_pins(request_options: Union[BeeRequestOptions, dict]) -> GetAllPinResponse:
     """
     Retrieves a list of all pinned references.
 
@@ -95,7 +100,8 @@ def get_all_pins(request_options: BeeRequestOptions) -> GetAllPinResponse:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     response_data = response.json()
     # print("Response data--->", response_data)

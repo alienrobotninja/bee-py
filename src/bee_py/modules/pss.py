@@ -49,7 +49,8 @@ def send(
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
 
 async def subscribe(url: str, topic: str) -> websockets.WebSocketClientProtocol:

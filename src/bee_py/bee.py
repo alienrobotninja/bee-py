@@ -2,6 +2,7 @@ import os
 from typing import Optional, Union
 
 import websockets
+from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from eth_pydantic_types import HexBytes
 from requests import HTTPError
@@ -160,21 +161,21 @@ class Bee:
         """
         if options:
             if isinstance(options, (JsonFeedOptions, BeeRequestOptions, AllTagsOptions)):
-                options = options.model_dump()
+                options = options.model_dump()  # type: ignore
             if isinstance(
                 self.request_options,
                 (JsonFeedOptions, BeeRequestOptions, AllTagsOptions),
             ):
-                self.request_options = self.request_options.model_dump()
-            return {**self.request_options, **options}
+                self.request_options = self.request_options.model_dump()  # type: ignore
+            return {**self.request_options, **options}  # type: ignore
         else:
             return self.request_options
 
     def __make_feed_reader(
         self,
         feed_type: Union[FeedType, str],
-        topic: Union[bytes, str],
-        owner: Union[AddressType, str],
+        topic: Union[bytes, str, Topic],
+        owner: Union[AddressType, str, bytes],
         options: Optional[BeeRequestOptions] = None,
     ) -> FeedReader:
         """
@@ -194,7 +195,10 @@ class Bee:
         assert_request_options(options)
 
         canonical_topic = make_topic(topic)
-        canonical_owner = make_hex_eth_address(owner).hex()
+        canonical_owner = make_hex_eth_address(owner)
+
+        if isinstance(canonical_owner, HexBytes):
+            canonical_owner = canonical_owner.hex()
 
         return _make_feed_reader(
             self.__get_request_options_for_call(options),
@@ -203,7 +207,7 @@ class Bee:
             canonical_owner,
         )
 
-    def __resolve_signer(self, signer: Optional[Union[Signer, bytes, str]] = None) -> Signer:
+    def __resolve_signer(self, signer: Optional[Union[Signer, bytes, str]] = None) -> Union[Signer, AccountAPI]:
         """
         Resolves the signer to be used.
 
@@ -226,7 +230,7 @@ class Bee:
             msg = "Signer Error"
             raise BeeArgumentError(msg, signer)
 
-    def make_feed_topic(self, topic: str) -> Topic:
+    def make_feed_topic(self, topic: Union[Topic, bytes, str]) -> Topic:
         """
         Make a new feed topic from a string
 
@@ -238,6 +242,10 @@ class Bee:
         Returns:
             hashed topic data
         """
+        if isinstance(topic, Topic):
+            topic = topic.value
+        if isinstance(topic, bytes):
+            topic = topic.decode()
 
         return make_topic_from_string(topic)
 
@@ -470,7 +478,7 @@ class Bee:
         self,
         reference: ReferenceCidOrENS,
         path: str = "",
-        options: BeeRequestOptions = None,
+        options: Optional[Union[BeeRequestOptions, dict]] = None,
     ) -> FileData:
         """
         Downloads a single file as a readable stream.
@@ -492,7 +500,7 @@ class Bee:
         assert_reference_or_ens(reference)
         reference = make_reference_or_ens(reference, ReferenceType.MANIFEST)
 
-        return bzz_api.download_file_readable(self.__get_request_options_for_call(options), reference, path)
+        return bzz_api.download_file_readable(self.__get_request_options_for_call(options), reference, path)  # type: ignore # noqa: 501
 
     def upload_files(
         self,
@@ -526,7 +534,7 @@ class Bee:
             assert_collection_upload_options(options)
             assert_file_upload_options(options)
 
-        data = make_collection_from_file_list(file_list)
+        data = make_collection_from_file_list(file_list)  # type: ignore
 
         upload_result = bzz_api.upload_collection(
             self.__get_request_options_for_call(request_options),
@@ -636,7 +644,7 @@ class Bee:
 
         return tag_api.create_tag(self.__get_request_options_for_call(options))
 
-    def get_all_tags(self, options: Optional[AllTagsOptions] = None) -> list[Tag]:
+    def get_all_tags(self, options: Optional[Union[AllTagsOptions, dict]] = None) -> list[Tag]:
         """
         Fetches all tags from the Bee node.
 
@@ -663,17 +671,17 @@ class Bee:
         if isinstance(options, dict):
             options = AllTagsOptions.model_validate(options, strict=True)
 
-        if options.offset and options.limit:
+        if options.offset and options.limit:  # type: ignore
             return tag_api.get_all_tags(
-                self.__get_request_options_for_call(options),
-                options.offset,
-                options.limit,
+                self.__get_request_options_for_call(options),  # type: ignore
+                options.offset,  # type: ignore
+                options.limit,  # type: ignore
             )
-        elif options.offset:
-            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset)
-        elif options.limit:
-            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.limit)
-        return tag_api.get_all_tags(self.__get_request_options_for_call(options))
+        elif options.offset:  # type: ignore
+            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.offset)  # type: ignore
+        elif options.limit:  # type: ignore
+            return tag_api.get_all_tags(self.__get_request_options_for_call(options), options.limit)  # type: ignore
+        return tag_api.get_all_tags(self.__get_request_options_for_call(options))  # type: ignore
 
     def retrieve_tag(self, tag_uid: Union[int, Tag], options: Optional[BeeRequestOptions] = None):
         """
@@ -762,7 +770,7 @@ class Bee:
 
         tag_uid = make_tag_uid(uid)
 
-        return tag_api.update_tag(self.__get_request_options_for_call(request_options), tag_uid)
+        return tag_api.update_tag(self.__get_request_options_for_call(request_options), tag_uid, reference)
 
     def pin(
         self,
@@ -972,6 +980,7 @@ class Bee:
             raise BeeError(msg)
 
         return are_all_sequential_feeds_update_retrievable(
+            self,
             canonical_owner,
             canonical_topic,
             index,
@@ -1205,7 +1214,10 @@ class Bee:
         assert_batch_id(postage_batch_id)
 
         canonical_topic = make_topic(topic)
-        canonical_owner = make_hex_eth_address(owner).hex()
+        canonical_owner = make_hex_eth_address(owner)
+
+        if isinstance(canonical_owner, HexBytes):
+            canonical_owner = canonical_owner.hex()
 
         reference = _create_feed_manifest(
             self.__get_request_options_for_call(options),
@@ -1247,13 +1259,15 @@ class Bee:
         assert_request_options(options)
 
         canonical_topic = make_topic(topic).value
-        canonical_signer = self.__resolve_signer(signer).address
+        canonical_signer = self.__resolve_signer(signer)
+
+        if isinstance(canonical_topic, Signer):
+            canonical_signer = Signer.signers  # type: ignore
+        else:
+            canonical_signer = canonical_signer.address  # type: ignore
 
         return _make_feed_reader(
-            self.__get_request_options_for_call(options),
-            feed_type,
-            canonical_topic,
-            canonical_signer,
+            self.__get_request_options_for_call(options), feed_type, canonical_topic, canonical_signer  # type: ignore
         )
 
     def make_feed_writer(
@@ -1285,6 +1299,9 @@ class Bee:
 
         canonical_topic = make_topic(topic)
         canonical_signer = self.__resolve_signer(signer)
+
+        if isinstance(canonical_topic, Signer):
+            canonical_signer = Signer.signers
 
         return _make_feed_writer(
             self.__get_request_options_for_call(options),
@@ -1339,7 +1356,7 @@ class Bee:
         self,
         topic: Union[Topic, bytes, str],
         options: Optional[Union[JsonFeedOptions, dict]] = None,
-    ) -> dict:
+    ) -> str:
         """
         High-level function that allows you to easily get data from feed.
         Returned data are parsed using json.loads().
@@ -1390,17 +1407,21 @@ class Bee:
             address = make_eth_address(options.address)
         else:
             try:
-                address = self.__resolve_signer(options.signer).address
+                signer = self.__resolve_signer(options.signer)
+                if isinstance(signer, Signer):
+                    address = signer.signer.address
+                else:
+                    address = signer.address
             except BeeError as e:
                 msg = "Either address, signer or default signer has to be specified!"
                 raise BeeError(msg) from e
-        reader = self.make_feed_reader(feed_type, hashed_topic, address, options)
+        reader = self.make_feed_reader(feed_type, hashed_topic, address, options)  # type: ignore
 
         return json_api.get_json_data(self, reader)
 
     def make_soc_reader(
         self,
-        owner_address: [AddressType, str, bytes],
+        owner_address: Union[AddressType, str, bytes],
         options: Optional[BeeRequestOptions] = None,
     ) -> SOCReader:
         """
@@ -1425,7 +1446,12 @@ class Bee:
                 self.__get_request_options_for_call(options), canonical_owner, identifier
             )
 
-        return SOCReader(owner=make_hex_eth_address(canonical_owner).hex(), download=__download)
+        owner = make_hex_eth_address(canonical_owner)
+
+        if isinstance(owner, HexBytes):
+            owner = owner.hex()
+
+        return SOCReader(owner=owner, download=__download)
 
     def make_soc_writer(
         self,
@@ -1449,7 +1475,7 @@ class Bee:
 
         canonical_signer = self.__resolve_signer(signer)
         if isinstance(canonical_signer, Signer):
-            canonical_signer = Signer.singer  # type: ignore[attr-defined]
+            canonical_signer = Signer.signer  # type: ignore
 
         reader = self.make_soc_reader(canonical_signer.address, options)  # type: ignore[attr-defined]
 

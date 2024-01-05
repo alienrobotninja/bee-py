@@ -3,6 +3,7 @@ from typing import Optional, Union
 
 import requests
 from ape.managers.accounts import AccountAPI
+from eth_pydantic_types import HexBytes
 from eth_typing import ChecksumAddress as AddressType
 
 from bee_py.chunk.serialize import serialize_bytes
@@ -23,6 +24,7 @@ from bee_py.types.type import (
     FetchFeedUpdateResponse,
     Index,
     Reference,
+    Signer,
     Topic,
 )
 from bee_py.utils.bytes import bytes_at_offset, make_bytes
@@ -38,10 +40,10 @@ REFERENCE_PAYLOAD_OFFSET = TIMESTAMP_PAYLOAD_SIZE
 
 def find_next_index(
     request_options: BeeRequestOptions,
-    owner: AddressType,
-    topic: Topic,
+    owner: Union[AddressType, str],
+    topic: Union[Topic, str],
     options: Optional[FeedUpdateOptions] = None,
-) -> bytes:
+) -> Union[bytes, str]:
     """
     Fetches the latest feed update and returns the next feed index.
 
@@ -52,7 +54,7 @@ def find_next_index(
         options (Optional[FeedUpdateOptions]): Additional options for fetching the latest feed update.
 
     Returns:
-        bytes: The next feed index.
+        bytes | str: The next feed index.
     """
 
     try:
@@ -68,7 +70,7 @@ def update_feed(
     request_options: BeeRequestOptions,
     signer: AccountAPI,
     topic: Union[Topic, str],
-    reference: Reference,
+    reference: Union[Reference, str, bytes],
     postage_batch_id: BatchId,
     options: Optional[FeedUpdateOptions] = None,
     index: str = "latest",
@@ -81,7 +83,7 @@ def update_feed(
     :param signer: The signer.
     :type signer: Signer
     :param topic: The topic.
-    :type topic: Topic
+    :type topic: Union[Topic,str]
     :param reference: The reference.
     :type reference: BytesReference
     :param postage_batch_id: The postage batch ID.
@@ -93,27 +95,35 @@ def update_feed(
     :return: The reference.
     :rtype: Reference
     """
-    owner_hex = make_hex_eth_address(signer.address).hex()
+    owner_hex = make_hex_eth_address(signer.address)
+    if isinstance(owner_hex, HexBytes):
+        owner_hex = owner_hex.hex()
     if isinstance(topic, Topic):
         topic = topic.value
     next_index = index if index != "latest" else find_next_index(request_options, owner_hex, topic, options)
 
-    identifier = make_feed_identifier(topic, next_index)
+    identifier = make_feed_identifier(topic, next_index)  # type: ignore
     at = options.at if options and options.at else datetime.now(tz=timezone.utc).timestamp()
     timestamp = write_big_endian(int(at))
+    if isinstance(reference, Reference):
+        reference = reference.value
+    if isinstance(reference, str):
+        reference = reference.encode()
     payload_bytes = serialize_bytes(timestamp, reference)
 
-    return upload_single_owner_chunk_data(request_options, signer, postage_batch_id, identifier, payload_bytes, options)
+    return upload_single_owner_chunk_data(request_options, signer, postage_batch_id, identifier, payload_bytes, options)  # type: ignore # noqa: 501
 
 
-def get_feed_update_chunk_reference(owner: AddressType, topic: Topic, index: Index) -> bytes:
+def get_feed_update_chunk_reference(
+    owner: Union[AddressType, bytes, str], topic: Union[Topic, str], index: Index
+) -> bytes:
     """
     Gets the feed update chunk reference.
 
     :param owner: The owner.
     :type owner: EthAddress
     :param topic: The topic.
-    :type topic: Topic
+    :type topic: Union[Topic,str]
     :param index: The index.
     :type index: Index
     :return: The feed update chunk reference.
@@ -127,7 +137,7 @@ def get_feed_update_chunk_reference(owner: AddressType, topic: Topic, index: Ind
 
 
 def download_feed_update(
-    request_options: BeeRequestOptions, owner: AddressType, topic: Topic, index: Index
+    request_options: BeeRequestOptions, owner: Union[AddressType, bytes, str], topic: Union[Topic, str], index: Index
 ) -> FeedUpdate:
     """
     Downloads a feed update.
@@ -137,7 +147,7 @@ def download_feed_update(
     :param owner: The owner.
     :type owner: EthAddress
     :param topic: The topic.
-    :type topic: Topic
+    :type topic: Union[Topic,str]
     :param index: The index.
     :type index: Index
     :return: The feed update.
@@ -157,9 +167,9 @@ def download_feed_update(
 
 def make_feed_reader(
     request_options: BeeRequestOptions,
-    _type: FeedType,
-    topic: Topic,
-    owner: AddressType,
+    _type: Union[FeedType, str],
+    topic: Union[Topic, str],
+    owner: Union[AddressType, str],
     options: Optional[FeedUpdateOptions] = None,
 ) -> FeedReader:
     """
@@ -185,7 +195,7 @@ def make_feed_reader(
             # * if options exists but not options.index then keep other configs from options
             if not options:
                 options = {}
-            return fetch_latest_feed_update(request_options, owner, topic, {**options, "type": _type})
+            return fetch_latest_feed_update(request_options, owner, topic, {**options, "type": _type})  # type: ignore
 
         update = download_feed_update(request_options, owner, topic, options.index)
 
@@ -209,9 +219,9 @@ def make_feed_reader(
 
 def make_feed_writer(
     request_options: BeeRequestOptions,
-    _type: FeedType,
-    topic: Topic,
-    signer: AccountAPI,
+    _type: Union[FeedType, str],
+    topic: Union[Topic, str],
+    signer: Union[AccountAPI, Signer],
 ) -> FeedWriter:
     """
     Creates a new feed writer object.
@@ -225,11 +235,13 @@ def make_feed_writer(
     Returns:
         FeedWriter: The feed writer object.
     """
+    if isinstance(signer, Signer):
+        signer = signer.signer
 
     def __upload(
         postage_batch_id: Union[BatchId, AddressType],
-        reference: Reference,
-        options: Optional[FeedUpdateOptions] = {},  # noqa: B006
+        reference: Union[Reference, str, bytes],
+        options: Optional[FeedUpdateOptions] = {},  # type: ignore  # noqa: B006
     ) -> Reference:
         canonical_reference = make_bytes_reference(reference)
         return update_feed(
@@ -238,7 +250,7 @@ def make_feed_writer(
             topic,
             canonical_reference,
             postage_batch_id,
-            {**options, type: _type},
+            {**options, type: _type},  # type: ignore
         )
 
     return FeedWriter(

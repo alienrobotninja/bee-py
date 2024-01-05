@@ -1,19 +1,22 @@
+from typing import Union
+
 from ape.types import AddressType
+from requests import HTTPError
 
 from bee_py.feed.feed import get_feed_update_chunk_reference
 
 # from bee_py.bee import Bee
 from bee_py.modules.bytes import read_big_endian
-from bee_py.types.type import BeeRequestOptions, Index, Reference, Topic
+from bee_py.types.type import BeeRequestOptions, Index, IndexBytes, Reference, Topic
 from bee_py.utils.hex import bytes_to_hex
 
 
-def make_numeric_index(index: Index):
+def make_numeric_index(index: Union[Index, IndexBytes]):
     """
     Converts an index to a numeric value.
 
     :param index: The index to convert.
-    :type index: Index: Union[int, Epoch, bytes, str]
+    :type index: Union[Index,IndexBytes]: Union[int, Epoch, bytes, str]
     :return: The numeric index.
     :rtype: int
     :raises TypeError: If the type of the index is unknown.
@@ -49,13 +52,15 @@ def is_chunk_retrievable(bee, ref: Reference, request_options: BeeRequestOptions
     try:
         bee.download_chunk(ref, request_options)
         return True
-    except Exception as e:
+    except HTTPError as e:
         if e.response.status_code == 404:  # noqa: PLR2004
             return False
         raise e
 
 
-def get_all_sequence_update_references(owner: AddressType, topic: Topic, index: Index) -> list[Reference]:
+def get_all_sequence_update_references(
+    owner: Union[AddressType, str, bytes], topic: Union[Topic, str], index: Union[Index, IndexBytes]
+) -> list[Reference]:
     """
     Creates a list of references for all sequence updates chunk up to the given index.
 
@@ -70,16 +75,18 @@ def get_all_sequence_update_references(owner: AddressType, topic: Topic, index: 
         list[Reference]
     """
     num_index = make_numeric_index(index)
-    update_references = [bytes_to_hex(get_feed_update_chunk_reference(owner, topic, i)) for i in range(num_index + 1)]
+    update_references = [
+        Reference(value=bytes_to_hex(get_feed_update_chunk_reference(owner, topic, i))) for i in range(num_index + 1)
+    ]
 
     return update_references
 
 
 def are_all_sequential_feeds_update_retrievable(
     bee,
-    owner: AddressType,
-    topic: Topic,
-    index: Index,
+    owner: Union[AddressType, bytes],
+    topic: Union[Topic, str],
+    index: Union[Index, IndexBytes],
     request_options: BeeRequestOptions,
 ) -> bool:
     """

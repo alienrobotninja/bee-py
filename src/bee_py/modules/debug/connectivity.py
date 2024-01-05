@@ -27,7 +27,8 @@ def get_node_addresses(request_options: BeeRequestOptions) -> NodeAddresses:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     addresses_response = response.json()
     return NodeAddresses.model_validate(addresses_response)
@@ -51,7 +52,8 @@ def get_peers(request_options: NodeAddresses) -> Peers:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     peers_response = response.json()
     return Peers.model_validate(peers_response)
@@ -75,7 +77,8 @@ def get_blocklist(request_options: BeeRequestOptions) -> Peers:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     blocklist_response = response.json()
     # * Extract the 'address' field from each peer in the 'peers' list
@@ -99,7 +102,8 @@ def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResp
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     return RemovePeerResponse.model_validate(response.json())
 
@@ -122,7 +126,8 @@ def get_topology(request_options: BeeRequestOptions) -> Topology:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
     if response.raise_for_status():
-        logger.error(response.raise_for_status())
+        logger.error(response.raise_for_status())  # type: ignore
+    return None  # type: ignore
 
     return Topology.model_validate(response.json())
 
@@ -143,6 +148,7 @@ def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     return PingResponse.model_validate(response.json())

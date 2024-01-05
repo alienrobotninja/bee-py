@@ -35,7 +35,7 @@ def make_feed_index_bytes(s: str) -> IndexBytes:
     return hex_to_bytes(hex_string)
 
 
-def make_feed_identifier(topic: Topic, index: Index) -> Union[Identifier, bytes]:
+def make_feed_identifier(topic: Union[Topic, str], index: Index) -> Union[Identifier, bytes]:
     """
     Converts a topic and an index into a feed identifier.
 

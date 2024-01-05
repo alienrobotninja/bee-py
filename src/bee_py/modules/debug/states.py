@@ -28,7 +28,8 @@ def get_reserve_state(request_options: BeeRequestOptions) -> ReserveState:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     reserve_state_response = response.json()
     return ReserveState.model_validate(reserve_state_response)
@@ -51,7 +52,8 @@ def get_chain_state(request_options: BeeRequestOptions) -> ChainState:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     chain_state_response = response.json()
     return ChainState.model_validate(chain_state_response)
@@ -98,8 +100,9 @@ def get_wallet_balance(
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
-            return None
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
+        return None
 
     wallet_balance_response = response.json()
 

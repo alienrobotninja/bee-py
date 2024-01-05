@@ -1,7 +1,6 @@
 from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
-from eth_account import Account
 from eth_typing import ChecksumAddress as AddressType
 from pydantic import BaseModel, Field
 
@@ -18,7 +17,16 @@ from bee_py.chunk.signer import recover_address, sign
 from bee_py.chunk.span import SPAN_SIZE
 from bee_py.modules.chunk import download
 from bee_py.modules.soc import upload
-from bee_py.types.type import BatchId, BeeRequestOptions, Data, Reference, Signer, UploadOptions, assert_address
+from bee_py.types.type import (
+    BatchId,
+    BeeRequestOptions,
+    Data,
+    FeedUpdateOptions,
+    Reference,
+    Signer,
+    UploadOptions,
+    assert_address,
+)
 from bee_py.utils.bytes import bytes_at_offset, bytes_equal, flex_bytes_at_offset
 from bee_py.utils.error import BeeError
 from bee_py.utils.hash import keccak256_hash
@@ -93,7 +101,9 @@ def recover_chunk_owner(data: bytes) -> AddressType:
     return owner_address
 
 
-def make_single_owner_chunk_from_data(data: Union[Data, bytes], address: AddressType) -> SingleOwnerChunk:
+def make_single_owner_chunk_from_data(
+    data: Union[Data, bytes], address: Union[AddressType, bytes, str]
+) -> SingleOwnerChunk:
     """
     Verifies if the data is a valid single owner chunk.
 
@@ -142,7 +152,7 @@ def make_soc_address(identifier: Union[Identifier, bytes], address: Union[Addres
 def make_single_owner_chunk(
     chunk: Chunk,
     identifier: Union[Identifier, bytearray],
-    signer: Union[AccountAPI, Account],
+    signer: Union[AccountAPI, Signer],
 ) -> SingleOwnerChunk:
     """
     Creates a single owner chunk object.
@@ -150,7 +160,7 @@ def make_single_owner_chunk(
     Args:
         chunk: A chunk object used for the span and payload.
         identifier|bytearray: The identifier of the chunk.
-        signer: The singer interface for signing the chunk.
+        signer: The signer interface for signing the chunk.
             signer can be a ape account API or a eth_account object.
 
     Returns:
@@ -165,6 +175,8 @@ def make_single_owner_chunk(
     assert_valid_chunk_data(chunk.data, chunk_address)
 
     digest = keccak256_hash(identifier, chunk_address)
+    if isinstance(signer, Signer):
+        signer = signer.signer
 
     signature = sign(data=digest, account=signer)
 
@@ -224,18 +236,18 @@ def upload_single_owner_chunk(
 
 def upload_single_owner_chunk_data(
     request_options: BeeRequestOptions,
-    signer: Signer,
+    signer: Union[Signer, AccountAPI],
     postage_batch_id: BatchId,
-    identifier: Identifier,
+    identifier: Union[Identifier, bytes],
     data: bytes,
-    options: Optional[dict] = None,
+    options: Optional[Union[FeedUpdateOptions, BeeRequestOptions, dict]] = None,
 ) -> Reference:
     """
     Helper function to create and upload SOC.
 
     Args:
       request_options: Ky Options for making requests.
-      signer: The singer interface for signing the chunk.
+      signer: The signer interface for signing the chunk.
       postage_batch_id: Postage BatchId that will be assigned to uploaded data.
       identifier: The identifier of the chunk.
       data: The chunk data.
@@ -253,7 +265,7 @@ def upload_single_owner_chunk_data(
 
 def download_single_owner_chunk(
     request_options: BeeRequestOptions,
-    owner_address: AddressType,
+    owner_address: Union[AddressType, bytes],
     identifier: Identifier,
 ) -> SingleOwnerChunk:
     """Downloads a Single Owner Chunk (SOC) from the Bee network.

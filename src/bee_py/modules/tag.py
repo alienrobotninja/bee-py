@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from bee_py.types.type import BeeRequestOptions, Reference, Tag
 from bee_py.utils.http import http
@@ -7,7 +7,7 @@ from bee_py.utils.logging import logger
 TAGS_ENDPOINT = "tags"
 
 
-def create_tag(request_options: BeeRequestOptions, address: Optional[str] = None) -> Tag:
+def create_tag(request_options: Union[BeeRequestOptions, dict], address: Optional[str] = None) -> Tag:
     """
     Creates a new tag in the Bee node.
 
@@ -33,13 +33,14 @@ def create_tag(request_options: BeeRequestOptions, address: Optional[str] = None
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     tag_response = response.json()
     return Tag.model_validate(tag_response)
 
 
-def retrieve_tag(request_options: BeeRequestOptions, uid: int) -> Tag:
+def retrieve_tag(request_options: Union[BeeRequestOptions, dict], uid: int) -> Tag:
     """
     Retrieves tag information from Bee node
 
@@ -59,13 +60,14 @@ def retrieve_tag(request_options: BeeRequestOptions, uid: int) -> Tag:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     tag_response = response.json()
     return Tag.model_validate(tag_response)
 
 
-def get_all_tags(request_options: BeeRequestOptions, offset: int = 0, limit: int = 10) -> list[Tag]:
+def get_all_tags(request_options: Union[BeeRequestOptions, dict], offset: int = 0, limit: int = 10) -> list[Tag]:
     """
     Fetches a limited list of tags from the Bee node.
 
@@ -97,7 +99,8 @@ def get_all_tags(request_options: BeeRequestOptions, offset: int = 0, limit: int
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     tag_response = response.json()["tags"]
 
@@ -126,10 +129,11 @@ def delete_tag(request_options: BeeRequestOptions, uid: int) -> None:
     if response.status_code != 204:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
 
-def update_tag(request_options: BeeRequestOptions, uid: int, reference: Reference) -> None:
+def update_tag(request_options: Union[BeeRequestOptions, dict], uid: int, reference: Union[Reference, str]) -> None:
     """
     Updates a tag on the Bee node.
 
@@ -152,4 +156,5 @@ def update_tag(request_options: BeeRequestOptions, uid: int, reference: Referenc
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore

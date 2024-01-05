@@ -1,5 +1,6 @@
 from typing import Any, Generic, TypeVar
 
+from pydantic import BaseModel
 from typing_extensions import TypeGuard
 
 from bee_py.types.type import Data, Length
@@ -8,7 +9,7 @@ Min = TypeVar("Min", bound=int)
 Max = TypeVar("Max", bound=int)
 
 
-class FlexBytes(Generic[Min, Max]):
+class FlexBytes(BaseModel, Generic[Min, Max]):
     """Helper type for dealing with flexible sized byte arrays.
 
     The actual min and and max values are not stored in runtime, they
@@ -24,27 +25,12 @@ class FlexBytes(Generic[Min, Max]):
     ValueError: If the length of the byte array is not within the specified range.
     """
 
-    __min__: Min
-    __max__: Max
+    data: bytes
+    minimum: Min
+    maximum: Max
 
-    def __init__(self, data: bytes, minimum: Min, maximum: Max):
-        if not (min <= len(data) <= max):
-            msg = f"Byte array length must be between {min} and {max}."
-            raise ValueError(msg)
-        super().__init__(data)
-        self.__min__ = minimum
-        self.__max__ = maximum
-
-    def __repr__(self) -> str:
-        return f"FlexBytes({bytes(self)}, {self.__min__}, {self.__max__})"
-
-    @property
-    def minimum(self) -> Min:
-        return self.__min__
-
-    @property
-    def maximum(self) -> Max:
-        return self.__max__
+    class Config:
+        validate_assignment = True
 
 
 def is_valid_flex_bytes(flex_bytes: FlexBytes) -> bool:

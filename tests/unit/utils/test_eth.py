@@ -120,9 +120,9 @@ def test_eth_to_swarm_address(eth_address, network_id, nonce, expected):
 
 
 def test_make_ethereum_wallet_signer(alice):
-    singer = make_ethereum_wallet_signer(account=alice, address=alice.address)
+    signer = make_ethereum_wallet_signer(account=alice, address=alice.address)
     message = "Hi from Bee"
-    signed_msg = singer.sign(message)
+    signed_msg = signer.sign(message)
 
     assert isinstance(signed_msg, HexBytes)
 

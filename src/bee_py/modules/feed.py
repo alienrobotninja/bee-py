@@ -20,10 +20,10 @@ FEED_ENDPOINT = "feeds"
 
 def create_feed_manifest(
     request_options: BeeRequestOptions,
-    owner: AddressType,
+    owner: Union[AddressType, str],
     topic: Union[Topic, str],
     postage_batch_id: str,
-    options: Optional[CreateFeedOptions] = None,
+    options: Optional[Union[CreateFeedOptions, dict]] = None,
 ) -> Reference:
     """
     Create an initial feed root manifest.
@@ -84,7 +84,7 @@ def read_feed_update_headers(headers: dict[str, str]) -> FeedUpdateHeaders:
 
 def fetch_latest_feed_update(
     request_options: BeeRequestOptions,
-    owner: AddressType,
+    owner: Union[AddressType, str],
     topic: Union[Topic, str],
     options: Optional[FeedUpdateOptions] = None,
 ) -> FetchFeedUpdateResponse:

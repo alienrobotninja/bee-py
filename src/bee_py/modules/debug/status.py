@@ -37,7 +37,8 @@ def get_debug_status(request_options: BeeRequestOptions) -> DebugStatus:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     debug_status_response = response.json()
     return DebugStatus.model_validate(debug_status_response)
@@ -60,7 +61,8 @@ def get_health(request_options: BeeRequestOptions) -> Health:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     health_response = response.json()
     return Health.model_validate(health_response)
@@ -103,7 +105,8 @@ def get_node_info(request_options: BeeRequestOptions) -> NodeInfo:
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
         if response.raise_for_status():
-            logger.error(response.raise_for_status())
+            logger.error(response.raise_for_status())  # type: ignore
+        return None  # type: ignore
 
     node_info_response = response.json()
     return NodeInfo.model_validate(node_info_response)
