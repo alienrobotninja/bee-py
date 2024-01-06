@@ -122,8 +122,9 @@ jobs:
      - name: Run Bee Factory
        run: |
          bee-factory start --detach 1.15.0-rc2
-     - name: Setup tmate session
-       uses: mxschmitt/action-tmate@v3
+    #* Keeping this for future debugging purposes 
+    #  - name: Setup tmate session
+    #    uses: mxschmitt/action-tmate@v3
      - name: Run Tests
        run: pdm run pytest --cache-clear
        
