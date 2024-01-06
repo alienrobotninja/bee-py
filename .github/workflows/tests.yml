@@ -37,9 +37,9 @@ jobs:
 
      - name: Run Black
        run: pdm run black --check .
-
-     - name: Run isort
-       run: pdm run isort --check-only .
+    # Ruff should be enough
+    #  - name: Run isort
+    #    run: pdm run isort --check-only .
 
      - name: Run flake8
        run: pdm run flake8 .
