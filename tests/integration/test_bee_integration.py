@@ -187,7 +187,9 @@ def test_upload_collection_CIDs_support(bee_class, get_debug_postage):  # noqa: 
 
 
 def test_list_tags(bee_class):
+    bee_class.create_tag()
     original_tags = bee_class.get_all_tags({"limit": 1000})
+    bee_class.create_tag()
     bee_class.create_tag()
     updated_tags = bee_class.get_all_tags({"limit": 1000})
 
@@ -202,10 +204,16 @@ def test_retreive_previously_created_empty_tags(bee_class):
 
 
 def test_delete_tags(bee_class):
+    # *  Create some tags
+    bee_class.create_tag()
+    bee_class.create_tag()
+    bee_class.create_tag()
     created_tag = bee_class.create_tag()
     original_tags = bee_class.get_all_tags({"limit": 1000})
 
     bee_class.delete_tag(created_tag)
+
+    print("--->", original_tags)
 
     try:
         assert created_tag.uid != original_tags[0].uid

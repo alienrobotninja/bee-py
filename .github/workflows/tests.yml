@@ -124,7 +124,7 @@ jobs:
          bee-factory start --detach 1.15.0-rc2
 
      - name: Run Tests
-       run: pdm run pytest --cache-clear
+       run: pdm run pytest --cache-clear -rb
        
 # Don't need fuzzing I guess
 #  fuzzing:
