@@ -97,9 +97,9 @@ This will allow a chance to talk it over with the owners and validate your appro
 <!-- github-only -->
 
 [code of conduct]: CODE_OF_CONDUCT.md
-[documentation]: https://bee-py.readthedocs.io/
+[documentation]: https://beePy.readthedocs.io/
 [gpl 3.0 license]: https://opensource.org/licenses/GPL-3.0
-[issue tracker]: https://github.com/alienrobotninja/bee-py/issues
-[pull request]: https://github.com/alienrobotninja/bee-py/pulls
+[issue tracker]: https://github.com/alienrobotninja/beePy/issues
+[pull request]: https://github.com/alienrobotninja/beePy/pulls
 [pytest]: https://pytest.readthedocs.io/
-[source code]: https://github.com/alienrobotninja/bee-py
+[source code]: https://github.com/alienrobotninja/beePy

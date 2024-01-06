@@ -2,6 +2,6 @@
 
 ```{eval-rst}
 .. click:: bee_py.__main__:main
-    :prog: bee-py
+    :prog: beePy
     :nested: full
 ```

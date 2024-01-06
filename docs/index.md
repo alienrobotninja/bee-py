@@ -15,5 +15,5 @@ reference
 contributing
 Code of Conduct <codeofconduct>
 License <license>
-Changelog <https://github.com/aviksaikat/bee-py/releases>
+Changelog <https://github.com/aviksaikat/beePy/releases>
 ```

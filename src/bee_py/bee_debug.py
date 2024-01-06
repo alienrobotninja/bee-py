@@ -637,7 +637,7 @@ class BeeDebug:
         return status.get_node_info(self.__get_request_options_for_call(options))  # type: ignore
 
     def is_supported_exact_version(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> bool:
-        """**Deprecated:** Checks if the connected Bee node version is supported by bee-py.
+        """**Deprecated:** Checks if the connected Bee node version is supported by beePy.
 
         Use `BeeDebug.isSupportedExactVersion()` instead for more accurate version checking.
 

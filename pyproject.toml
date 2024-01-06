@@ -1,6 +1,6 @@
 # Project specifications
 [project]
-name = "bee-py"
+name = "beePy"
 version = "0.1.0"
 description = "Python client library for connecting to Bee decentralised storage"
 authors = [
@@ -31,10 +31,10 @@ classifiers = [
 ]
 
 [project.urls]
-homepage = "https://github.com/alienrobotninja/bee-py"
-repository = "https://github.com/alienrobotninja/bee-py"
-Issues = "https://github.com/alienrobotninja/bee-py/issues"
-Changelog = "https://github.com/alienrobotninja/bee-py/releases"
+homepage = "https://github.com/alienrobotninja/beePy"
+repository = "https://github.com/alienrobotninja/beePy"
+Issues = "https://github.com/alienrobotninja/beePy/issues"
+Changelog = "https://github.com/alienrobotninja/beePy/releases"
 
 # build system to use
 [build-system]
@@ -178,8 +178,8 @@ parallel = true
 omit = ["src/bee_py/__about__.py"]
 
 [tool.coverage.paths]
-bee_py = ["src/bee_py", "*/bee-py/src/bee_py"]
-tests = ["tests", "*/bee-py/tests"]
+bee_py = ["src/bee_py", "*/beePy/src/bee_py"]
+tests = ["tests", "*/beePy/tests"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
