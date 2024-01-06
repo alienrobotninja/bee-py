@@ -213,7 +213,6 @@ def test_delete_tags(bee_class):
 
     bee_class.delete_tag(created_tag)
 
-
     try:
         assert created_tag.uid != original_tags[0].uid
     except AttributeError:
