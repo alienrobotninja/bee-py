@@ -2,21 +2,21 @@
 
 <div align="center">
 
-| Feature       | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Technology    | [![Python](https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white)](https://www.python.org/) [![Ape](https://img.shields.io/badge/Built%20with-Ape-blue.svg)](https://github.com/ApeWorX/ape) [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white)](https://github.com/features/actions) [![Pytest](https://img.shields.io/badge/Pytest-0A9EDC.svg?style=flat&logo=Pytest&logoColor=white)](https://github.com/alienrobotninja/beePy/actions/workflows/tests.yml/badge.svg) [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm-project.org)                       |
-| Linting       | [![Code style: black](https://img.shields.io/badge/Code%20Style-black-000000.svg)](https://github.com/psf/black) ![Style Guide](https://img.shields.io/badge/Style%20Guide-Flake8-blue) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)                                                                                                                                                                                                                                                                                                                                                                      |
-| Type Checking | [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| CI/CD         | [![Tests](https://github.com/alienrobotninja/beePy/actions/workflows/tests.yml/badge.svg)](https://github.com/alienrobotninja/beePy/actions/workflows/tests.yml) [![Labeler](https://github.com/alienrobotninja/beePy/actions/workflows/labeler.yml/badge.svg)](https://github.com/alienrobotninja/beePy/actions/workflows/labeler.yml) [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)                                                                                                                                                                                                        |
-| Docs          | [![Read the Docs](https://img.shields.io/readthedocs/beePy/latest.svg?label=Read%20the%20Docs)](https://beePy.readthedocs.io/)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Package       | [![PyPI - Version](https://img.shields.io/pypi/v/beePy.svg)](https://pypi.org/project/beePy/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/beePy)](https://pypi.org/project/beePy/) [![PyPI - License](https://img.shields.io/pypi/l/beePy)](https://pypi.org/project/beePy/)                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Meta          | [![GitHub license](https://img.shields.io/github/license/alienrobotninja/beePy?style=flat&color=1573D5)](https://github.com/alienrobotninja/beePy/blob/main/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/alienrobotninja/beePy?style=flat&color=1573D5)](https://github.com/alienrobotninja/beePy/commits/main) [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/alienrobotninja/beePy?style=flat&color=1573D5)](https://github.com/alienrobotninja/beePy/graphs/commit-activity) [![GitHub top language](https://img.shields.io/github/languages/top/alienrobotninja/beePy?style=flat&color=1573D5)](https://github.com/alienrobotninja/beePy) |
+| Feature       | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Technology    | [![Python](https://img.shields.io/badge/Python-3776AB.svg?style=flat&logo=Python&logoColor=white)](https://www.python.org/) [![Ape](https://img.shields.io/badge/Built%20with-Ape-blue.svg)](https://github.com/ApeWorX/ape) [![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-2088FF.svg?style=flat&logo=GitHub-Actions&logoColor=white)](https://github.com/features/actions) [![Pytest](https://img.shields.io/badge/Pytest-0A9EDC.svg?style=flat&logo=Pytest&logoColor=white)](https://github.com/alienrobotninja/bee-py/actions/workflows/tests.yml/badge.svg) [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm-project.org)                              |
+| Linting       | [![Code style: black](https://img.shields.io/badge/Code%20Style-black-000000.svg)](https://github.com/psf/black) ![Style Guide](https://img.shields.io/badge/Style%20Guide-Flake8-blue) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)                                                                                                                                                                                                                                                                                                                                                                              |
+| Type Checking | [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff) [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| CI/CD         | [![Tests](https://github.com/alienrobotninja/bee-py/actions/workflows/tests.yml/badge.svg)](https://github.com/alienrobotninja/bee-py/actions/workflows/tests.yml) [![Labeler](https://github.com/alienrobotninja/bee-py/actions/workflows/labeler.yml/badge.svg)](https://github.com/alienrobotninja/bee-py/actions/workflows/labeler.yml) [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)                                                                                                                                                                                                            |
+| Docs          | [![Read the Docs](https://img.shields.io/readthedocs/bee-py/latest.svg?label=Read%20the%20Docs)](https://bee-py.readthedocs.io/)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Package       | [![PyPI - Version](https://img.shields.io/pypi/v/bee-py.svg)](https://pypi.org/project/bee-Py/) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/bee-Py)](https://pypi.org/project/bee-py/) [![PyPI - License](https://img.shields.io/pypi/l/bee-Py)](https://pypi.org/project/bee-py/)                                                                                                                                                                                                                                                                                                                                                                                                        |
+| Meta          | [![GitHub license](https://img.shields.io/github/license/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py/blob/main/LICENSE) [![GitHub last commit](https://img.shields.io/github/last-commit/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py/commits/main) [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py/graphs/commit-activity) [![GitHub top language](https://img.shields.io/github/languages/top/alienrobotninja/bee-py?style=flat&color=1573D5)](https://github.com/alienrobotninja/bee-py) |
 
 </div>
 
 ## 📖 Table of Contents
 
-- [🐝 Bee Py](#-beePy)
+- [🐝 Bee Py](#-bee-py)
   - [📖 Table of Contents](#-table-of-contents)
   - [🌐 Overview](#-overview)
   - [✨ Features](#-features)
@@ -53,10 +53,10 @@ This is the library for connecting to Bee decentralised storage using python.
 
 ## 🛠️ Installation
 
-You can install `beePy` via \[pip\] from \[PyPI\]:
+You can install `bee-py` via \[pip\] from \[PyPI\]:
 
 ```sh
-pip install beePy
+pip install bee-py
 ```
 
 ## 🚀 Usage
@@ -134,8 +134,8 @@ print(batch_id)
 This project is developed using [pdm](https://pdm-project.org/). So the quickest way to get started is using `pdm`. Install pdm using `pip`, `pipx` etc & then follow the following steps
 
 ```sh
-git clone https://github.com/alienrobotninja/beePy
-cd beePy
+git clone https://github.com/alienrobotninja/bee-py
+cd bee-py
 # To install all the dev & lint dependencies 
 pdm install -G:all
 ```
@@ -157,7 +157,7 @@ _Bee Py_ is free and open source software.
 There are some know issues like:
 
 - Some tests are perfomed on older versions of bee.
-- Some tests are stuck for hours when using the latest Bee API(not `beePy` issue).
+- Some tests are stuck for hours when using the latest Bee API(not `bee-py` issue).
 - Some tests are skipped because of outdated libraries used by various `ethersphere` projects.
 
 If you encounter any problems,
@@ -173,5 +173,5 @@ Developed by [@Aviksaikat](https://github.com/aviksaikat)
 
 <!-- github-only -->
 
-[contributor guide]: https://github.com/alienrobotninja/beePy/blob/main/CONTRIBUTING.md
-[license]: https://github.com/alienrobotninja/beePy/blob/main/LICENSE
+[contributor guide]: https://github.com/alienrobotninja/bee-py/blob/main/CONTRIBUTING.md
+[license]: https://github.com/alienrobotninja/bee-py/blob/main/LICENSE
