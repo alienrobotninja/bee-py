@@ -209,7 +209,7 @@ def test_delete_tags(bee_class):
 
     try:
         assert created_tag.uid != original_tags[0].uid
-    except:  # noqa: E722
+    except AttributeError:
         assert created_tag.tag_uid != original_tags[0].tag_uid
 
 
