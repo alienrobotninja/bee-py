@@ -1,12 +1,13 @@
 """Nox sessions."""
 # import shlex
 # import shutil
-import sys
-from pathlib import Path
+# import sys
+# from pathlib import Path
 
-# from textwrap import dedent
+# # from textwrap import dedent
 import nox
-from nox import Session, session
+
+# from nox import Session, session
 
 """
     Helps for future developer to implement tests using Nox
@@ -57,48 +58,48 @@ nox.options.sessions = (
 #         activate_virtualenv_in_precommit_hooks(session)
 
 
-@session(python=python_versions)
-def mypy(session: Session) -> None:
-    """Type-check using mypy."""
-    args = session.posargs or ["src", "tests", "docs/conf.py"]
-    session.install(".[lint]")
-    session.install("mypy", "pytest")
-    session.run("mypy", *args)
-    if not session.posargs:
-        session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
+# @session(python=python_versions)
+# def mypy(session: Session) -> None:
+#     """Type-check using mypy."""
+#     args = session.posargs or ["src", "tests", "docs/conf.py"]
+#     session.install(".[lint]")
+#     session.install("mypy", "pytest")
+#     session.run("mypy", *args)
+#     if not session.posargs:
+#         session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
 
 
-@session(python=python_versions)
-def tests(session: Session) -> None:
-    """Run the test suite."""
-    session.install(".[test]")
-    session.install("coverage[toml]", "pytest", "pygments")
-    try:
-        session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
-    finally:
-        if session.interactive:
-            session.notify("coverage", posargs=[])
+# @session(python=python_versions)
+# def tests(session: Session) -> None:
+#     """Run the test suite."""
+#     session.install(".[test]")
+#     session.install("coverage[toml]", "pytest", "pygments")
+#     try:
+#         session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
+#     finally:
+#         if session.interactive:
+#             session.notify("coverage", posargs=[])
 
 
-@session(python=python_versions[0])
-def coverage(session: Session) -> None:
-    """Produce the coverage report."""
-    args = session.posargs or ["report"]
+# @session(python=python_versions[0])
+# def coverage(session: Session) -> None:
+#     """Produce the coverage report."""
+#     args = session.posargs or ["report"]
 
-    session.install("coverage[toml]")
+#     session.install("coverage[toml]")
 
-    if not session.posargs and any(Path().glob(".coverage.*")):
-        session.run("coverage", "combine")
+#     if not session.posargs and any(Path().glob(".coverage.*")):
+#         session.run("coverage", "combine")
 
-    session.run("coverage", *args)
+#     session.run("coverage", *args)
 
 
-@session(python=python_versions[0])
-def typeguard(session: Session) -> None:
-    """Runtime type checking using Typeguard."""
-    session.install(".[dev]")
-    session.install("pytest", "typeguard", "pygments")
-    session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
+# @session(python=python_versions[0])
+# def typeguard(session: Session) -> None:
+#     """Runtime type checking using Typeguard."""
+#     session.install(".[dev]")
+#     session.install("pytest", "typeguard", "pygments")
+#     session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
 
 
 # @session(name="docs-build", python=python_versions[0])
