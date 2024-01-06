@@ -1,6 +1,8 @@
 import struct
 from typing import Optional, Union
 
+from requests import Response
+
 from bee_py.types.type import BatchId, BeeRequestOptions, Data, Reference, ReferenceOrENS, UploadOptions, UploadResult
 from bee_py.utils.bytes import wrap_bytes_with_helpers
 from bee_py.utils.headers import extract_upload_headers
@@ -41,7 +43,7 @@ def upload(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -73,14 +75,14 @@ def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
     return wrap_bytes_with_helpers(response.content)
 
 
-def download_readable(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> bytes:
+def download_readable(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Response:
     """
     Downloads data from the Bee node as a readable stream.
 
@@ -97,7 +99,7 @@ def download_readable(request_options: BeeRequestOptions, _hash: ReferenceOrENS)
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 

@@ -5,7 +5,7 @@ import websockets
 from ape.managers.accounts import AccountAPI
 from ape.types import AddressType
 from eth_pydantic_types import HexBytes
-from requests import HTTPError
+from requests import HTTPError, Response
 from swarm_cid import ReferenceType
 
 from bee_py.chunk.soc import Identifier, download_single_owner_chunk, upload_single_owner_chunk_data
@@ -312,7 +312,9 @@ class Bee:
 
         return bytes_api.download(self.__get_request_options_for_call(options), reference)
 
-    def download_readable_data(self, reference: ReferenceOrENS, options: Optional[BeeRequestOptions] = None) -> bytes:
+    def download_readable_data(
+        self, reference: ReferenceOrENS, options: Optional[BeeRequestOptions] = None
+    ) -> Response:
         """
         Downloads data as a Readable stream.
 
@@ -1356,7 +1358,7 @@ class Bee:
         self,
         topic: Union[Topic, bytes, str],
         options: Optional[Union[JsonFeedOptions, dict]] = None,
-    ) -> str:
+    ) -> dict:
         """
         High-level function that allows you to easily get data from feed.
         Returned data are parsed using json.loads().

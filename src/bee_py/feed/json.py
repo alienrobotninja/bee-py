@@ -31,7 +31,7 @@ def serialize_json(data: dict) -> bytes:
         raise
 
 
-def get_json_data(bee, reader: FeedReader) -> str:
+def get_json_data(bee, reader: FeedReader) -> dict:
     """
     Get JSON data from a feed.
 

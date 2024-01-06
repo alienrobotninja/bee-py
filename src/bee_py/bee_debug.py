@@ -1,3 +1,4 @@
+from time import sleep
 from typing import Optional, Union
 
 from ape.types import AddressType
@@ -121,7 +122,7 @@ class BeeDebug:
     def __get_request_options_for_call(
         self,
         options: Optional[Union[BeeRequestOptions, JsonFeedOptions]] = None,
-    ) -> BeeRequestOptions:
+    ) -> Union[BeeRequestOptions, dict]:
         """
         Returns the request options for a call, merging the default options with the provided options.
 
@@ -133,13 +134,13 @@ class BeeDebug:
         """
         if options:
             if isinstance(options, (JsonFeedOptions, BeeRequestOptions, AllTagsOptions)):
-                options = options.model_dump()
+                options = options.model_dump()  # type: ignore
             if isinstance(
                 self.request_options,
                 (JsonFeedOptions, BeeRequestOptions, AllTagsOptions),
             ):
-                self.request_options = self.request_options.model_dump()
-            return {**self.request_options, **options}
+                self.request_options = self.request_options.model_dump()  # type: ignore
+            return {**self.request_options, **options}  # type: ignore
         else:
             return self.request_options
 
@@ -155,7 +156,7 @@ class BeeDebug:
         """
         assert_request_options(options)
 
-        return connectivity.get_node_addresses(self.__get_request_options_for_call(options))
+        return connectivity.get_node_addresses(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_blocklist(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> Peers:
         """Retrieves the list of blocked peers from the network.
@@ -171,7 +172,7 @@ class BeeDebug:
         """
         assert_request_options(options)
 
-        return connectivity.get_blocklist(self.__get_request_options_for_call(options))
+        return connectivity.get_blocklist(self.__get_request_options_for_call(options))  # type: ignore
 
     def retrieve_extended_tag(
         self, tag_uid: Union[int, Tag], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -200,7 +201,7 @@ class BeeDebug:
             msg = "tag_uid must be a Tag object or a non-negative integer."
             raise TypeError(msg)
 
-        return tag.retrieve_extended_tag(self.__get_request_options_for_call(options), tag_uid)
+        return tag.retrieve_extended_tag(self.__get_request_options_for_call(options), tag_uid)  # type: ignore
 
     def get_peers(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> Peers:
         """Retrieves a list of peers for the current node.
@@ -216,7 +217,7 @@ class BeeDebug:
         """
         assert_request_options(options)
 
-        return connectivity.get_peers(self.__get_request_options_for_call(options))
+        return connectivity.get_peers(self.__get_request_options_for_call(options))  # type: ignore
 
     def remove_peer(
         self, peer: Union[str, AddressType], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -236,7 +237,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(peer)
 
-        return connectivity.remove_peer(self.__get_request_options_for_call(options), peer)
+        return connectivity.remove_peer(self.__get_request_options_for_call(options), peer)  # type: ignore
 
     def get_topology(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> Topology:
         """Retrieves the topology information from the network.
@@ -252,7 +253,7 @@ class BeeDebug:
         """
         assert_request_options(options)
 
-        return connectivity.get_topology(self.__get_request_options_for_call(options))
+        return connectivity.get_topology(self.__get_request_options_for_call(options))  # type: ignore
 
     def ping_peer(
         self, peer: Union[str, AddressType], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -273,7 +274,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(peer)
 
-        return connectivity.ping_peer(self.__get_request_options_for_call(options), peer)
+        return connectivity.ping_peer(self.__get_request_options_for_call(options), peer)  # type: ignore
 
     # ? Balances Endpoint
     def get_all_balances(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> BalanceResponse:
@@ -290,7 +291,7 @@ class BeeDebug:
         """
         assert_request_options(options)
 
-        return balance.get_all_balances(self.__get_request_options_for_call(options))
+        return balance.get_all_balances(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_peer_balance(
         self, address: Union[AddressType, str], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -310,7 +311,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(address)
 
-        return balance.get_peer_balance(self.__get_request_options_for_call(options), address)
+        return balance.get_peer_balance(self.__get_request_options_for_call(options), address)  # type: ignore
 
     def et_past_due_consumption_balances(
         self, options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -329,7 +330,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return balance.get_past_due_consumption_balances(self.__get_request_options_for_call(options))
+        return balance.get_past_due_consumption_balances(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_past_due_consumption_peer_balance(
         self, address: Union[AddressType, str], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -350,7 +351,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(address)
 
-        return balance.get_past_due_consumption_peer_balance(self.__get_request_options_for_call(options), address)
+        return balance.get_past_due_consumption_peer_balance(self.__get_request_options_for_call(options), address)  # type: ignore # noqa: 501
 
     # ? Chequebook endpoints
     def get_chequebook_address(
@@ -371,7 +372,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return chequebook.get_chequebook_address(self.__get_request_options_for_call(options))
+        return chequebook.get_chequebook_address(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_chequebook_balance(
         self, options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -387,7 +388,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return chequebook.get_chequebook_balance(self.__get_request_options_for_call(options))
+        return chequebook.get_chequebook_balance(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_last_cheques(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> LastChequesResponse:
         """Retrieves the last cheques for all peers.
@@ -401,7 +402,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return chequebook.get_last_cheques(self.__get_request_options_for_call(options))
+        return chequebook.get_last_cheques(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_last_cheques_for_peer(
         self, address: Union[AddressType, str], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -422,7 +423,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(address)
 
-        return chequebook.get_last_cheques_for_peer(self.__get_request_options_for_call(options), address)
+        return chequebook.get_last_cheques_for_peer(self.__get_request_options_for_call(options), address)  # type: ignore # noqa: 501
 
     def get_last_cashout_action(
         self, address: Union[AddressType, str], options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -443,7 +444,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(address)
 
-        return chequebook.get_last_cashout_action(self.__get_request_options_for_call(options), address)
+        return chequebook.get_last_cashout_action(self.__get_request_options_for_call(options), address)  # type: ignore
 
     def cashout_last_cheque(
         self,
@@ -470,7 +471,7 @@ class BeeDebug:
         assert_cashout_options(options)
         assert_address(address)
 
-        return chequebook.cashout_last_cheque(self.__get_request_options_for_call(request_options), address, options)
+        return chequebook.cashout_last_cheque(self.__get_request_options_for_call(request_options), address, options)  # type: ignore # noqa: 501
 
     def deposit_tokens(
         self,
@@ -498,7 +499,7 @@ class BeeDebug:
         if gas_price:
             assert_non_negative_integer(gas_price)
 
-        return chequebook.deposit_tokens(self.__get_request_options_for_call(options), amount, gas_price)
+        return chequebook.deposit_tokens(self.__get_request_options_for_call(options), amount, gas_price)  # type: ignore # noqa: 501
 
     def withdraw_tokens(
         self,
@@ -526,7 +527,7 @@ class BeeDebug:
         if gas_price:
             assert_non_negative_integer(gas_price)
 
-        return chequebook.withdraw_tokens(self.__get_request_options_for_call(options), amount, gas_price)
+        return chequebook.withdraw_tokens(self.__get_request_options_for_call(options), amount, gas_price)  # type: ignore # noqa: 501
 
     # ? Settlements endpoint
     def get_settlements(
@@ -548,7 +549,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_address(address)
 
-        return settlements.get_settlements(self.__get_request_options_for_call(options), address)
+        return settlements.get_settlements(self.__get_request_options_for_call(options), address)  # type: ignore
 
     def get_all_settlements(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> AllSettlements:
         """Retrieves settlements with all known peers and total amounts sent or received.
@@ -565,7 +566,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return settlements.get_all_settlements(self.__get_request_options_for_call(options))
+        return settlements.get_all_settlements(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_status(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> DebugStatus:
         """Retrieves the status of the node.
@@ -582,7 +583,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.get_debug_status(self.__get_request_options_for_call(options))
+        return status.get_debug_status(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_health(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> Health:
         """Retrieves the health of the node.
@@ -599,7 +600,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.get_health(self.__get_request_options_for_call(options))
+        return status.get_health(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_readiness(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> bool:
         """Retrieves the readiness of the node.
@@ -616,7 +617,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.get_readiness(self.__get_request_options_for_call(options))
+        return status.get_readiness(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_node_info(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> NodeInfo:
         """Retrieves the mode information of the node.
@@ -633,7 +634,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.get_node_info(self.__get_request_options_for_call(options))
+        return status.get_node_info(self.__get_request_options_for_call(options))  # type: ignore
 
     def is_supported_exact_version(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> bool:
         """**Deprecated:** Checks if the connected Bee node version is supported by bee-py.
@@ -653,7 +654,7 @@ class BeeDebug:
         assert_request_options(options)
 
         try:
-            return status.is_supported_exact_version(self.__get_request_options_for_call(options))
+            return status.is_supported_exact_version(self.__get_request_options_for_call(options))  # type: ignore
         except Exception as e:
             # logger.info(
             #     "Warning: `is_supported_version()` is deprecated. Use `BeeDebug.is_supported_exact_version()` instead."  # noqa: E501
@@ -677,7 +678,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.is_supported_main_api_version(self.__get_request_options_for_call(options))
+        return status.is_supported_main_api_version(self.__get_request_options_for_call(options))  # type: ignore
 
     def is_supported_debug_api_version(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> bool:
         """Checks if the connected Bee node's Debug API version is supported by bee-js.
@@ -696,7 +697,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.is_supported_debug_api_version(self.__get_request_options_for_call(options))
+        return status.is_supported_debug_api_version(self.__get_request_options_for_call(options))  # type: ignore
 
     def is_supported_api_version(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> bool:
         """Checks if both the Main and Debug API versions of the connected Bee node are supported by bee-js.
@@ -715,7 +716,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.is_supported_debug_api_version(self.__get_request_options_for_call(options))
+        return status.is_supported_debug_api_version(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_versions(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> BeeVersions:
         """Retrieves an object containing version information for the connected Bee node and bee-js.
@@ -732,7 +733,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return status.get_versions(self.__get_request_options_for_call(options))
+        return status.get_versions(self.__get_request_options_for_call(options))  # type: ignore
 
     async def get_reserve_state(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> ReserveState:
         """Retrieves the reserve state.
@@ -749,7 +750,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return states.get_reserve_state(self.__get_request_options_for_call(options))
+        return states.get_reserve_state(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_chain_state(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> ChainState:
         """Retrieves the chain state.
@@ -766,7 +767,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return states.get_chain_state(self.__get_request_options_for_call(options))
+        return states.get_chain_state(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_wallet_balance(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> WalletBalance:
         """Retrieves the wallet balances for xDai and BZZ of the Bee node.
@@ -783,7 +784,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return states.get_wallet_balance(self.__get_request_options_for_call(options))
+        return states.get_wallet_balance(self.__get_request_options_for_call(options))  # type: ignore
 
     def create_postage_batch(
         self,
@@ -791,7 +792,7 @@ class BeeDebug:
         depth: int,
         options: Optional[Union[PostageBatchOptions, dict]] = None,
         request_options: Optional[Union[BeeRequestOptions, dict]] = None,
-    ) -> str:  # Assuming BatchId is a string
+    ) -> str:
         """Creates a new postage batch from the node's available funds.
 
         **WARNING: This creates transactions that spend money.**
@@ -829,12 +830,12 @@ class BeeDebug:
             raise BeeArgumentError(msg, depth)
 
         stamp = stamps.create_postage_batch(
-            self.__get_request_options_for_call(request_options), amount, depth, options
+            self.__get_request_options_for_call(request_options), amount, depth, options  # type: ignore
         )
 
         if options:
             if options.wait_for_usable:
-                self.wait_for_usable_postage_stamp(stamp, options.wait_for_usable_timeout)
+                self.wait_for_usable_postage_stamp(stamp, options.wait_for_usable_timeout)  # type: ignore
 
         return stamp
 
@@ -865,7 +866,7 @@ class BeeDebug:
         assert_non_negative_integer(amount, "Amount")
         assert_batch_id(postage_batch_id)
 
-        stamps.top_up_batch(self.__get_request_options_for_call(options), postage_batch_id, amount)
+        stamps.top_up_batch(self.__get_request_options_for_call(options), postage_batch_id, amount)  # type: ignore
 
     def dilute_batch(
         self,
@@ -894,13 +895,13 @@ class BeeDebug:
         assert_non_negative_integer(depth)
         assert_batch_id(postage_batch_id)
 
-        stamps.dilute_batch(self.__get_request_options_for_call(options), postage_batch_id, depth)
+        stamps.dilute_batch(self.__get_request_options_for_call(options), postage_batch_id, depth)  # type: ignore
 
     def get_postage_batch(
         self,
         postage_batch_id: Union[BatchId, str],
         options: Optional[Union[BeeRequestOptions, dict]] = None,
-    ) -> list[PostageBatch]:
+    ) -> PostageBatch:
         """Retrieves details for a specific postage batch.
 
         Args:
@@ -921,7 +922,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_batch_id(postage_batch_id)
 
-        return stamps.get_postage_batch(self.__get_request_options_for_call(options), postage_batch_id)
+        return stamps.get_postage_batch(self.__get_request_options_for_call(options), postage_batch_id)  # type: ignore
 
     def get_postage_batch_buckets(
         self,
@@ -948,7 +949,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_batch_id(postage_batch_id)
 
-        return stamps.get_postage_batch_buckets(self.__get_request_options_for_call(options), postage_batch_id)
+        return stamps.get_postage_batch_buckets(self.__get_request_options_for_call(options), postage_batch_id)  # type: ignore # noqa: 501
 
     def get_all_postage_batches(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> list[PostageBatch]:
         """Retrieves all postage batches available on the node.
@@ -966,7 +967,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return stamps.get_all_postage_batches(self.__get_request_options_for_call(options))
+        return stamps.get_all_postage_batches(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_all_global_postage_batches(
         self, options: Optional[Union[BeeRequestOptions, dict]] = None
@@ -982,7 +983,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return stamps.get_global_postage_batches(self.__get_request_options_for_call(options))
+        return stamps.get_global_postage_batches(self.__get_request_options_for_call(options))  # type: ignore
 
     # ? transcation endpoint
     def get_all_pending_transactions(
@@ -999,7 +1000,7 @@ class BeeDebug:
 
         assert_request_options(options)  # Assuming a function to validate options
 
-        return transactions.get_all_transactions(self.__get_request_options_for_call(options))
+        return transactions.get_all_transactions(self.__get_request_options_for_call(options))  # type: ignore
 
     def get_pending_transaction(
         self,
@@ -1017,7 +1018,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_transaction_hash(transaction_hash)
 
-        return transactions.get_transaction(self.__get_request_options_for_call(options), transaction_hash)
+        return transactions.get_transaction(self.__get_request_options_for_call(options), transaction_hash)  # type: ignore # noqa: 501
 
     def rebroadcast_pending_transaction(
         self,
@@ -1042,7 +1043,7 @@ class BeeDebug:
         assert_request_options(options)
         assert_transaction_hash(transaction_hash)
 
-        return transactions.rebroadcast_transaction(self.__get_request_options_for_call(options), transaction_hash)
+        return transactions.rebroadcast_transaction(self.__get_request_options_for_call(options), transaction_hash)  # type: ignore # noqa: 501
 
     def cancel_pending_transaction(
         self,
@@ -1070,7 +1071,7 @@ class BeeDebug:
             assert_non_negative_integer(gas_price)
 
         return transactions.cancel_transaction(
-            self.__get_request_options_for_call(options), transaction_hash, gas_price
+            self.__get_request_options_for_call(options), transaction_hash, gas_price  # type: ignore
         )
 
     def get_stake(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> Union[str, NumberString]:
@@ -1085,7 +1086,7 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return stake.get_stake(self.__get_request_options_for_call(options))
+        return stake.get_stake(self.__get_request_options_for_call(options))  # type: ignore
 
     def deposit_stake(
         self,
@@ -1110,7 +1111,7 @@ class BeeDebug:
         assert_transaction_options(options)
         # * Validate amount (e.g., ensure it's a non-negative integer and meets the minimum requirement)
 
-        stake.stake(self.__get_request_options_for_call(request_options), amount, options)
+        stake.stake(self.__get_request_options_for_call(request_options), amount, options)  # type: ignore
 
     def get_redistribution_state(self, options: Optional[Union[BeeRequestOptions, dict]] = None) -> RedistributionState:
         """Retrieves the current status of the node in the redistribution game.
@@ -1124,11 +1125,9 @@ class BeeDebug:
 
         assert_request_options(options)
 
-        return stake.get_redistribution_state(self.__get_request_options_for_call(options))
+        return stake.get_redistribution_state(self.__get_request_options_for_call(options))  # type: ignore
 
-    def wait_for_usable_postage_stamp(
-        self, batch_id: str, timeout: int = 120_000  # Assuming BatchId is a string
-    ) -> None:
+    def wait_for_usable_postage_stamp(self, batch_id: Union[BatchId, str], timeout: int = 120_000) -> None:
         """Waits for a postage stamp with the given batch ID to become usable.
 
         Args:
@@ -1141,11 +1140,11 @@ class BeeDebug:
 
         # * Check every 1.5 seconds
         TIME_STEP = 1500  # noqa: N806
-        for time in range(0, timeout, TIME_STEP):
+        for _ in range(0, timeout, TIME_STEP):
             stamp = self.get_postage_batch(batch_id)
             if stamp.usable:
                 return
-            time.sleep(TIME_STEP / 1000)
+            sleep(TIME_STEP / 1000)
 
         msg = "Timeout on waiting for postage stamp to become usable"
         raise BeeError(msg)

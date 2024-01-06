@@ -115,7 +115,7 @@ def fetch_latest_feed_update(
     data = response.json()
 
     # Extract feed update headers from response headers
-    headers = read_feed_update_headers(response.headers)
+    headers = read_feed_update_headers(response.headers)  # type: ignore
 
     return FetchFeedUpdateResponse(
         reference=data["reference"],

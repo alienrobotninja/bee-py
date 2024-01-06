@@ -1,4 +1,4 @@
-# from typing import Union
+from typing import Union
 
 from pydantic import ValidationError
 
@@ -27,7 +27,7 @@ def get_reserve_state(request_options: BeeRequestOptions) -> ReserveState:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -51,7 +51,7 @@ def get_chain_state(request_options: BeeRequestOptions) -> ChainState:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -74,16 +74,17 @@ def map_wallet_properties(data: WalletBalance) -> WalletBalance:
     data_dict = {}
     data_dict["bzz_balance"] = data.bzz
     data_dict["native_token_balance"] = data.xDai
-    data_dict["chequebook_contract_address"] = data.contractAddress
-    data_dict["chain_id"] = data.chain_id
+    data_dict["chequebook_contract_address"] = data.contract_address
+    data_dict["chain_id"] = data.chain_id  # type: ignore
     data_dict["wallet_address"] = data.wallet_address
 
     return WalletBalance.model_validate(data_dict)
 
 
+# * Remove this union return when the Bee versions in the containers are fixed
 def get_wallet_balance(
     request_options: BeeRequestOptions,
-) -> WalletBalance:
+) -> Union[WalletBalance, WalletBalanceOLD]:
     """
     Retrieves the wallet balances for xDai and BZZ of the Bee node.
 
@@ -99,7 +100,7 @@ def get_wallet_balance(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 

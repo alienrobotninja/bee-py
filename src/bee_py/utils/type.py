@@ -176,7 +176,7 @@ def make_reference_or_ens(value: ReferenceCidOrENS, expected_cid_type: Union[Ref
     return value
 
 
-def add_cid_conversion_function(result: UploadResult, cid_type: str) -> UploadResultWithCid:
+def add_cid_conversion_function(result: UploadResult, cid_type: Union[str, ReferenceType]) -> UploadResultWithCid:
     """
     Adds a getter method to the result object that converts the reference to a CID base32 encoded string.
 

@@ -803,7 +803,8 @@ class FeedReader(BaseModel):
     topic: Union[Topic, str]
     request_options: Optional[BeeRequestOptions] = None
 
-    download: Callable = ""
+    # * This is not the best way to handle this callable method. But for now this works
+    download: Callable = ""  # type: ignore
     # upload: Callable
 
 
@@ -926,7 +927,7 @@ class SOCWriter(SOCReader):
 
 
 class AllTagsOptions(BaseModel):
-    limit: int = Field(default=None, gt=TAGS_LIMIT_MIN, lt=TAGS_LIMIT_MAX)
+    limit: int = Field(default=0, gt=TAGS_LIMIT_MIN, lt=TAGS_LIMIT_MAX)
     offset: int = Field(default=0, ge=0)
 
     @validator("limit", "offset")

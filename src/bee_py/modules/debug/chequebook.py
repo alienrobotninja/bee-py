@@ -35,7 +35,7 @@ def get_chequebook_address(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -62,7 +62,7 @@ def get_chequebook_balance(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -91,7 +91,7 @@ def get_last_cashout_action(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -126,10 +126,10 @@ def cashout_last_cheque(
             headers["gas-limit"] = str(options["gasLimit"])
     else:
         if options and options.gas_price:
-            headers["gas-price"] = options.gas_price
+            headers["gas-price"] = str(options.gas_price)
 
         if options and options.gas_limit:
-            headers["gas-limit"] = options.gas_limit
+            headers["gas-limit"] = str(options.gas_limit)
 
     url = f"{CHEQUEBOOK_ENDPOINT}/cashout/{peer}"
     config = {"url": url, "method": "POST", "headers": headers}
@@ -137,7 +137,7 @@ def cashout_last_cheque(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -166,7 +166,7 @@ def get_last_cheques_for_peer(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -191,7 +191,7 @@ def get_last_cheques(request_options: BeeRequestOptions) -> LastChequesResponse:
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -232,7 +232,7 @@ def deposit_tokens(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -273,7 +273,7 @@ def withdraw_tokens(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 

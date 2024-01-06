@@ -26,8 +26,8 @@ class FlexBytes(BaseModel, Generic[Min, Max]):
     """
 
     data: bytes
-    minimum: Min
-    maximum: Max
+    min_length: Min
+    max_length: Max
 
     class Config:
         validate_assignment = True
@@ -43,7 +43,7 @@ def is_valid_flex_bytes(flex_bytes: FlexBytes) -> bool:
                             True if the byte array is valid, False otherwise.
     """
 
-    return flex_bytes.minimum <= len(flex_bytes) <= flex_bytes.maximum
+    return flex_bytes.min_length <= len(flex_bytes) <= flex_bytes.max_length  # type: ignore
 
 
 def is_bytes(b: Any, length: int) -> TypeGuard[bytes]:
@@ -114,7 +114,7 @@ def assert_bytes_length(b: bytes, length: int):
         raise TypeError(msg)
 
 
-def flex_bytes_at_offset(data: bytes, offset: int, min_size: int, max_size: int) -> FlexBytes[Min, Max]:
+def flex_bytes_at_offset(data: bytes, offset: int, min_size: int, max_size: int) -> bytes:
     """Returns a flex bytes object starting from the specified offset, ensuring the size is within the specified range.
 
     Args:
@@ -202,7 +202,7 @@ def bytes_at_offset(data: bytes, offset: int, length: Length) -> bytes:
 
     # * We are returning strongly typed Bytes so we have to verify that length is really what we claim
     if not len(offset_bytes) == length:
-        msg = f"Lenght mismatch. Expected {length}, got {offset_bytes}"
+        msg = f"Lenght mismatch. Expected {length}, got {offset_bytes!r}"
         raise ValueError(msg)
 
     return offset_bytes

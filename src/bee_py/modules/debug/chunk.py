@@ -31,7 +31,7 @@ def check_if_chunk_exists_locally(
         msg = f"Failed to check chunk existence: {status_code}"
         raise Exception(msg)
 
-    return BeeGenericResponse(json.loads(response.text), status_code)
+    return BeeGenericResponse(message=json.loads(response.text), code=status_code)
 
 
 def delete_chunk_from_local_storage(

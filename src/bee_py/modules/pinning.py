@@ -25,8 +25,8 @@ def pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Refere
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
-            if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
+            if response.raise_for_status():  # type: ignore
                 logger.error(response.raise_for_status())  # type: ignore
                 return None  # type: ignore
 
@@ -48,7 +48,7 @@ def unpin(request_options: Union[BeeRequestOptions, dict], reference: Union[Refe
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -76,7 +76,7 @@ def get_pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Re
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -99,7 +99,7 @@ def get_all_pins(request_options: Union[BeeRequestOptions, dict]) -> GetAllPinRe
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 

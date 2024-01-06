@@ -1,6 +1,7 @@
 from typing import NewType, Optional, Union
 
 from ape.managers.accounts import AccountAPI
+from eth_pydantic_types import HexBytes
 from eth_typing import ChecksumAddress as AddressType
 from pydantic import BaseModel, Field
 
@@ -82,7 +83,7 @@ class SingleOwnerChunk(Chunk, SingleOwnerChunkBase):
     pass
 
 
-def recover_chunk_owner(data: bytes) -> AddressType:
+def recover_chunk_owner(data: bytes) -> Union[AddressType, str]:
     """Recovers the owner's Ethereum address from a single owner chunk (SOC).
 
     Args:
@@ -120,7 +121,7 @@ def make_single_owner_chunk_from_data(
     identifier = bytes_at_offset(data, SOC_IDENTIFIER_OFFSET, IDENTIFIER_SIZE)
     soc_address = keccak256_hash(identifier, hex_to_bytes(owner_address[2:]))
 
-    if bytes_equal(address, soc_address):
+    if bytes_equal(address, soc_address):  # type: ignore
         msg = "SOC Data does not match given address!"
         raise BeeError(msg)
 
@@ -144,14 +145,15 @@ def make_single_owner_chunk_from_data(
     )
 
 
-def make_soc_address(identifier: Union[Identifier, bytes], address: Union[AddressType, bytes]) -> bytes:
-    address_bytes = hex_to_bytes(address)
+def make_soc_address(identifier: Union[Identifier, bytes], address: Union[AddressType, bytes, HexBytes, str]) -> bytes:
+    if not isinstance(address, bytes):
+        address_bytes = hex_to_bytes(address)
     return keccak256_hash(identifier, address_bytes)
 
 
 def make_single_owner_chunk(
     chunk: Chunk,
-    identifier: Union[Identifier, bytearray],
+    identifier: Union[Identifier, bytes],
     signer: Union[AccountAPI, Signer],
 ) -> SingleOwnerChunk:
     """
@@ -181,7 +183,7 @@ def make_single_owner_chunk(
     signature = sign(data=digest, account=signer)
 
     if isinstance(signer, AccountAPI):
-        encoded_signature = signature.encode_rsv()
+        encoded_signature = signature.encode_rsv()  # type: ignore
         data = serialize_bytes(identifier, encoded_signature, chunk.span, chunk.payload)
     else:
         encoded_signature = signature.signature.hex()
@@ -260,7 +262,7 @@ def upload_single_owner_chunk_data(
     cac = make_content_addressed_chunk(data)
     soc = make_single_owner_chunk(cac, identifier, signer)
 
-    return upload_single_owner_chunk(request_options, soc, postage_batch_id, options)
+    return upload_single_owner_chunk(request_options, soc, postage_batch_id, options)  # type: ignore
 
 
 def download_single_owner_chunk(

@@ -1,15 +1,16 @@
 import io
 import tarfile
-from typing import Protocol, Union
+from typing import Callable, Union
+
+from pydantic import BaseModel
 
 from bee_py.types.type import Collection, CollectionEntry
 
 
-class StringLike(Protocol):
+class StringLike(BaseModel):
     length: int
 
-    def char_code_at(self, index: int) -> int:
-        ...
+    char_code_at: Callable
 
 
 def fix_unicode_path(path: str) -> StringLike:

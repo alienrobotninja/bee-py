@@ -11,17 +11,17 @@ def is_epoch(epoch: Any) -> bool:
     return isinstance(epoch, dict) and epoch is not None and "time" in epoch and "level" in epoch
 
 
-def hash_feed_identifier(topic: Topic, index: IndexBytes) -> Identifier:
-    return keccak256_hash(hex_to_bytes(topic), index)
+def hash_feed_identifier(topic: Union[Topic, str], index: Union[IndexBytes, Index]) -> Identifier:
+    return keccak256_hash(hex_to_bytes(topic), index)  # type: ignore
 
 
-def make_sequential_feed_identifier(topic: Topic, index: int) -> Identifier:
+def make_sequential_feed_identifier(topic: Union[Topic, str], index: int) -> Identifier:
     # * convert index into big endian
     index_bytes = to_big_endian(index)
     return hash_feed_identifier(topic, index_bytes)
 
 
-def make_feed_index_bytes(s: str) -> IndexBytes:
+def make_feed_index_bytes(s: str) -> Union[IndexBytes, bytes]:
     """
     Converts a string into a byte array.
 

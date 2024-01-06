@@ -874,7 +874,7 @@ files = [
 
 [[package]]
 name = "eth-ape"
-version = "0.7.3"
+version = "0.7.4"
 requires_python = ">=3.8,<4"
 summary = "Ape Ethereum Framework"
 groups = ["default"]
@@ -912,8 +912,8 @@ dependencies = [
     "web3[tester]<7,>=6.12.0",
 ]
 files = [
-    {file = "eth-ape-0.7.3.tar.gz", hash = "sha256:24730a0f2da318a1828c778a986f250c07cbd1f92e89a15050bb057797a3e357"},
-    {file = "eth_ape-0.7.3-py3-none-any.whl", hash = "sha256:0ee93d2bc816f0b1cf2d8de4fcc50be0d4af8f6f9fb29004487acd35d72bd7ca"},
+    {file = "eth-ape-0.7.4.tar.gz", hash = "sha256:7a22d3e11d12e61e0b26347a169ceb36f4b943602d68cbbabf6fe6ee0b2ccf2d"},
+    {file = "eth_ape-0.7.4-py3-none-any.whl", hash = "sha256:ba0a1438f6e5df07793989f55a33281762452dbb51af6660c504e3684dc76c52"},
 ]
 
 [[package]]
@@ -3431,7 +3431,7 @@ files = [
 
 [[package]]
 name = "swarm-cid-py"
-version = "0.1.2"
+version = "0.1.3"
 requires_python = ">=3.9,<4.0"
 summary = "Utility library written in Python to convert Swarm hex references into Swarm CIDs"
 groups = ["default"]
@@ -3441,8 +3441,8 @@ dependencies = [
     "safe-pysha3<2.0.0,>=1.0.4",
 ]
 files = [
-    {file = "swarm_cid_py-0.1.2-py3-none-any.whl", hash = "sha256:aed2b5b8e41dd9727c3f52c5c3736b05d0e0da8a386c4a4b4e54d0b0cd17a01a"},
-    {file = "swarm_cid_py-0.1.2.tar.gz", hash = "sha256:73da0cfaf93153ef11f9e1d6c79dde5eac0f55d8f85a648491426d358d177714"},
+    {file = "swarm_cid_py-0.1.3-py3-none-any.whl", hash = "sha256:d67764b7a373b9b7502bdf3b658f9a2dac0bc256788a34c9d054bb6ec7c0c5e4"},
+    {file = "swarm_cid_py-0.1.3.tar.gz", hash = "sha256:96449f6300350e53b26b3423cea84e24d016b4ee3f5b7bfd79e9185de6781b3f"},
 ]
 
 [[package]]
@@ -3524,27 +3524,27 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.20231231"
-requires_python = ">=3.7"
+version = "2.31.0.20240106"
+requires_python = ">=3.8"
 summary = "Typing stubs for requests"
 groups = ["lint"]
 dependencies = [
     "urllib3>=2",
 ]
 files = [
-    {file = "types-requests-2.31.0.20231231.tar.gz", hash = "sha256:0f8c0c9764773384122813548d9eea92a5c4e1f33ed54556b508968ec5065cee"},
-    {file = "types_requests-2.31.0.20231231-py3-none-any.whl", hash = "sha256:2e2230c7bc8dd63fa3153c1c0ae335f8a368447f0582fc332f17d54f88e69027"},
+    {file = "types-requests-2.31.0.20240106.tar.gz", hash = "sha256:0e1c731c17f33618ec58e022b614a1a2ecc25f7dc86800b36ef341380402c612"},
+    {file = "types_requests-2.31.0.20240106-py3-none-any.whl", hash = "sha256:da997b3b6a72cc08d09f4dba9802fdbabc89104b35fe24ee588e674037689354"},
 ]
 
 [[package]]
 name = "types-setuptools"
-version = "69.0.0.0"
-requires_python = ">=3.7"
+version = "69.0.0.20240106"
+requires_python = ">=3.8"
 summary = "Typing stubs for setuptools"
 groups = ["lint"]
 files = [
-    {file = "types-setuptools-69.0.0.0.tar.gz", hash = "sha256:b0a06219f628c6527b2f8ce770a4f47550e00d3e8c3ad83e2dc31bc6e6eda95d"},
-    {file = "types_setuptools-69.0.0.0-py3-none-any.whl", hash = "sha256:8c86195bae2ad81e6dea900a570fe9d64a59dbce2b11cc63c046b03246ea77bf"},
+    {file = "types-setuptools-69.0.0.20240106.tar.gz", hash = "sha256:e077f9089578df3c9938f6e4aa1633f182ba6740a6fdb1333f162bae5dfcbadc"},
+    {file = "types_setuptools-69.0.0.20240106-py3-none-any.whl", hash = "sha256:b1da8981425723a674fd459c43dfa4402abeaee3f9cf682723ee9cf226125cc3"},
 ]
 
 [[package]]

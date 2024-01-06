@@ -24,7 +24,7 @@ def get_settlements(request_options: BeeRequestOptions, peer: str) -> Settlement
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
         return None  # type: ignore
 
@@ -49,7 +49,7 @@ def get_all_settlements(request_options: BeeRequestOptions) -> AllSettlements:
     response = http(request_options, config)
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
         return None  # type: ignore
 

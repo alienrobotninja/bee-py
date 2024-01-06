@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from bee_py.types.type import BeeRequestOptions, NumberString, TransactionHash, TransactionInfo
 from bee_py.utils.http import http
@@ -23,7 +23,7 @@ def get_all_transactions(request_options: BeeRequestOptions) -> list[Transaction
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -34,7 +34,9 @@ def get_all_transactions(request_options: BeeRequestOptions) -> list[Transaction
     return [TransactionInfo.model_validate(transaction) for transaction in pending_transactions]
 
 
-def get_transaction(request_options: BeeRequestOptions, transaction_hash: TransactionHash) -> TransactionInfo:
+def get_transaction(
+    request_options: BeeRequestOptions, transaction_hash: Union[TransactionHash, str]
+) -> TransactionInfo:
     """
     Retrieves information for a specific pending transaction based on its hash.
 
@@ -51,7 +53,7 @@ def get_transaction(request_options: BeeRequestOptions, transaction_hash: Transa
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -59,7 +61,9 @@ def get_transaction(request_options: BeeRequestOptions, transaction_hash: Transa
     return TransactionInfo.model_validate(transaction_response)
 
 
-def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash: TransactionHash) -> TransactionHash:
+def rebroadcast_transaction(
+    request_options: BeeRequestOptions, transaction_hash: Union[TransactionHash, str]
+) -> Union[TransactionHash, str]:
     """
     Rebroadcasts an existing pending transaction.
 
@@ -76,7 +80,7 @@ def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -86,9 +90,9 @@ def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash
 
 def cancel_transaction(
     request_options: BeeRequestOptions,
-    transaction_hash: TransactionHash,
+    transaction_hash: Union[TransactionHash, str],
     gas_price: Optional[NumberString] = None,
-) -> TransactionHash:
+) -> Union[TransactionHash, str]:
     """
     Cancels an existing pending transaction.
 
@@ -115,7 +119,7 @@ def cancel_transaction(
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 

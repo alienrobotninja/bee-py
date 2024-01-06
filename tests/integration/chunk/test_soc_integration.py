@@ -30,4 +30,4 @@ def test_upload_single_owner_chunk(
 
     response = upload_single_owner_chunk(bee_ky_options, soc, get_debug_postage)
 
-    assert soc_address == response
+    assert soc_address == response.value

@@ -16,6 +16,6 @@ def check_connection(request_options: BeeRequestOptions) -> None:
     config = {"url": "", "method": "GET"}
     response = http(request_options, config)
 
-    if response.raise_for_status():
+    if response.raise_for_status():  # type: ignore
         logger.error(response.raise_for_status())  # type: ignore
         return None  # type: ignore

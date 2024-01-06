@@ -78,7 +78,7 @@ def upload_file(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
@@ -115,10 +115,10 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
-    file_headers = read_file_headers(response.headers)
+    file_headers = read_file_headers(response.headers)  # type: ignore
     file_data = wrap_bytes_with_helpers(response.content)
 
     # print(f"response.headers --->{response.headers}")
@@ -144,14 +144,14 @@ def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceO
 
     if response.status_code != 200:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 
-    file_headers = read_file_headers(response.headers)
-    file_data = response.data
+    file_headers = read_file_headers(response.headers)  # type: ignore
+    file_data = response.content
 
-    return FileData(file_headers, file_data)
+    return FileData(headers=file_headers, data=file_data)
 
 
 def extract_collection_upload_headers(
@@ -224,7 +224,7 @@ def upload_collection(
 
     if response.status_code != 201:  # noqa: PLR2004
         logger.info(response.json())
-        if response.raise_for_status():
+        if response.raise_for_status():  # type: ignore
             logger.error(response.raise_for_status())  # type: ignore
             return None  # type: ignore
 

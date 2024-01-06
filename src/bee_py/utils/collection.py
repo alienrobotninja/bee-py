@@ -31,14 +31,16 @@ def _make_filepath(file: Union[os.PathLike, str, Path]) -> str:
     """
     if isinstance(file, str):
         file = Path(file)
-    if file.is_file():
-        return file.name
+    if file.is_file():  # type: ignore
+        return file.name  # type: ignore
 
     msg = f"Invalid file path: {file}"
     raise TypeError(msg)
 
 
-def make_collection_from_file_list(path: Union[os.PathLike, str], relative_path: Optional[str] = None) -> Collection:
+def make_collection_from_file_list(
+    path: Union[os.PathLike, str], relative_path: Optional[str] = None
+) -> list[CollectionEntry]:
     """
     Creates a collection of files from the provided file list.
 
@@ -50,9 +52,9 @@ def make_collection_from_file_list(path: Union[os.PathLike, str], relative_path:
     """
     collection = []
     if isinstance(path, str):
-        dirname = Path(path) / relative_path
+        dirname = Path(path) / relative_path  # type: ignore
     else:
-        dirname = path
+        dirname = path  # type: ignore
 
     for entry in dirname.iterdir():
         if entry.is_file():

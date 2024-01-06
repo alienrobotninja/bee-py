@@ -66,7 +66,7 @@ def sign(
     # * you have to set password as env variable
     # * more info here: https://docs.apeworx.io/ape/stable/userguides/accounts.html#keyfile-passphrase-environment-variable-more-secure # noqa: E501
     if auto_sign:
-        account.set_autosign(True)
+        account.set_autosign(True)  # type: ignore
 
     signature = account.sign_message(data)
 
@@ -100,7 +100,7 @@ def public_key_to_address(pub_key: Union[str, bytes, eth_keys.datatypes.PublicKe
     return HexBytes(address)
 
 
-def recover_address(signature: bytes, digest: bytes) -> AddressType:
+def recover_address(signature: bytes, digest: bytes) -> Union[AddressType, str]:
     """
     Recovers the Ethereum address from a given signature and message digest.
 
