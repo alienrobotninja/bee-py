@@ -29,7 +29,7 @@ def get_reserve_state(request_options: BeeRequestOptions) -> ReserveState:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     reserve_state_response = response.json()
     return ReserveState.model_validate(reserve_state_response)
@@ -53,7 +53,7 @@ def get_chain_state(request_options: BeeRequestOptions) -> ChainState:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     chain_state_response = response.json()
     return ChainState.model_validate(chain_state_response)
@@ -101,8 +101,7 @@ def get_wallet_balance(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
-        return None
+            return None  # type: ignore
 
     wallet_balance_response = response.json()
 

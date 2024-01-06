@@ -29,7 +29,7 @@ def get_stake(request_options: BeeRequestOptions) -> NumberString:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return response.json()["stakedAmount"]
 
@@ -91,7 +91,7 @@ def get_redistribution_state(request_options: BeeRequestOptions) -> Redistributi
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     redistribution_state = response.json()
 

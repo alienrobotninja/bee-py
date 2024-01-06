@@ -28,7 +28,7 @@ def get_node_addresses(request_options: BeeRequestOptions) -> NodeAddresses:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     addresses_response = response.json()
     return NodeAddresses.model_validate(addresses_response)
@@ -53,7 +53,7 @@ def get_peers(request_options: NodeAddresses) -> Peers:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     peers_response = response.json()
     return Peers.model_validate(peers_response)
@@ -103,7 +103,7 @@ def remove_peer(request_options: BeeRequestOptions, peer: str) -> RemovePeerResp
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return RemovePeerResponse.model_validate(response.json())
 
@@ -127,7 +127,7 @@ def get_topology(request_options: BeeRequestOptions) -> Topology:
         logger.info(response.json())
     if response.raise_for_status():
         logger.error(response.raise_for_status())  # type: ignore
-    return None  # type: ignore
+        return None  # type: ignore
 
     return Topology.model_validate(response.json())
 
@@ -149,6 +149,6 @@ def ping_peer(request_options: BeeRequestOptions, peer: str) -> PingResponse:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return PingResponse.model_validate(response.json())

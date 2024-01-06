@@ -37,7 +37,7 @@ def get_global_postage_batches(request_options: BeeRequestOptions) -> list[Posta
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return parse_postage_batch(response.json())
 
@@ -60,7 +60,7 @@ def get_all_postage_batches(request_options: BeeRequestOptions) -> list[PostageB
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return parse_postage_batch(response.json())
 
@@ -87,7 +87,7 @@ def get_postage_batch(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return PostageBatch.model_validate(response.json())
 
@@ -114,7 +114,7 @@ def get_postage_batch_buckets(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     postage_batch_buckets = response.json()
     return PostageBatchBuckets.model_validate(postage_batch_buckets)
@@ -166,7 +166,7 @@ def create_postage_batch(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     stamp_response = response.json()
     return stamp_response["batchID"]
@@ -197,7 +197,7 @@ def top_up_batch(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     stamp_response = response.json()
     return stamp_response["batchID"]
@@ -228,7 +228,7 @@ def dilute_batch(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     stamp_response = response.json()
     return stamp_response["batchID"]

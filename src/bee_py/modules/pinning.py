@@ -28,7 +28,7 @@ def pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Refere
         if response.raise_for_status():
             if response.raise_for_status():
                 logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+                return None  # type: ignore
 
 
 def unpin(request_options: Union[BeeRequestOptions, dict], reference: Union[Reference, str]) -> None:
@@ -50,7 +50,7 @@ def unpin(request_options: Union[BeeRequestOptions, dict], reference: Union[Refe
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
 
 def get_pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Reference, str]) -> Pin:
@@ -78,7 +78,7 @@ def get_pin(request_options: Union[BeeRequestOptions, dict], reference: Union[Re
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return Pin.model_validate(response.json())
 
@@ -101,7 +101,7 @@ def get_all_pins(request_options: Union[BeeRequestOptions, dict]) -> GetAllPinRe
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     response_data = response.json()
     # print("Response data--->", response_data)

@@ -33,7 +33,7 @@ def reupload(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
 
 def is_retrievable(
@@ -58,6 +58,6 @@ def is_retrievable(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return IsRetrievableResponse(is_retrievable=response.json()["isRetrievable"])

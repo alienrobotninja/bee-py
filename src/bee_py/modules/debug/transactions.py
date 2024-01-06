@@ -25,7 +25,7 @@ def get_all_transactions(request_options: BeeRequestOptions) -> list[Transaction
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     transactions_response = response.json()
 
@@ -53,7 +53,7 @@ def get_transaction(request_options: BeeRequestOptions, transaction_hash: Transa
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     transaction_response = response.json()
     return TransactionInfo.model_validate(transaction_response)
@@ -78,7 +78,7 @@ def rebroadcast_transaction(request_options: BeeRequestOptions, transaction_hash
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     rebroadcasted_transaction_response = response.json()
     return rebroadcasted_transaction_response["transactionHash"]
@@ -117,7 +117,7 @@ def cancel_transaction(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     canceled_transaction_response = response.json()
     return canceled_transaction_response["transactionHash"]

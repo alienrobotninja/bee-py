@@ -80,7 +80,7 @@ def upload_file(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     upload_response = response.json()
     reference = Reference(value=upload_response["reference"])
@@ -117,7 +117,7 @@ def download_file(request_options: BeeRequestOptions, _hash: ReferenceOrENS, pat
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
     file_headers = read_file_headers(response.headers)
     file_data = wrap_bytes_with_helpers(response.content)
 
@@ -146,7 +146,7 @@ def download_file_readable(request_options: BeeRequestOptions, _hash: ReferenceO
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     file_headers = read_file_headers(response.headers)
     file_data = response.data
@@ -226,7 +226,7 @@ def upload_collection(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     upload_response = response.json()
     reference = Reference(value=upload_response["reference"])

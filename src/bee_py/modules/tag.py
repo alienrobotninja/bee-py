@@ -34,7 +34,7 @@ def create_tag(request_options: Union[BeeRequestOptions, dict], address: Optiona
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     tag_response = response.json()
     return Tag.model_validate(tag_response)
@@ -61,7 +61,7 @@ def retrieve_tag(request_options: Union[BeeRequestOptions, dict], uid: int) -> T
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     tag_response = response.json()
     return Tag.model_validate(tag_response)
@@ -100,7 +100,7 @@ def get_all_tags(request_options: Union[BeeRequestOptions, dict], offset: int = 
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     tag_response = response.json()["tags"]
 
@@ -130,7 +130,7 @@ def delete_tag(request_options: BeeRequestOptions, uid: int) -> None:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
 
 def update_tag(request_options: Union[BeeRequestOptions, dict], uid: int, reference: Union[Reference, str]) -> None:
@@ -157,4 +157,4 @@ def update_tag(request_options: Union[BeeRequestOptions, dict], uid: int, refere
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore

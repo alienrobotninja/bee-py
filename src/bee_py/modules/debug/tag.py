@@ -23,7 +23,7 @@ def retrieve_extended_tag(request_options: BeeRequestOptions, uid: int) -> Exten
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     debug_status_response = response.json()
     return ExtendedTag.model_validate(debug_status_response)

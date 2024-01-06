@@ -43,7 +43,7 @@ def upload(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     upload_response = response.json()
     reference = Reference(value=upload_response["reference"])
@@ -75,7 +75,7 @@ def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return wrap_bytes_with_helpers(response.content)
 
@@ -99,7 +99,7 @@ def download_readable(request_options: BeeRequestOptions, _hash: ReferenceOrENS)
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return response
 

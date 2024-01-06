@@ -38,7 +38,7 @@ def get_debug_status(request_options: BeeRequestOptions) -> DebugStatus:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     debug_status_response = response.json()
     return DebugStatus.model_validate(debug_status_response)
@@ -62,7 +62,7 @@ def get_health(request_options: BeeRequestOptions) -> Health:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     health_response = response.json()
     return Health.model_validate(health_response)
@@ -106,7 +106,7 @@ def get_node_info(request_options: BeeRequestOptions) -> NodeInfo:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     node_info_response = response.json()
     return NodeInfo.model_validate(node_info_response)

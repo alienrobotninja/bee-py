@@ -39,7 +39,7 @@ def upload(
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
 
     return Reference(value=response.json()["reference"])
 
@@ -56,5 +56,5 @@ def download(request_options: BeeRequestOptions, _hash: ReferenceOrENS) -> Data:
         logger.info(response.json())
         if response.raise_for_status():
             logger.error(response.raise_for_status())  # type: ignore
-        return None  # type: ignore
+            return None  # type: ignore
     return wrap_bytes_with_helpers(response.content)
