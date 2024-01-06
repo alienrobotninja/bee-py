@@ -125,7 +125,7 @@ jobs:
      - name: Setup tmate session
        uses: mxschmitt/action-tmate@v3
      - name: Run Tests
-       run: pdm run pytest --cache-clear -rb
+       run: pdm run pytest --cache-clear
        
 # Don't need fuzzing I guess
 #  fuzzing:
