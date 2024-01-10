@@ -1,4 +1,5 @@
 import os
+from time import sleep
 from typing import Optional, Union
 
 import websockets
@@ -1498,7 +1499,6 @@ class Bee:
                 signer=canonical_signer,
             )
 
-        # TODO: Look into it
         return SOCWriter(owner=reader.owner, download=reader.download, upload=__upload)
 
     def check_connection(self, options: Optional[BeeRequestOptions] = None) -> None:
@@ -1535,6 +1535,28 @@ class Bee:
         except HTTPError:
             return False
         return True
+
+    def wait_for_usable_postage_stamp(self, batch_id: Union[BatchId, str], timeout: int = 120_000) -> None:
+        """Waits for a postage stamp with the given batch ID to become usable.
+
+        Args:
+            batch_id: The ID of the postage batch to wait for.
+            timeout: The maximum time in milliseconds to wait before raising a timeout error.
+
+        Raises:
+            BeeError: If the timeout is reached before the stamp becomes usable.
+        """
+
+        # * Check every 1.5 seconds
+        TIME_STEP = 1500  # noqa: N806
+        for _ in range(0, timeout, TIME_STEP):
+            stamp = self.get_postage_batch(batch_id)
+            if stamp.usable:
+                return
+            sleep(TIME_STEP / 1000)
+
+        msg = "Timeout on waiting for postage stamp to become usable"
+        raise BeeError(msg)
 
     def create_postage_batch(
         self,

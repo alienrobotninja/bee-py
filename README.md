@@ -22,7 +22,7 @@
   - [✨ Features](#-features)
   - [📋 Requirements](#-requirements)
     - [🚀 Testing Locally](#-testing-locally)
-  - [🛠️ Installation](#%EF%B8%8F-installation)
+  - [🛠️ Installation](#️-installation)
   - [🚀 Usage](#-usage)
     - [🐝 Bee Endpoint](#-bee-endpoint)
     - [🚀 Bee Debug Endpoint](#-bee-debug-endpoint)
@@ -105,7 +105,7 @@ print(data)
 >>> Data(data=b'Bee is Awesome!')
 
 # Data can be converted into json format, hex, bytes or plain-text
-print(data.json())
+print(data.to_json())
 >>> '{"data":"Bee is Awesome!"}'
 
 print(data.text())
