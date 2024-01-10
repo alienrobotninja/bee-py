@@ -810,7 +810,7 @@ def test_pss_send_topic_assertion(input_value, expected_error_type, test_batch_i
         bee.pss_send(test_batch_id, input_value, "123", "data")
 
 
-# TODO: pss_subscribe, pss_receive is not implemented yet
+# TODO: pss_subscribe, pss_receive is not implemented yet because of bee container issues
 
 
 @pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
@@ -1038,3 +1038,10 @@ def test_make_soc_writer_make_signer_assertion(input_value, expected_error_type)
     bee = Bee(MOCK_SERVER_URL)
     with pytest.raises(expected_error_type):
         bee.make_soc_writer(input_value)
+
+
+@pytest.mark.parametrize("input_value, expected_error_type", request_options_assertions)
+def test_create_postage_batch(input_value, expected_error_type):
+    with pytest.raises(expected_error_type):
+        bee = Bee(MOCK_SERVER_URL, input_value)
+        bee.create_postage_batch("10", 17, input_value)

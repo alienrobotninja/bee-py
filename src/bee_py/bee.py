@@ -23,10 +23,13 @@ from bee_py.modules import pss as pss_api
 from bee_py.modules import status as status_api
 from bee_py.modules import stewardship as stewardship_api
 from bee_py.modules import tag as tag_api
+from bee_py.modules.debug import stamps
 from bee_py.modules.feed import create_feed_manifest as _create_feed_manifest
 from bee_py.types.type import (
     CHUNK_SIZE,
     SPAN_SIZE,
+    STAMPS_DEPTH_MAX,
+    STAMPS_DEPTH_MIN,
     AddressPrefix,
     AllTagsOptions,
     BatchId,
@@ -44,7 +47,9 @@ from bee_py.types.type import (
     Index,
     IndexBytes,
     JsonFeedOptions,
+    NumberString,
     Pin,
+    PostageBatchOptions,
     PssMessageHandler,
     PssSubscription,
     Reference,
@@ -76,6 +81,9 @@ from bee_py.utils.type import (
     assert_feed_type,
     assert_file_data,
     assert_file_upload_options,
+    assert_non_negative_integer,
+    assert_positive_integer,
+    assert_postage_batch_options,
     assert_public_key,
     assert_reference,
     assert_reference_or_ens,
@@ -1527,3 +1535,56 @@ class Bee:
         except HTTPError:
             return False
         return True
+
+    def create_postage_batch(
+        self,
+        amount: Union[NumberString, str],
+        depth: int,
+        options: Optional[Union[PostageBatchOptions, dict]] = None,
+        request_options: Optional[Union[BeeRequestOptions, dict]] = None,
+    ) -> str:
+        """Creates a new postage batch from the node's available funds.
+
+        **WARNING: This creates transactions that spend money.**
+
+        Args:
+            amount: The value per chunk, as a positive integer or string representation.
+            depth: The logarithm of the number of chunks that can be stamped with the batch, as a non-negative integer.
+            options: Optional options for batch creation.
+            request_options: Optional request options to customize the request.
+
+        Returns:
+            The ID of the created postage batch.
+
+        Raises:
+            BeeArgumentError: If the amount or depth is invalid.
+            TypeError: If a non-integer value is passed for amount or depth.
+
+        See Also:
+            - Bee docs: https://docs.ethswarm.org/docs/access-the-swarm/keep-your-data-alive
+            - Bee Debug API reference: https://docs.ethswarm.org/debug-api/#tag/Postage-Stamps/paths/~1stamps~1{amount}~1{depth}/post
+        """  # noqa: 501
+
+        assert_postage_batch_options(options)
+        assert_positive_integer(amount)
+        assert_non_negative_integer(depth)
+
+        if isinstance(options, dict):
+            options = PostageBatchOptions.model_validate(options)
+
+        if depth < STAMPS_DEPTH_MIN:
+            msg = f"Depth has to be at least {STAMPS_DEPTH_MIN}"
+            raise BeeArgumentError(msg, depth)
+        if depth > STAMPS_DEPTH_MAX:
+            msg = f"Depth has to be at most {STAMPS_DEPTH_MAX}"
+            raise BeeArgumentError(msg, depth)
+
+        stamp = stamps.create_postage_batch(
+            self.__get_request_options_for_call(request_options), amount, depth, options  # type: ignore
+        )
+
+        if options:
+            if options.wait_for_usable:
+                self.wait_for_usable_postage_stamp(stamp, options.wait_for_usable_timeout)  # type: ignore
+
+        return stamp
