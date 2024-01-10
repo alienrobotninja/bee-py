@@ -50,6 +50,7 @@ from bee_py.types.type import (
     JsonFeedOptions,
     NumberString,
     Pin,
+    PostageBatch,
     PostageBatchOptions,
     PssMessageHandler,
     PssSubscription,
@@ -1535,6 +1536,33 @@ class Bee:
         except HTTPError:
             return False
         return True
+
+    def get_postage_batch(
+        self,
+        postage_batch_id: Union[BatchId, str],
+        options: Optional[Union[BeeRequestOptions, dict]] = None,
+    ) -> PostageBatch:
+        """Retrieves details for a specific postage batch.
+
+        Args:
+            postage_batch_id: The ID of the batch to retrieve.
+            options: Optional request options to customize the request.
+
+        Returns:
+            The details of the postage batch.
+
+        Raises:
+            ValueError: If the batch ID is invalid.
+
+        See Also:
+            - Bee docs: https://docs.ethswarm.org/docs/access-the-swarm/keep-your-data-alive
+            - Bee Debug API reference: https://docs.ethswarm.org/debug-api/#tag/Postage-Stamps/paths/~1stamps~1{id}/get
+        """
+
+        assert_request_options(options)
+        assert_batch_id(postage_batch_id)
+
+        return stamps.get_postage_batch(self.__get_request_options_for_call(options), postage_batch_id)  # type: ignore
 
     def wait_for_usable_postage_stamp(self, batch_id: Union[BatchId, str], timeout: int = 120_000) -> None:
         """Waits for a postage stamp with the given batch ID to become usable.
