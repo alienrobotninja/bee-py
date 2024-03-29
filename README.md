@@ -56,7 +56,7 @@ This is the library for connecting to Bee decentralised storage using python.
 You can install `bee-py` via \[pip\] from \[PyPI\]:
 
 ```sh
-pip install bee-py
+pip install swarm-bee-py
 ```
 
 ## 🚀 Usage

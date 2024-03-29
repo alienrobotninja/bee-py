@@ -1,6 +1,6 @@
 # Project specifications
 [project]
-name = "bee-py"
+name = "swarm-bee-py"
 version = "0.1.0"
 description = "Python client library for connecting to Bee decentralised storage"
 authors = [
