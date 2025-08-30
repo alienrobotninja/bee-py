@@ -167,9 +167,6 @@ please \[file an issue\] along with a detailed description.
 
 You can find the full documentation [here](https://bee-js.ethswarm.org/docs). The API reference documentation can be found [here](https://bee-js.ethswarm.org/docs/api).
 
-## 👏 Credits
-
-Developed by [@Aviksaikat](https://github.com/aviksaikat)
 
 <!-- github-only -->
 
